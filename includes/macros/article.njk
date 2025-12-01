@@ -1,0 +1,14 @@
+{% macro article(post, content) %}
+  {% if post.data.hero %}
+    <figure class="hero-image">
+      {% set src = post.page.filePathStem + '/' + post.data.hero.src %}
+      {{ src }}
+      {# {% image src, post.data.hero.alt, post.data.hero.title %} #}
+      {% if post.data.hero.caption %}
+        <figcaption>{{ post.data.hero.caption }}</figcaption>
+      {% endif %}
+    </figure>
+  {% endif %}
+  {{ content | safe }}
+  -dwk
+{% endmacro %}

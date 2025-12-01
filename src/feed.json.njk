@@ -1,0 +1,39 @@
+---
+eleventyExcludeFromCollections: true
+permalink: /feed.json
+---
+{# TODO: add WebSub https://www.w3.org/TR/websub/ #}
+{% from "macros/article.njk" import article %}
+{
+	"version": "https://jsonfeed.org/version/1.1",
+	"title": "{{ metadata.title }}",
+	"language": "{{ metadata.language }}",
+	"home_page_url": "{{ metadata.url }}",
+	"feed_url": "{{ permalink | absoluteUrl(metadata.url) }}",
+	"icon": "{{ metadata.logo.src | absoluteUrl(metadata.url) }}",
+	"favicon": "{{ metadata.favicon | absoluteUrl(metadata.url) }}",
+	"description": "{{ metadata.description }}",
+	"author": {
+		"name": "{{ metadata.author.name }}",
+		"url": "{{ metadata.author.url }}",
+		"avatar": "{{ metadata.author.avatar }}"
+	},
+	"items": [
+		{%- for post in collections.posts | reverse %}
+		{%- set absolutePostUrl = post.url | absoluteUrl(metadata.url) %}
+		{
+			"id": "{{ absolutePostUrl }}",
+			"url": "{{ absolutePostUrl }}",
+			"title": "{{ post.data.title }}",
+			{% if  post.data.hero.src %}
+			"image": "{{( absolutePostUrl + post.data.hero.src) | absoluteUrl(metadata.url) }}",
+			{% endif %}
+			"content_html": {{ article(post, post.templateContent) | htmlToAbsoluteUrls(absolutePostUrl) | dump | safe }},
+			"date_published": "{{ post.date | dateToRfc3339 }}",
+			{# FIXME: need JSON output
+			"tags": "{{ post.data.tags }}" #}
+		}
+		{% if not loop.last %},{% endif %}
+		{%- endfor %}
+	]
+}

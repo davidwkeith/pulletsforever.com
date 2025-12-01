@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="{{ metadata.language }}" prefix="og: https://ogp.me/ns#">
+  <head>
+    {% include "partials/meta-tags.njk" %}
+ 
+    <title>{{ title or metadata.title }}</title>
+
+    {% include "partials/link-tags.njk" %}
+
+    <script type="application/ld+json">
+      {% generateSchema schema %}
+    </script>
+
+    {%- css %}
+      {% include "includes/css/index.css" %}
+      {% include (inputDir + "_css/index.css") %}
+    {% endcss %}
+    <style>{% getBundle "css" %}</style>
+ 
+  </head>
+  <body>
+ 
+    {% include "partials/header.njk" %}
+ 
+    <main>
+      {{ content | safe }}
+    </main>
+ 
+    {% include "partials/footer.njk" %}
+    
+    {%- js %}
+      {% include "includes/js/index.js" %}
+      {% include (inputDir + "_js/index.js") %}
+    {% endjs %}
+    <script>{% getBundle "js" %}</script>
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon="{{ metadata.cloudflare_insights | json }}"></script>
+  </body>
+</html>

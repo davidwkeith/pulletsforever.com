@@ -1,0 +1,19 @@
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="{{ metadata.colorScheme }}">
+<meta name="description" content="{{ schema.description }}">
+<meta name="generator" content="{{ eleventy.generator }}">
+
+{#
+  TODO: Generate OpenGraph data from Schema.org JSON-LD
+#}
+{% set logoPath = inputDir + metadata.logo.src %}
+<meta property="og:title" content="{{ schema.name }}">
+<meta property="og:description" content="{{ schema.description }}">
+<meta property="og:type" content="{{ ogType or metadata.ogType }}">
+{# FIXME: Social images plugin <meta property="og:image" content="{% GenerateSocialImage
+  schema.name, siteName=metadata.title, promoImage=logoPath, titleColor="#1095C1" %}"> #}
+<meta property="og:url" content="{{ schema.url }}">
+
+<meta property="fediverse:creator" content="{{ metadata.author.fediverse }}">

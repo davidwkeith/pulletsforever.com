@@ -1,0 +1,52 @@
+{# TODO: output Dublin Core https://en.wikipedia.org/wiki/Dublin_Core #}
+{# TODO: output RDF JSON-LD https://www.w3.org/TR/rdf-syntax-grammar/ #}
+{# TODO: figure out discussion link to Webmention.io? #}
+{% set faviconPath = inputDir + metadata.favicon %}
+{% favicons faviconPath, manifestData={ name: schema.name, description: schema.description } %}
+
+{% for service, profileURL in schema.author.alternates %}
+  {% if profileURL != metadata.url %} {# Skip author links to dwk.io from dwk.io #}
+    <link href="{{profileURL}}" rel="me">
+  {% endif %}
+{% endfor %}
+
+{# https://indieweb.org/authorship #}
+{% if schema['@type'] == 'Person' %}
+  <link rel="me author" href="{{schema.email}}">
+{% else %}
+  <link rel="me author" href="{{schema.author.email}}">
+  <link rel="me author" href="{{schema.author.url}}">
+{% endif %}
+
+<link rel="licence" href="/.less-well-known/license.spdx" type="text/spdx" data-licence="CC-BY-4.0">
+
+{# http://microformats.org/wiki/rel-canonical #}
+<link rel="canonical" href="{{metadata.url}}{{page.url}}">
+
+{% if index %}
+<link rel="index" href="{{index}}" type="text/html">
+{% endif %}
+
+{% if metadata.feed %}
+  <link rel="alternate" href="{{metadata.feed}}" type="application/atom+xml" title="{{metadata.title}} Feed">
+{% endif %}
+
+{% if metadata.favicon %}
+  <link rel="icon" href="{{metadata.favicon}}">
+{% endif %}
+
+{% if metadata.apple_touch_icon %}
+  <link rel="apple-touch-icon" href="{{metadata.apple_touch_icon}}">
+{% endif %}
+
+{% for link in metadata.head_links %}
+  <link 
+    rel="{{link.rel}}" 
+    href="{{link.href | replace('{{site}}', metadata.site)}}"
+    {% if link.type %}
+      type="{{link.type}}"
+    {% endif %}
+    {% if link.title %}
+      title="{{link.title}}"
+    {% endif %}>
+{% endfor %}

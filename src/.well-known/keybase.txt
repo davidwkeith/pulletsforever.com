@@ -1,0 +1,68 @@
+==================================================================
+https://keybase.io/dwkeith
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://pulletsforever.com
+  * I am dwkeith (https://keybase.io/dwkeith) on keybase.
+  * I have a public key with fingerprint 8AEE 1308 A48E C6BE 885B  89CD 7208 DB57 1364 E5E5
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "01014101d6366d94379f9fa945e47d0253b3aa8efb935f6bbdc4f0b6cf52bd84868d0a",
+      "fingerprint": "8aee1308a48ec6be885b89cd7208db571364e5e5",
+      "host": "keybase.io",
+      "key_id": "7208db571364e5e5",
+      "kid": "01014101d6366d94379f9fa945e47d0253b3aa8efb935f6bbdc4f0b6cf52bd84868d0a",
+      "uid": "e9797f5b266ccbbae424323d29ce3819",
+      "username": "dwkeith"
+    },
+    "service": {
+      "hostname": "pulletsforever.com",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 1
+  },
+  "ctime": 1595278132,
+  "expire_in": 157680000,
+  "prev": "048da0798786d5253d19af1c96ec7706aec3488a88b382d505398027f0954993",
+  "seqno": 68,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v2.1.13
+Comment: https://keybase.io/crypto
+
+yMIwAnicrVJtSBRBGD61K9O+fpRhIdVGYiK1u7OzO3MQFFQUdRUZQZRcOzuz3ua5
+e97unamcRQYWRBBRVGY/goiiD0miKPqyqDQohcos+6QvEiqQKCqtWal//WxgGOad
+53nmeR/eG6OzAjkZN4/2jUhv3pTKuHOtORmI5GUpdQJxaI0QqhMq2NDBYpS5XqTC
+okJIECVRUvimKlBVihWgYRObOlYgUzQqyhAQoOuImQQDaKqEUEMxRaIaJpQJRQpS
+ERV1oUQwLbucJeIJy/a4LNIZk4CIdAUxQyUMIUgQNqgmi4gSqElAVRhkkBOjjusz
+uDmiu2yW5fAav0SG7P0D/599J4fkGNawZkIiq6phEKIzRVaADKiMDQaQhH2gyxK2
+Xsk4mlZXMMuLCukSgRdTlsH8XP1G/gDiyViMea7pJFiKJWYZTiUXiCcczzGcGH+P
+el7cDfl8rybuE6oZifyRihDLpjxMzuBc13JsISRxpOFZvrYEMZQ1JAG5RGAb41aC
+RSwfATUViXz5/7CUn5CCqC5qGGlIpZAHQiWsm5KBVWZomqjqzAAKQjpCBCCZQhEC
+jERZM0UMFYyB4DdXZTtCSEXcp17ONV2r3Na9ZIIJ6bar64YFMnICw4OZ/pQFckaO
++zt7LGvE4NRoc/DmN/AtXfA4e2DVcvfYnNJpwbkL+2OTT5jPO80PtaNI9a5pZuut
+qsV3Kz41T7g49eP09Pk1fd09ypb4w31Lup613VbLdlaWvZhf/35bz6Uzb4rDDR0v
+F0S/l88+WJY5O7/v+p6fRfMnNQ7zmk5lvtn9cWbXxGVwY92UB+Gazy3BwjBaW9ze
+8bRx5aNg3vbOdV9ezSCH2ge8yOvV+R1sfIm94ZaXe3ngkLx0yhjrWvjAxCah+0fS
+bm3fmzs6OrbzrJ56+27cuerS49b+htqTgy05TXtaijoX7Vrff2XH6ScX+guzoxIo
+nnf9a/J974pfrW1L7u0/0ruitmjHgfrD4dUF97f+BmL9Q4k=
+=NvMY
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/dwkeith
+
+==================================================================

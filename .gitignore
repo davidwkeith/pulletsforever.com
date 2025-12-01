@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Build output
+_build/
+
+# Cache
+.cache/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
