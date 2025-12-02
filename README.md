@@ -87,15 +87,16 @@ This project was recently extracted from a multi-site monorepo (`static-websites
 - [x] Update `package.json`
   - Added `repository` field with new repo URL
 
-### Phase 4: Code Cleanup
+### Phase 4: Code Cleanup ✅
 
-**Priority: Low**
+**Priority: Low** — **COMPLETED**
 
-- [ ] Delete empty file `src/_js/index.js`
-- [ ] Fix CSP glob syntax in `.eleventy.js` line 87
-  - Change `"/*.{png|jpg|jpeg|webp}"` to `"/*.{png,jpg,jpeg,webp}"`
-- [ ] Remove commented embed plugin from `plugins/markdown-it.js`
-- [ ] Clean up FIXME comments in `.eleventy.js`
+- [x] Delete empty file `src/_js/index.js`
+  - Removed file and include reference in `base.njk`
+- [x] Fix CSP glob syntax in `.eleventy.js`
+  - Changed `"/*.{png|jpg|jpeg|webp}"` to `"/*.{png,jpg,jpeg,webp}"`
+- [x] Remove commented embed plugin from `plugins/markdown-it.js`
+- [x] Clean up FIXME comments in `.eleventy.js`
 
 ---
 

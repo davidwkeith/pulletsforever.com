@@ -26,8 +26,6 @@ export default function (eleventyConfig) {
   eleventyConfig.addGlobalData("inputDir", input);
   eleventyConfig.addGlobalData("baseURL", "https://pulletsforever.com");
 
-  // FIXME: addPassThroughCopy does not respect ignores
-  // eleventyConfig.ignores.add(`${input}/_static`);
   eleventyConfig.addPassthroughCopy(`${input}/**/*.{svg,webp,png,jpg,jpeg,gif,zip}`)
   eleventyConfig.addPassthroughCopy(`${input}/fonts`)
   eleventyConfig.addPassthroughCopy({
@@ -63,7 +61,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addPlugin(contentSecurityPolicyPlugin, {
     directives: csp,
     globPatterns: ["/*"],
-    globPatternsDetach: ["/*.{png|jpg|jpeg|webp}"],
+    globPatternsDetach: ["/*.{png,jpg,jpeg,webp}"],
     includePatterns: ["/**/**.html"],
     excludePatterns: [],
     hosting: "cloudflare-pages",
