@@ -67,6 +67,20 @@ pulletsforever.com/
 
 ---
 
+## Blog Post Frontmatter
+
+Blog posts support the following frontmatter fields (see [frontmatter.json](frontmatter.json)):
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `title` | Yes | Post title |
+| `date` | Yes | Publication date (`YYYY-MM-DD` or ISO 8601) |
+| `description` | No | Short description for meta tags |
+| `tags` | No | Array of categorization tags |
+| `modified` | No | Last modification date (`YYYY-MM-DD`) |
+
+---
+
 ## License
 
 - **Code**: [ISC License](https://opensource.org/license/isc-license-txt)

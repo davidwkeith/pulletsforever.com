@@ -1,0 +1,50 @@
+{
+  "$schema": "https://frontmatter.codes/frontmatter.schema.json",
+  "frontMatter.content.pageFolders": [
+    {
+      "title": "Blog",
+      "path": "[[workspace]]/src/blog",
+      "contentTypes": [
+        "blog-post"
+      ]
+    }
+  ],
+  "frontMatter.taxonomy.contentTypes": [
+    {
+      "name": "blog-post",
+      "pageBundle": false,
+      "fields": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "description": "The title of the blog post, displayed in the page heading and meta tags"
+        },
+        {
+          "name": "date",
+          "type": "datetime",
+          "required": true,
+          "description": "Publication date"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "description": "Short description for meta tags and social sharing previews"
+        },
+        {
+          "name": "tags",
+          "type": "tags",
+          "description": "Categorization tags for the post"
+        },
+        {
+          "name": "modified",
+          "type": "datetime",
+          "description": "Last modification date, used for article:modified_time meta tag"
+        }
+      ]
+    }
+  ],
+  "frontMatter.taxonomy.tags": [],
+  "frontMatter.framework.id": "eleventy",
+  "frontMatter.git.enabled": true
+}
