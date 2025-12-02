@@ -22,7 +22,9 @@ export default function(eleventyConfig) {
 		// which file extensions to process
 		extensions: "html",
 
-		// Add any other Image utility options here:
+		// Output all images to a central directory for caching
+		outputDir: "./_build/img/",
+		urlPath: "/img/",
 
 		// optional, output image formats
 		formats: ["webp", "jpeg"],
