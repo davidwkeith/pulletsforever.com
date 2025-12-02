@@ -65,11 +65,11 @@ Blog posts support the following frontmatter fields (see [frontmatter.json](fron
   - Fixed `--text-color-link-active` from `#6969f7` to `#7b7bff` (~5.4:1)
 - [x] Added visible `:focus-visible` styles for keyboard navigation
 
-### Phase 2: Keyboard Navigation (Medium)
+### Phase 2: Keyboard Navigation (Medium) ✅
 
-- [ ] Add skip-to-main-content link
-- [ ] Ensure all interactive elements are keyboard accessible
-- [ ] Add focus trap for any modals (if added in future)
+- [x] Skip-to-main-content link (visible on focus)
+- [x] All interactive elements keyboard accessible (native HTML)
+- [x] Focus trap for modals (N/A - no modals)
 
 ### Phase 3: Screen Reader Improvements (Medium)
 

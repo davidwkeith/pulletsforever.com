@@ -69,6 +69,22 @@ body {
     width: 1px;
 }
 
+/* Skip link - visible only on focus */
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 0;
+    padding: 0.5em 1em;
+    background: var(--background-color);
+    color: var(--text-color-link);
+    text-decoration: underline;
+    z-index: 100;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
 p:last-child {
     margin-bottom: 0;
 }
