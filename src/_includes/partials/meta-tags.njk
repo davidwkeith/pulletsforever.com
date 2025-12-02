@@ -21,4 +21,12 @@
 <meta name="twitter:description" content="{{ description or schema.description }}">
 <meta name="twitter:image" content="{{ ogImage }}">
 
+{% if ogType == "article" %}
+<meta property="article:published_time" content="{{ date | dateToRfc3339 }}">
+<meta property="article:author" content="{{ metadata.author.url }}">
+{% for tag in tags %}{% if tag != "posts" %}
+<meta property="article:tag" content="{{ tag }}">
+{% endif %}{% endfor %}
+{% endif %}
+
 <meta property="fediverse:creator" content="{{ metadata.author.fediverse }}">

@@ -44,13 +44,13 @@ pulletsforever.com/
   - `twitter:description`
   - `twitter:image`
 
-### Phase 2: Article-Specific OpenGraph (Medium)
+### Phase 2: Article-Specific OpenGraph (Medium) ✅
 
-- [ ] Add article meta tags for blog posts
-  - `article:published_time`
-  - `article:modified_time`
-  - `article:author`
-  - `article:tag`
+- [x] Add article meta tags for blog posts
+  - `article:published_time` (from post date)
+  - `article:author` (author URL)
+  - `article:tag` (post tags, excluding collection tags)
+  - Note: `article:modified_time` skipped - no modified date in frontmatter
 
 ### Phase 3: Schema.org Enhancements (Medium)
 
