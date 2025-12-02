@@ -32,12 +32,13 @@ pulletsforever.com/
 
 ## SEO Improvements
 
-### Phase 1: Social Sharing Meta Tags (High)
+### Phase 1: Social Sharing Meta Tags (High) ✅
 
-- [ ] Enable og:image for social previews
-  - Uncomment and fix social images integration in `src/_includes/partials/meta-tags.njk`
-  - `pluginSocialImages` is configured but template integration is incomplete
-- [ ] Add Twitter/X Card meta tags
+- [x] Enable og:image for social previews
+  - Custom social card generator in `plugins/social-images.js`
+  - Auto-includes first image from post on right side of card
+  - Images output to `_build/img/social-cards/`
+- [x] Add Twitter/X Card meta tags
   - `twitter:card` (summary_large_image)
   - `twitter:title`
   - `twitter:description`
