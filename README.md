@@ -30,43 +30,6 @@ pulletsforever.com/
 
 ---
 
-## SEO Improvements
-
-### Phase 1: Social Sharing Meta Tags (High) ✅
-
-- [x] Enable og:image for social previews
-  - Custom social card generator in `plugins/social-images.js`
-  - Auto-includes first image from post on right side of card
-  - Images output to `_build/img/social-cards/`
-- [x] Add Twitter/X Card meta tags
-  - `twitter:card` (summary_large_image)
-  - `twitter:title`
-  - `twitter:description`
-  - `twitter:image`
-
-### Phase 2: Article-Specific OpenGraph (Medium) ✅
-
-- [x] Add article meta tags for blog posts
-  - `article:published_time` (from post date)
-  - `article:author` (author URL)
-  - `article:tag` (post tags, excluding collection tags)
-  - `article:modified_time` (optional - add `modified: YYYY-MM-DD` to frontmatter)
-
-### Phase 3: Schema.org Enhancements (Medium) ✅
-
-- [x] Complete BlogPosting schema for posts
-  - `datePublished` from page date
-  - `dateModified` from modified field (falls back to date)
-  - `headline` from title
-  - `mainEntityOfPage` with canonical URL
-
-### Phase 4: Minor Fixes (Low)
-
-- [ ] Add standard `/sitemap.xml` location (currently only at `/.well-known/sitemap.xml`)
-- [ ] Move SPDX comment in `robots.txt` below sitemap line
-
----
-
 ## Blog Post Frontmatter
 
 Blog posts support the following frontmatter fields (see [frontmatter.json](frontmatter.json)):
