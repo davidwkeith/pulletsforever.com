@@ -7,7 +7,7 @@ import pluginFavicon from "eleventy-plugin-gen-favicons"
 import pluginFilesMinifier from "@sherby/eleventy-plugin-files-minifier"
 import pluginNavigation from "@11ty/eleventy-navigation"
 import pluginRss from '@11ty/eleventy-plugin-rss'
-import pluginSocialImages from "@manustays/eleventy-plugin-generate-social-images"
+import pluginSocialImages from "./plugins/social-images.js"
 import pluginSyntaxHighlight from "@11ty/eleventy-plugin-syntaxhighlight"
 import { contentSecurityPolicyPlugin } from "@jackdbd/eleventy-plugin-content-security-policy"
 
@@ -46,14 +46,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addPlugin(pluginSyntaxHighlight);
   eleventyConfig.addPlugin(pluginMarkdown);
 
-  /**
-   * Social Images
-   */
-  eleventyConfig.addPlugin(pluginSocialImages, {
-    outputDir: `${output}/social-cards/`,
-    urlPath: "/social-cards",
-    bgGradient: ["#ABB8C0", "#A0ACB3"],
-  })
+  eleventyConfig.addPlugin(pluginSocialImages);
 
   /**
    *  Content Security Policy

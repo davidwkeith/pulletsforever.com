@@ -5,15 +5,20 @@
 <meta name="description" content="{{ schema.description }}">
 <meta name="generator" content="{{ eleventy.generator }}">
 
-{#
-  TODO: Generate OpenGraph data from Schema.org JSON-LD
-#}
-{% set logoPath = inputDir + metadata.logo.src %}
-<meta property="og:title" content="{{ schema.name }}">
-<meta property="og:description" content="{{ schema.description }}">
+{% set postImage = content | firstImage %}
+{% set socialImage = (title or schema.name) | socialImageUrl(postImage, page.inputPath) %}
+{% set ogImage = (metadata.url + socialImage) if socialImage else schema.image %}
+
+<meta property="og:title" content="{{ title or schema.name }}">
+<meta property="og:description" content="{{ description or schema.description }}">
 <meta property="og:type" content="{{ ogType or metadata.ogType }}">
-{# FIXME: Social images plugin <meta property="og:image" content="{% GenerateSocialImage
-  schema.name, siteName=metadata.title, promoImage=logoPath, titleColor="#1095C1" %}"> #}
-<meta property="og:url" content="{{ schema.url }}">
+<meta property="og:image" content="{{ ogImage }}">
+<meta property="og:image:alt" content="{{ title or schema.name }}">
+<meta property="og:url" content="{{ metadata.url }}{{ page.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ title or schema.name }}">
+<meta name="twitter:description" content="{{ description or schema.description }}">
+<meta name="twitter:image" content="{{ ogImage }}">
 
 <meta property="fediverse:creator" content="{{ metadata.author.fediverse }}">
