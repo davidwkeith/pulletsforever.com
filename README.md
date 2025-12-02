@@ -30,73 +30,39 @@ pulletsforever.com/
 
 ---
 
-## Refactoring Plan
+## SEO Improvements
 
-This project was recently extracted from a multi-site monorepo (`static-websites`). The following cleanup tasks remain to align with Eleventy best practices.
+### Phase 1: Social Sharing Meta Tags (High)
 
-### Phase 1: Remove Multi-Site Debris ✅
+- [ ] Enable og:image for social previews
+  - Uncomment and fix social images integration in `src/_includes/partials/meta-tags.njk`
+  - `pluginSocialImages` is configured but template integration is incomplete
+- [ ] Add Twitter/X Card meta tags
+  - `twitter:card` (summary_large_image)
+  - `twitter:title`
+  - `twitter:description`
+  - `twitter:image`
 
-**Priority: High** — **COMPLETED**
+### Phase 2: Article-Specific OpenGraph (Medium)
 
-- [x] Remove legistar plugin (santaclara.dwk.io-specific)
-  - Deleted `plugins/legistar.js`
-  - Deleted `plugins/lib/fetchWithCache.js`
-  - Removed import and plugin registration from `.eleventy.js`
-- [x] Remove webmentions configuration (dwk.io-specific)
-  - Removed `configWebmentions` and conditional plugin loading from `.eleventy.js`
-  - Removed webmention/pingback links from `data/head_links.js`
-  - Cleaned up commented code in `src/blog/blog.11tydata.js`
-- [x] Remove site detection logic
-  - Removed hardcoded `const site` variable and conditional blocks in `.eleventy.js`
-- [x] Remove unused dependencies from `package.json`
-  - `jsonld-checker` (never used)
-  - `node-fetch` (only used by legistar)
-  - `ical-generator` (only used by legistar)
-  - `@chrisburnell/eleventy-cache-webmentions` (dwk.io-specific)
-  - Note: `sharp` was kept as it's a peer dependency of `eleventy-plugin-gen-favicons`
-- [x] Delete legistar cache directory `plugins/.cache/`
+- [ ] Add article meta tags for blog posts
+  - `article:published_time`
+  - `article:modified_time`
+  - `article:author`
+  - `article:tag`
 
-### Phase 2: Standardize Directory Structure ✅
+### Phase 3: Schema.org Enhancements (Medium)
 
-**Priority: High** — **COMPLETED**
+- [ ] Complete BlogPosting schema for posts
+  - Add `datePublished` from page data
+  - Add `dateModified` from page data
+  - Add `headline` from title
+  - Add `mainEntityOfPage` from canonical URL
 
-- [x] Move `/data/` contents into `src/_data/`
-  - Merged `data/metadata.js` into `src/_data/metadata.js` (flattened inheritance)
-  - Moved `data/author.js` → `src/_data/author.js`
-  - Merged `data/schema.js` into `src/_data/schema.js` (flattened inheritance)
-  - Moved `data/head_links.js` → `src/_data/head_links.js`
-  - Moved `data/csp.js` → `src/_data/csp.js`
-  - Deleted `/data/` directory
-- [x] Move `/includes/` to `src/_includes/`
-  - Moved all layouts, partials, macros, css, js
-  - Updated include paths in templates (`includes/css/` → `css/`, etc.)
-  - Deleted `/includes/` directory
-- [x] Update `.eleventy.js` configuration
-  - Removed custom `includes: "../includes"` path (now uses Eleventy default)
-  - Updated CSP import path to `./src/_data/csp.js`
+### Phase 4: Minor Fixes (Low)
 
-### Phase 3: Update Repository References ✅
-
-**Priority: Medium** — **COMPLETED**
-
-- [x] Update `src/_data/head_links.js` repository URLs
-  - Changed `static-websites` → `pulletsforever.com` in:
-    - `code-repository`
-    - `content-repository`
-    - `issues`
-- [x] Update `package.json`
-  - Added `repository` field with new repo URL
-
-### Phase 4: Code Cleanup ✅
-
-**Priority: Low** — **COMPLETED**
-
-- [x] Delete empty file `src/_js/index.js`
-  - Removed file and include reference in `base.njk`
-- [x] Fix CSP glob syntax in `.eleventy.js`
-  - Changed `"/*.{png|jpg|jpeg|webp}"` to `"/*.{png,jpg,jpeg,webp}"`
-- [x] Remove commented embed plugin from `plugins/markdown-it.js`
-- [x] Clean up FIXME comments in `.eleventy.js`
+- [ ] Add standard `/sitemap.xml` location (currently only at `/.well-known/sitemap.xml`)
+- [ ] Move SPDX comment in `robots.txt` below sitemap line
 
 ---
 
