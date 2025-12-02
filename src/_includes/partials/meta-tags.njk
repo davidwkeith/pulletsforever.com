@@ -23,7 +23,8 @@
 
 {% if ogType == "article" %}
 <meta property="article:published_time" content="{{ date | dateToRfc3339 }}">
-<meta property="article:author" content="{{ metadata.author.url }}">
+{% if modified %}<meta property="article:modified_time" content="{{ modified | dateToRfc3339 }}">
+{% endif %}<meta property="article:author" content="{{ metadata.author.url }}">
 {% for tag in tags %}{% if tag != "posts" %}
 <meta property="article:tag" content="{{ tag }}">
 {% endif %}{% endfor %}

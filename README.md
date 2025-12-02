@@ -50,7 +50,7 @@ pulletsforever.com/
   - `article:published_time` (from post date)
   - `article:author` (author URL)
   - `article:tag` (post tags, excluding collection tags)
-  - Note: `article:modified_time` skipped - no modified date in frontmatter
+  - `article:modified_time` (optional - add `modified: YYYY-MM-DD` to frontmatter)
 
 ### Phase 3: Schema.org Enhancements (Medium)
 
