@@ -9,7 +9,6 @@ import pluginNavigation from "@11ty/eleventy-navigation"
 import pluginRss from '@11ty/eleventy-plugin-rss'
 import pluginSocialImages from "@manustays/eleventy-plugin-generate-social-images"
 import pluginSyntaxHighlight from "@11ty/eleventy-plugin-syntaxhighlight"
-import pluginWebmentions from "@chrisburnell/eleventy-cache-webmentions"
 import { contentSecurityPolicyPlugin } from "@jackdbd/eleventy-plugin-content-security-policy"
 
 // Local Plugins
@@ -17,35 +16,15 @@ import pluginImages from "./plugins/11ty.images.js"
 import pluginFilters from "./plugins/filters.js"
 import pluginSchema from "./plugins/schema.js"
 import pluginMarkdown from "./plugins/markdown-it.js"
-import pluginLegistar from "./plugins/legistar.js"
 
 import csp from "./data/csp.js"
 
-const site = "pulletsforever.com"
 const input = `src/`
 const output = `_build/`
 
-const configWebmentions = {
-  ...pluginWebmentions.defaults,
-  domain: `https://${site}`,
-  feed: `https://webmention.io/api/mentions.jf2?domain=${site}&token=${process.env.WEBMENTION_IO_TOKEN}&per-page=9001`,
-  key: "children",
-};
-
 export default function (eleventyConfig) {
   eleventyConfig.addGlobalData("inputDir", input);
-  eleventyConfig.addGlobalData("configWebmentions", configWebmentions);
-  eleventyConfig.addGlobalData("baseURL", `https://${site}`);
-
-  // FIXME: Web mentions are only for dwk.io, how can I move this to that directory?
-  //   Maybe add a _plugins directory that we load an index.js from?
-  if (site === "dwk.io") {
-    eleventyConfig.addPlugin(pluginWebmentions, configWebmentions)
-    console.log('Added dwk.io specific plugins')
-  } else if (site === "santaclara.dwk.io") {
-    eleventyConfig.addPlugin(pluginLegistar);
-    console.log('Added santaclara.dwk.io specific plugins')
-  }
+  eleventyConfig.addGlobalData("baseURL", "https://pulletsforever.com");
 
   // FIXME: addPassThroughCopy does not respect ignores
   // eleventyConfig.ignores.add(`${input}/_static`);

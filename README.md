@@ -35,23 +35,27 @@ pulletsforever.com/
 
 This project was recently extracted from a multi-site monorepo (`static-websites`). The following cleanup tasks remain to align with Eleventy best practices.
 
-### Phase 1: Remove Multi-Site Debris
+### Phase 1: Remove Multi-Site Debris ✅
 
-**Priority: High**
+**Priority: High** — **COMPLETED**
 
-- [ ] Remove legistar plugin (santaclara.dwk.io-specific)
-  - Delete `plugins/legistar.js`
-  - Delete `plugins/lib/fetchWithCache.js`
-  - Remove import and plugin registration from `.eleventy.js`
-- [ ] Remove webmentions configuration (dwk.io-specific)
-  - Remove `configWebmentions` and conditional plugin loading from `.eleventy.js`
-- [ ] Remove site detection logic
-  - Remove hardcoded `const site = "pulletsforever.com"` and conditional blocks in `.eleventy.js`
-- [ ] Remove unused dependencies from `package.json`
+- [x] Remove legistar plugin (santaclara.dwk.io-specific)
+  - Deleted `plugins/legistar.js`
+  - Deleted `plugins/lib/fetchWithCache.js`
+  - Removed import and plugin registration from `.eleventy.js`
+- [x] Remove webmentions configuration (dwk.io-specific)
+  - Removed `configWebmentions` and conditional plugin loading from `.eleventy.js`
+  - Removed webmention/pingback links from `data/head_links.js`
+  - Cleaned up commented code in `src/blog/blog.11tydata.js`
+- [x] Remove site detection logic
+  - Removed hardcoded `const site` variable and conditional blocks in `.eleventy.js`
+- [x] Remove unused dependencies from `package.json`
   - `jsonld-checker` (never used)
-  - `sharp` (not imported anywhere)
   - `node-fetch` (only used by legistar)
+  - `ical-generator` (only used by legistar)
   - `@chrisburnell/eleventy-cache-webmentions` (dwk.io-specific)
+  - Note: `sharp` was kept as it's a peer dependency of `eleventy-plugin-gen-favicons`
+- [x] Delete legistar cache directory `plugins/.cache/`
 
 ### Phase 2: Standardize Directory Structure
 
@@ -91,8 +95,6 @@ This project was recently extracted from a multi-site monorepo (`static-websites
 - [ ] Fix CSP glob syntax in `.eleventy.js` line 87
   - Change `"/*.{png|jpg|jpeg|webp}"` to `"/*.{png,jpg,jpeg,webp}"`
 - [ ] Remove commented embed plugin from `plugins/markdown-it.js`
-- [ ] Remove multi-site comment from `includes/partials/link-tags.njk`
-- [ ] Delete legistar cache directory `plugins/.cache/`
 - [ ] Clean up FIXME comments in `.eleventy.js`
 
 ---

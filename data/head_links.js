@@ -26,9 +26,6 @@ export default [
     href: "https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1",
     type: "text/html",
   },
-  { rel: "webmention", href: "https://webmention.io/{{site}}/webmention" },
-  // http://www.hixie.ch/specs/pingback/pingback
-  { rel: "pingback", href: "https://webmention.io/{{site}}/xmlrpc" },
   {
     rel: "donation",
     href: "https://www.buymeacoffee.com/davidwkeith",
