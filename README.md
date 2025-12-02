@@ -21,10 +21,9 @@ npm run build
 pulletsforever.com/
 ├── src/              # Content and templates
 │   ├── blog/         # Blog posts
-│   ├── _data/        # Site-specific data
+│   ├── _data/        # Data files (metadata, schema, CSP, etc.)
+│   ├── _includes/    # Layouts, partials, macros, CSS, JS
 │   └── ...
-├── data/             # Global data files (to be moved)
-├── includes/         # Layouts and partials (to be moved)
 ├── plugins/          # Custom Eleventy plugins
 └── _build/           # Generated output (gitignored)
 ```
@@ -57,23 +56,24 @@ This project was recently extracted from a multi-site monorepo (`static-websites
   - Note: `sharp` was kept as it's a peer dependency of `eleventy-plugin-gen-favicons`
 - [x] Delete legistar cache directory `plugins/.cache/`
 
-### Phase 2: Standardize Directory Structure
+### Phase 2: Standardize Directory Structure ✅
 
-**Priority: High**
+**Priority: High** — **COMPLETED**
 
-- [ ] Move `/data/` contents into `src/_data/`
-  - Merge `data/metadata.js` with `src/_data/metadata.js`
-  - Move `data/author.js` → `src/_data/author.js`
-  - Move `data/schema.js` → `src/_data/schema.js` (merge with existing)
-  - Move `data/head_links.js` → `src/_data/head_links.js`
-  - Move `data/csp.js` → `src/_data/csp.js`
-  - Delete `/data/` directory
-- [ ] Move `/includes/` to `src/_includes/`
-  - Move all layouts, partials, macros, css, js
-  - Delete `/includes/` directory
-- [ ] Update `.eleventy.js` configuration
-  - Remove custom `includes: "../includes"` path (use Eleventy default)
-  - Add `data: "_data"` if needed
+- [x] Move `/data/` contents into `src/_data/`
+  - Merged `data/metadata.js` into `src/_data/metadata.js` (flattened inheritance)
+  - Moved `data/author.js` → `src/_data/author.js`
+  - Merged `data/schema.js` into `src/_data/schema.js` (flattened inheritance)
+  - Moved `data/head_links.js` → `src/_data/head_links.js`
+  - Moved `data/csp.js` → `src/_data/csp.js`
+  - Deleted `/data/` directory
+- [x] Move `/includes/` to `src/_includes/`
+  - Moved all layouts, partials, macros, css, js
+  - Updated include paths in templates (`includes/css/` → `css/`, etc.)
+  - Deleted `/includes/` directory
+- [x] Update `.eleventy.js` configuration
+  - Removed custom `includes: "../includes"` path (now uses Eleventy default)
+  - Updated CSP import path to `./src/_data/csp.js`
 
 ### Phase 3: Update Repository References
 

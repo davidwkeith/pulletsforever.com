@@ -17,7 +17,7 @@ import pluginFilters from "./plugins/filters.js"
 import pluginSchema from "./plugins/schema.js"
 import pluginMarkdown from "./plugins/markdown-it.js"
 
-import csp from "./data/csp.js"
+import csp from "./src/_data/csp.js"
 
 const input = `src/`
 const output = `_build/`
@@ -83,7 +83,6 @@ export default function (eleventyConfig) {
     dir: {
       input,
       output,
-      includes: "../includes",
     },
   }
 }

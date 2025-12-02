@@ -12,7 +12,7 @@
     </script>
 
     {%- css %}
-      {% include "includes/css/index.css" %}
+      {% include "css/index.css" %}
       {% include (inputDir + "_css/index.css") %}
     {% endcss %}
     <style>{% getBundle "css" %}</style>
@@ -29,7 +29,7 @@
     {% include "partials/footer.njk" %}
     
     {%- js %}
-      {% include "includes/js/index.js" %}
+      {% include "js/index.js" %}
       {% include (inputDir + "_js/index.js") %}
     {% endjs %}
     <script>{% getBundle "js" %}</script>

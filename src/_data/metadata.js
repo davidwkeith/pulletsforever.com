@@ -1,11 +1,19 @@
-import globalMetadata from "../../data/metadata.js";
+import author from "./author.js";
+import head_links from "./head_links.js";
+import schema from "./schema.js";
 
-const site = "pulletsforever.com"
-const title = "Pullets Forever"
-const email = "dwk@pulletsforever.com"
+const site = "pulletsforever.com";
+const title = "Pullets Forever";
+const email = "dwk@pulletsforever.com";
 
 export default {
-  ...globalMetadata,
+  // Global metadata
+  language: "en",
+  ogType: "website",
+  hasRSSFeed: true,
+  colorScheme: "dark light",
+
+  // Site-specific metadata
   title,
   site,
   url: `https://${site}`,
@@ -16,15 +24,15 @@ export default {
   },
   description: "Pullet surprise writing.",
   author: {
-    ...globalMetadata.author,
+    ...author,
     email,
   },
   cloudflare_insights: {
-    token: "5049d90e34c84a5ba463d0541825cb30"
+    token: "5049d90e34c84a5ba463d0541825cb30",
   },
   useNavigation: true,
   head_links: [
-    ...globalMetadata.head_links,
+    ...head_links,
     {
       rel: "alternate",
       href: "/feed.json",
@@ -33,4 +41,5 @@ export default {
     },
     { rel: "reply-to", href: email },
   ],
+  schema,
 };
