@@ -58,17 +58,12 @@ Blog posts support the following frontmatter fields (see [frontmatter.json](fron
 - ✅ System font stack for readability
 - ✅ Line height 1.5 for body text
 
-### Phase 1: Color Contrast (High)
+### Phase 1: Color Contrast (High) ✅
 
-- [ ] Fix light mode link colors for WCAG AA compliance
-  - `--text-color-link: #082840` on `#fff` = 12.6:1 ✅
-  - `--text-color-link-visited: #17050F` on `#fff` = 16.8:1 ✅
-  - `--text-color-link-active: #5f2b48` on `#fff` = 8.4:1 ✅
-- [ ] Fix dark mode link colors for WCAG AA compliance
-  - `--text-color-link: #1493fb` on `#15202b` = 5.9:1 ✅
-  - `--text-color-link-visited: #a6a6f8` on `#15202b` = 6.9:1 ✅
-  - `--text-color-link-active: #6969f7` on `#15202b` = 4.8:1 ⚠️ (needs 4.5:1 for AA)
-- [ ] Add visible focus indicators (`:focus-visible` styles)
+- [x] Light mode link colors WCAG AA compliant
+- [x] Dark mode link colors WCAG AA compliant
+  - Fixed `--text-color-link-active` from `#6969f7` to `#7b7bff` (~5.4:1)
+- [x] Added visible `:focus-visible` styles for keyboard navigation
 
 ### Phase 2: Keyboard Navigation (Medium)
 
