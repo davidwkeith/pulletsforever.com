@@ -52,13 +52,13 @@ pulletsforever.com/
   - `article:tag` (post tags, excluding collection tags)
   - `article:modified_time` (optional - add `modified: YYYY-MM-DD` to frontmatter)
 
-### Phase 3: Schema.org Enhancements (Medium)
+### Phase 3: Schema.org Enhancements (Medium) ✅
 
-- [ ] Complete BlogPosting schema for posts
-  - Add `datePublished` from page data
-  - Add `dateModified` from page data
-  - Add `headline` from title
-  - Add `mainEntityOfPage` from canonical URL
+- [x] Complete BlogPosting schema for posts
+  - `datePublished` from page date
+  - `dateModified` from modified field (falls back to date)
+  - `headline` from title
+  - `mainEntityOfPage` with canonical URL
 
 ### Phase 4: Minor Fixes (Low)
 
