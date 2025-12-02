@@ -5,15 +5,15 @@
 export default [
   {
     rel: "code-repository",
-    href: "https://gitlab.com/davidwkeith/static-websites.git",
+    href: "https://gitlab.com/dwk-io/pulletsforever.com.git",
   },
   {
     rel: "content-repository",
-    href: "https://gitlab.com/davidwkeith/static-websites.git",
+    href: "https://gitlab.com/dwk-io/pulletsforever.com.git",
   },
   {
     rel: "issues",
-    href: "https://gitlab.com/davidwkeith/static-websites/-/issues",
+    href: "https://gitlab.com/dwk-io/pulletsforever.com/-/issues",
     type: "text/html",
   },
   {

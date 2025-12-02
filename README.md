@@ -75,17 +75,17 @@ This project was recently extracted from a multi-site monorepo (`static-websites
   - Removed custom `includes: "../includes"` path (now uses Eleventy default)
   - Updated CSP import path to `./src/_data/csp.js`
 
-### Phase 3: Update Repository References
+### Phase 3: Update Repository References ✅
 
-**Priority: Medium**
+**Priority: Medium** — **COMPLETED**
 
-- [ ] Update `data/head_links.js` repository URLs
-  - Change `static-websites` → `pulletsforever.com` in:
+- [x] Update `src/_data/head_links.js` repository URLs
+  - Changed `static-websites` → `pulletsforever.com` in:
     - `code-repository`
     - `content-repository`
     - `issues`
-- [ ] Update `package.json`
-  - Update repository URL to new repo path
+- [x] Update `package.json`
+  - Added `repository` field with new repo URL
 
 ### Phase 4: Code Cleanup
 
