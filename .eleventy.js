@@ -29,7 +29,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy(`${input}/**/*.{svg,webp,png,jpg,jpeg,gif,zip}`)
   eleventyConfig.addPassthroughCopy(`${input}/fonts`)
   eleventyConfig.addPassthroughCopy({
-    [`${input}/.well-known/`]: "/.well-known/",
+    [`${input}/.well-known/keybase.txt`]: "/.well-known/keybase.txt",
     "./node_modules/prismjs/themes/prism-okaidia.css": "/css/prism-okaidia.css",
   });
 
