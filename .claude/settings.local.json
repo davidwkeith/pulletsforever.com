@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(npx @11ty/eleventy:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []
