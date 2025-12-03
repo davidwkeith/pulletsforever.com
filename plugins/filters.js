@@ -89,4 +89,31 @@ export default function(eleventyConfig) {
     return toc;
   });
 
+  /**
+   * Get related posts based on shared tags
+   * Returns up to `limit` posts sorted by number of shared tags (descending)
+   */
+  eleventyConfig.addFilter("relatedPosts", (currentTags, currentUrl, posts, limit = 3) => {
+    if (!posts) return [];
+    const filteredTags = (currentTags || []).filter(
+      tag => ["all", "nav", "post", "posts"].indexOf(tag) === -1
+    );
+    if (filteredTags.length === 0) return [];
+
+    const scored = posts
+      .filter(post => post.url !== currentUrl)
+      .map(post => {
+        const postTags = (post.data.tags || []).filter(
+          tag => ["all", "nav", "post", "posts"].indexOf(tag) === -1
+        );
+        const sharedTags = filteredTags.filter(tag => postTags.includes(tag));
+        return { post, score: sharedTags.length };
+      })
+      .filter(item => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit);
+
+    return scored.map(item => item.post);
+  });
+
 }

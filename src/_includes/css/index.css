@@ -305,7 +305,6 @@ header img {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    text-transform: capitalize;
     font-style: italic;
 }
 
@@ -357,6 +356,28 @@ header img {
 
 .toc .toc-level-3 {
     margin-left: 1em;
+}
+
+/* Related Posts */
+.related-posts {
+    border-top: 1px dashed var(--color-gray-20);
+    margin-top: 2em;
+    padding-top: 1em;
+}
+
+.related-posts h3 {
+    margin-top: 0;
+    font-size: 1em;
+}
+
+.related-posts ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.related-posts li {
+    margin-bottom: 0.5em;
 }
 
 /* Direct Links / Markdown Headers */

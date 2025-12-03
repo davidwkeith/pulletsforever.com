@@ -65,7 +65,7 @@ Blog posts support the following frontmatter fields (see [frontmatter.json](fron
 ### Phase 2: Content & Navigation (Medium Impact)
 
 - [ ] Create About page with author bio and h-card microformat
-- [ ] Add related posts section (tag-based suggestions)
+- [x] Add related posts section (tag-based suggestions)
 - [ ] Add h-entry microformat classes to post template
 
 ### Phase 3: IndieWeb & Engagement (Lower Priority)

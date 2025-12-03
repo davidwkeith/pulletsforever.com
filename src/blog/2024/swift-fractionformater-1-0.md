@@ -2,6 +2,7 @@
 title: Swift FractionFormatter 1.0
 description: Properly format fractions in Swift using Unicode (e.g. "½" rather than "1/2")
 date: 2024-06-05
+tags: [ios, code]
 ---
 
 With WWDC next week, I decided I should clean up the documentation and release

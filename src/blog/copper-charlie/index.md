@@ -2,6 +2,7 @@
 title: Copper Charlie
 description: A review of the new Copper Charlie battery induction range
 date: 2025-01-23
+tags: [food, reviews]
 ---
 ![Copper Charlie installed in my kitchen](hero.jpeg)
 

@@ -1,7 +1,7 @@
 ---
 title: Bloggin'
 date: 2024-05-01
-tags: [web-tech]
+tags: [web]
 ---
 I decided to start bloggin' again, which might have been an excuse to evaluate the state of Static Site Generators, tooling that I worked with at Nest on at Apple. It was more than a bunch of Perl scripts, honest.
 

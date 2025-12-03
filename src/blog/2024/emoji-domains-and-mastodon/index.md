@@ -2,6 +2,7 @@
 title: Emoji Domains & Mastodon
 description: Getting a Mastodon server running on an emoji domain
 date: 2024-05-29
+tags: [web, fediverse]
 ---
 
 It has been well over a decade since I first started playing around with [emoji domains](/unicode-chicken-dot-tk/) and in that time I have learned nothing.
