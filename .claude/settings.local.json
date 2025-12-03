@@ -6,7 +6,20 @@
       "Bash(git commit:*)",
       "Bash(cat:*)",
       "Bash(find:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(npm run build:*)",
+      "Bash(rm:*)",
+      "Bash(rmdir:*)",
+      "Bash(npm install:*)",
+      "Bash(node -e:*)",
+      "Bash(node:*)",
+      "Bash(/bin/ls:*)",
+      "Bash(/usr/bin/head:*)",
+      "Bash(/bin/bash -c 'cd /Users/dwk/Developer/gitlab.com/davidwkeith/pulletsforever.com && pwd')",
+      "Bash(xargs:*)",
+      "Bash(gh pr:*)",
+      "Bash(done)",
+      "Bash(npm run webmentions:send:dry:*)"
     ],
     "deny": [],
     "ask": []
