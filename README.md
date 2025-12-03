@@ -56,11 +56,11 @@ Blog posts support the following frontmatter fields (see [frontmatter.json](fron
 - Tag system with index and individual tag pages
 - 404 page, robots.txt, security.txt, humans.txt
 
-### Phase 1: Reader Experience (High Impact)
+### Phase 1: Reader Experience (High Impact) - COMPLETE
 
-- [ ] Add reading time estimates to posts
-- [ ] Add table of contents for long posts (auto-generated from headings)
-- [ ] Add RSS/Atom feed alongside JSON Feed
+- [x] Add reading time estimates to posts
+- [x] Add table of contents for long posts (auto-generated from headings)
+- [x] Add RSS/Atom feed alongside JSON Feed
 
 ### Phase 2: Content & Navigation (Medium Impact)
 

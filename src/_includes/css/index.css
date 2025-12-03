@@ -327,6 +327,38 @@ header img {
     margin-right: 1em;
 }
 
+/* Table of Contents */
+.toc {
+    background: var(--color-gray-20);
+    border-radius: 4px;
+    padding: 1em 1.5em;
+    margin: 1.5em 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    .toc {
+        background: #1e2d3d;
+    }
+}
+
+.toc h3 {
+    margin-top: 0;
+    font-size: 1em;
+}
+
+.toc ol {
+    margin: 0;
+    padding-left: 1.5em;
+}
+
+.toc li {
+    line-height: 1.8;
+}
+
+.toc .toc-level-3 {
+    margin-left: 1em;
+}
+
 /* Direct Links / Markdown Headers */
 .header-anchor {
     text-decoration: none;

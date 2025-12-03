@@ -35,9 +35,15 @@ export default {
     ...head_links,
     {
       rel: "alternate",
+      href: "/feed.xml",
+      type: "application/atom+xml",
+      title: `${title} (Atom)`,
+    },
+    {
+      rel: "alternate",
       href: "/feed.json",
       type: "application/feed+json",
-      title,
+      title: `${title} (JSON)`,
     },
     { rel: "reply-to", href: email },
   ],

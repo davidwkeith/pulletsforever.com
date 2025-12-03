@@ -9,11 +9,24 @@ layout: layouts/base.njk
 
 <ul class="post-metadata">
 	<li><time datetime="{{ page.date | htmlDateString }}">{{ page.date | readableDate }}</time></li>
+	<li>{{ content | readingTime }}</li>
 	{% for tag in tags | filterTagList %}
 	{% set tagUrl %}/tags/{{ tag | slugify }}/{% endset %}
 	<li><a href="{{ tagUrl }}" class="post-tag">{{ tag }}</a>{% if not loop.last %}, {% endif %}</li>
 	{% endfor %}
 </ul>
+
+{% set toc = content | tableOfContents %}
+{% if toc.length >= 3 %}
+<nav class="toc" aria-labelledby="toc-heading">
+	<h3 id="toc-heading">Table of Contents</h3>
+	<ol>
+	{% for item in toc %}
+		<li class="toc-level-{{ item.level }}"><a href="#{{ item.id }}">{{ item.text }}</a></li>
+	{% endfor %}
+	</ol>
+</nav>
+{% endif %}
 
 <article>
   {{ article(page, content) }}

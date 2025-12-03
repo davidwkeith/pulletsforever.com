@@ -52,4 +52,41 @@ export default function(eleventyConfig) {
     return JSON.stringify(value);
   });
 
+  /**
+   * Calculate reading time from content
+   * Assumes average reading speed of 200 words per minute
+   */
+  eleventyConfig.addFilter("readingTime", (content) => {
+    if (!content) return "1 min read";
+    const textOnly = content.replace(/<[^>]+>/g, '');
+    const wordCount = textOnly.split(/\s+/).filter(word => word.length > 0).length;
+    const minutes = Math.ceil(wordCount / 200);
+    return `${minutes} min read`;
+  });
+
+  /**
+   * Extract table of contents from HTML content
+   * Returns array of { id, text, level } for h2 and h3 headings
+   */
+  eleventyConfig.addFilter("tableOfContents", (content) => {
+    if (!content) return [];
+    const headingRegex = /<h([23])[^>]*id="([^"]+)"[^>]*>([^<]*)<a[^>]*class="header-anchor"[^>]*>.*?<\/a><\/h[23]>/gi;
+    const toc = [];
+    let match;
+    const decodeHtmlEntities = (str) => str
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
+    while ((match = headingRegex.exec(content)) !== null) {
+      toc.push({
+        level: parseInt(match[1]),
+        id: match[2],
+        text: decodeHtmlEntities(match[3].trim())
+      });
+    }
+    return toc;
+  });
+
 }
