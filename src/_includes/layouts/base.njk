@@ -33,6 +33,6 @@
       {% include "js/index.js" %}
     {% endjs %}
     <script>{% getBundle "js" %}</script>
-    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon="{{ metadata.cloudflare_insights | json }}"></script>
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon="{{ metadata.cloudflare_insights | json }}" crossorigin="anonymous"></script>
   </body>
 </html>
