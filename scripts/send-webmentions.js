@@ -15,7 +15,7 @@ import { fileURLToPath } from "url";
 import { JSDOM } from "jsdom";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const BUILD_DIR = path.join(__dirname, "../_build");
+const BUILD_DIR = path.join(__dirname, "../_site");
 const CACHE_DIR = path.join(__dirname, "../.cache");
 const SENT_FILE = path.join(CACHE_DIR, "webmentions-sent.json");
 const SITE_URL = "https://pulletsforever.com";

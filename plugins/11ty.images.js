@@ -23,7 +23,7 @@ export default function(eleventyConfig) {
 		extensions: "html",
 
 		// Output all images to a central directory for caching
-		outputDir: "./_build/img/",
+		outputDir: "./_site/img/",
 		urlPath: "/img/",
 
 		// optional, output image formats

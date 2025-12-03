@@ -2,7 +2,7 @@ import sharp from "sharp";
 import fs from "fs";
 import path from "path";
 
-const OUTPUT_DIR = "_build/img/social-cards";
+const OUTPUT_DIR = "_site/img/social-cards";
 const URL_PATH = "/img/social-cards";
 const IMAGE_WIDTH = 470;
 const IMAGE_HEIGHT = 470;

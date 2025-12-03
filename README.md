@@ -25,7 +25,7 @@ pulletsforever.com/
 │   ├── _includes/    # Layouts, partials, macros, CSS, JS
 │   └── ...
 ├── plugins/          # Custom Eleventy plugins
-└── _build/           # Generated output (gitignored)
+└── _site/            # Generated output (gitignored)
 ```
 
 ---

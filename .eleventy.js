@@ -20,7 +20,7 @@ import pluginMarkdown from "./plugins/markdown-it.js"
 import csp from "./src/_data/csp.js"
 
 const input = `src/`
-const output = `_build/`
+const output = `_site/`
 
 export default function (eleventyConfig) {
   eleventyConfig.addGlobalData("inputDir", input);
