@@ -58,7 +58,7 @@ export default function (eleventyConfig) {
     includePatterns: ["/**/**.html"],
     excludePatterns: [],
     hosting: "cloudflare-pages",
-    reportOnly: true,
+    reportOnly: false,
   })
 
   /**
