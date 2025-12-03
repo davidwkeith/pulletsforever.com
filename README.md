@@ -44,46 +44,6 @@ Blog posts support the following frontmatter fields (see [frontmatter.json](fron
 
 ---
 
-## Accessibility Improvements
-
-### Current State (Good)
-
-- ✅ Semantic HTML structure (`<header>`, `<main>`, `<nav>`, `<article>`, `<footer>`)
-- ✅ Language attribute on `<html>` element
-- ✅ `aria-current="page"` on active nav links
-- ✅ `.visually-hidden` utility class available
-- ✅ All images have `alt` attributes
-- ✅ Responsive images with `width`/`height` to prevent layout shift
-- ✅ `prefers-color-scheme` dark mode support
-- ✅ System font stack for readability
-- ✅ Line height 1.5 for body text
-
-### Phase 1: Color Contrast (High) ✅
-
-- [x] Light mode link colors WCAG AA compliant
-- [x] Dark mode link colors WCAG AA compliant
-  - Fixed `--text-color-link-active` from `#6969f7` to `#7b7bff` (~5.4:1)
-- [x] Added visible `:focus-visible` styles for keyboard navigation
-
-### Phase 2: Keyboard Navigation (Medium) ✅
-
-- [x] Skip-to-main-content link (visible on focus)
-- [x] All interactive elements keyboard accessible (native HTML)
-- [x] Focus trap for modals (N/A - no modals)
-
-### Phase 3: Screen Reader Improvements (Medium) ✅
-
-- [x] Add `aria-label` to nav element
-- [x] Add `role="list"` to styled lists
-- [x] Ensure header anchors have accessible names (aria-label on anchor links)
-
-### Phase 4: Motion & Preferences (Low)
-
-- [ ] Add `prefers-reduced-motion` media query for any animations
-- [ ] Consider `prefers-contrast` for high contrast mode
-
----
-
 ## License
 
 - **Code**: [ISC License](https://opensource.org/license/isc-license-txt)

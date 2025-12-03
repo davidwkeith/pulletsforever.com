@@ -379,3 +379,39 @@ footer p img {
 footer img#greenweb-badge {
     margin-top: 4rem;
 }
+
+/* Reduced motion preference - disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* High contrast preference - enhance contrast for users who need it */
+@media (prefers-contrast: more) {
+    :root {
+        --color-gray-20: #ccc;
+        --color-gray-50: #999;
+        --color-gray-90: #000;
+        --text-color-link: #00008B;
+        --text-color-link-active: #8B0000;
+        --text-color-link-visited: #4B0082;
+    }
+}
+
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+    :root {
+        --color-gray-20: #fff;
+        --color-gray-50: #ccc;
+        --color-gray-90: #fff;
+        --background-color: #000;
+        --text-color-link: #6cf;
+        --text-color-link-active: #ff6;
+        --text-color-link-visited: #c9f;
+    }
+}
