@@ -1,0 +1,106 @@
+{# Get webmentions for this page #}
+{% set mentions = webmentions | getWebmentions(page.url) %}
+{% set hasWebmentions = mentions.likes.length or mentions.reposts.length or mentions.replies.length or mentions.mentions.length %}
+
+{# Always render section for client-side refresh to populate #}
+<section class="webmentions" aria-labelledby="webmentions-heading" data-page-url="{{ metadata.url }}{{ page.url }}">
+{% if hasWebmentions %}
+  <h3 id="webmentions-heading">Webmentions</h3>
+
+  {# Likes facepile #}
+  {% if mentions.likes.length %}
+  <div class="wm-likes">
+    <h4>{{ mentions.likes.length }} Like{% if mentions.likes.length != 1 %}s{% endif %}</h4>
+    <ul class="wm-facepile" aria-label="People who liked this">
+      {% for like in mentions.likes %}
+      <li>
+        <a href="{{ like.author.url }}" title="{{ like.author.name }}" rel="nofollow ugc">
+          {% if like.author.photo %}
+          <img src="{{ like.author.photo }}" alt="{{ like.author.name }}" width="48" height="48" loading="lazy">
+          {% else %}
+          <span class="wm-avatar-placeholder" aria-hidden="true"></span>
+          {% endif %}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {# Reposts facepile #}
+  {% if mentions.reposts.length %}
+  <div class="wm-reposts">
+    <h4>{{ mentions.reposts.length }} Repost{% if mentions.reposts.length != 1 %}s{% endif %}</h4>
+    <ul class="wm-facepile" aria-label="People who reposted this">
+      {% for repost in mentions.reposts %}
+      <li>
+        <a href="{{ repost.author.url }}" title="{{ repost.author.name }}" rel="nofollow ugc">
+          {% if repost.author.photo %}
+          <img src="{{ repost.author.photo }}" alt="{{ repost.author.name }}" width="48" height="48" loading="lazy">
+          {% else %}
+          <span class="wm-avatar-placeholder" aria-hidden="true"></span>
+          {% endif %}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {# Replies as full cards #}
+  {% if mentions.replies.length %}
+  <div class="wm-replies">
+    <h4>{{ mentions.replies.length }} Repl{% if mentions.replies.length == 1 %}y{% else %}ies{% endif %}</h4>
+    <ol class="wm-reply-list">
+      {% for reply in mentions.replies | sortWebmentions %}
+      <li class="wm-reply h-cite">
+        <div class="wm-reply-author">
+          <a href="{{ reply.author.url }}" class="p-author h-card" rel="nofollow ugc">
+            {% if reply.author.photo %}
+            <img src="{{ reply.author.photo }}" alt="" width="48" height="48" loading="lazy" class="u-photo">
+            {% else %}
+            <span class="wm-avatar-placeholder" aria-hidden="true"></span>
+            {% endif %}
+            <span class="p-name">{{ reply.author.name }}</span>
+          </a>
+          <time class="dt-published" datetime="{{ reply.published or reply['wm-received'] }}">
+            {{ (reply.published or reply['wm-received']) | readableDate }}
+          </time>
+        </div>
+        {% if reply.content and reply.content.text %}
+        <blockquote class="wm-reply-content p-content">
+          {{ reply.content.text | truncate(500) }}
+        </blockquote>
+        {% endif %}
+        <a href="{{ reply.url }}" class="u-url wm-reply-source" rel="nofollow ugc">View original</a>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+  {% endif %}
+
+  {# Generic mentions #}
+  {% if mentions.mentions.length %}
+  <div class="wm-mentions">
+    <h4>{{ mentions.mentions.length }} Mention{% if mentions.mentions.length != 1 %}s{% endif %}</h4>
+    <ul class="wm-mention-list">
+      {% for mention in mentions.mentions | sortWebmentions %}
+      <li class="wm-mention h-cite">
+        <a href="{{ mention.url }}" class="u-url" rel="nofollow ugc">
+          {% if mention.author and mention.author.name %}
+          {{ mention.author.name }}
+          {% else %}
+          {{ mention.url | truncate(60) }}
+          {% endif %}
+        </a>
+        {% if mention.content and mention.content.text %}
+        <p class="p-content">{{ mention.content.text | truncate(200) }}</p>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+{% endif %}
+</section>

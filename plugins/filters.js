@@ -116,4 +116,29 @@ export default function(eleventyConfig) {
     return scored.map(item => item.post);
   });
 
+  /**
+   * Get webmentions for a specific page URL
+   * Uses the webmentions data file which groups mentions by target URL
+   */
+  eleventyConfig.addFilter("getWebmentions", (webmentions, url) => {
+    if (!webmentions || !webmentions.byTarget) {
+      return { likes: [], reposts: [], replies: [], mentions: [] };
+    }
+    // Normalize URL path
+    const path = url.replace(/\/$/, "") || "/";
+    return webmentions.byTarget[path] || { likes: [], reposts: [], replies: [], mentions: [] };
+  });
+
+  /**
+   * Sort webmentions by date (newest first)
+   */
+  eleventyConfig.addFilter("sortWebmentions", (mentions) => {
+    if (!Array.isArray(mentions)) return [];
+    return [...mentions].sort((a, b) => {
+      const dateA = new Date(a.published || a["wm-received"]);
+      const dateB = new Date(b.published || b["wm-received"]);
+      return dateB - dateA;
+    });
+  });
+
 }

@@ -484,3 +484,120 @@ footer img#greenweb-badge {
         --text-color-link-visited: #c9f;
     }
 }
+
+/* Webmentions */
+.webmentions {
+    border-top: 1px dashed var(--color-gray-20);
+    margin-top: 2em;
+    padding-top: 1em;
+}
+
+.webmentions h3 {
+    margin-top: 0;
+}
+
+.webmentions h4 {
+    font-size: 0.9em;
+    margin: 1em 0 0.5em;
+    color: var(--color-gray-50);
+}
+
+/* Facepile for likes/reposts */
+.wm-facepile {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25em;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.wm-facepile li {
+    line-height: 1;
+}
+
+.wm-facepile img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.wm-avatar-placeholder {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-gray-20);
+}
+
+/* Reply cards */
+.wm-reply-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.wm-reply {
+    border-left: 3px solid var(--color-gray-20);
+    padding: 0.5em 0 0.5em 1em;
+    margin-bottom: 1em;
+}
+
+.wm-reply-author {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    flex-wrap: wrap;
+}
+
+.wm-reply-author a {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    text-decoration: none;
+}
+
+.wm-reply-author a:hover .p-name {
+    text-decoration: underline;
+}
+
+.wm-reply-author img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.wm-reply-author time {
+    font-size: 0.8em;
+    color: var(--color-gray-50);
+}
+
+.wm-reply-content {
+    margin: 0.5em 0;
+    padding: 0;
+    font-style: italic;
+    border: none;
+}
+
+.wm-reply-source {
+    font-size: 0.8em;
+}
+
+/* Mention list */
+.wm-mention-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.wm-mention {
+    margin-bottom: 0.5em;
+}
+
+.wm-mention .p-content {
+    margin: 0.25em 0 0;
+    font-size: 0.9em;
+    color: var(--color-gray-50);
+}

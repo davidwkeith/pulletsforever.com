@@ -11,7 +11,9 @@
     "start": "npx @11ty/eleventy --serve --quiet",
     "debug": "DEBUG=Eleventy* npx @11ty/eleventy",
     "debugstart": "DEBUG=Eleventy* npx @11ty/eleventy --serve --quiet",
-    "benchmark": "DEBUG=Eleventy:Benchmark* npx @11ty/eleventy"
+    "benchmark": "DEBUG=Eleventy:Benchmark* npx @11ty/eleventy",
+    "webmentions:send": "node scripts/send-webmentions.js",
+    "webmentions:send:dry": "node scripts/send-webmentions.js --dry-run"
   },
   "author": {
     "name": "David W. Keith",
@@ -37,6 +39,7 @@
     "@sherby/eleventy-plugin-files-minifier": "^1.1.1",
     "dotenv": "^16.4.5",
     "eleventy-plugin-gen-favicons": "^1.1.2",
+    "jsdom": "^27.2.0",
     "luxon": "^3.3.0",
     "markdown-it-anchor": "9.2.0",
     "sharp": "0.33.5"

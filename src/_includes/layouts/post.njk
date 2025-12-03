@@ -48,6 +48,8 @@ layout: layouts/base.njk
 </aside>
 {% endif %}
 
+{% include "partials/webmentions.njk" %}
+
 {% if collections.posts %}
   {% set previousPost = collections.posts | getPreviousCollectionItem %}
   {% set nextPost = collections.posts | getNextCollectionItem %}

@@ -6,6 +6,14 @@ const site = "pulletsforever.com";
 const title = "Pullets Forever";
 const email = "dwk@pulletsforever.com";
 
+// Webmention.io configuration
+const webmention = {
+  domain: site,
+  endpoint: `https://webmention.io/${site}/webmention`,
+  pingback: `https://webmention.io/${site}/xmlrpc`,
+  // API token loaded from WEBMENTION_IO_TOKEN environment variable at build time
+};
+
 export default {
   // Global metadata
   language: "en",
@@ -31,6 +39,7 @@ export default {
     token: "5049d90e34c84a5ba463d0541825cb30",
   },
   useNavigation: true,
+  webmention,
   head_links: [
     ...head_links,
     {
@@ -46,6 +55,9 @@ export default {
       title: `${title} (JSON)`,
     },
     { rel: "reply-to", href: email },
+    // Webmention discovery links
+    { rel: "webmention", href: webmention.endpoint },
+    { rel: "pingback", href: webmention.pingback },
   ],
   schema,
 };

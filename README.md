@@ -70,9 +70,35 @@ Blog posts support the following frontmatter fields (see [frontmatter.json](fron
 
 ### Phase 3: IndieWeb & Engagement (Lower Priority)
 
-- [ ] Implement webmentions support (webmentions.io)
+- [x] Implement webmentions support (webmention.io)
 - [ ] Add client-side search (Pagefind or Lunr.js)
 - [ ] Consider newsletter signup integration
+
+---
+
+## Webmentions
+
+This site supports [webmentions](https://indieweb.org/Webmention) via [webmention.io](https://webmention.io/).
+
+### Receiving Webmentions
+
+1. Set the `WEBMENTION_IO_TOKEN` environment variable (get from webmention.io dashboard)
+2. Webmentions are fetched at build time and cached in `.cache/webmentions.json`
+3. Client-side JavaScript refreshes webmentions for visitors
+
+### Sending Webmentions
+
+After publishing new content with external links:
+
+```bash
+# Preview what would be sent
+npm run webmentions:send:dry
+
+# Send webmentions
+npm run webmentions:send
+```
+
+Sent webmentions are tracked in `.cache/webmentions-sent.json` to avoid duplicates.
 
 ---
 
