@@ -44,6 +44,38 @@ Blog posts support the following frontmatter fields (see [frontmatter.json](fron
 
 ---
 
+## Blog Best Practices Improvements
+
+### Current State (Good)
+
+- JSON Feed at `/feed.json`
+- Sitemap at `/.well-known/sitemap.xml`
+- Schema.org structured data (BlogPosting)
+- OpenGraph & Twitter card meta tags
+- rel="me" links & Fediverse integration
+- Tag system with index and individual tag pages
+- 404 page, robots.txt, security.txt, humans.txt
+
+### Phase 1: Reader Experience (High Impact)
+
+- [ ] Add reading time estimates to posts
+- [ ] Add table of contents for long posts (auto-generated from headings)
+- [ ] Add RSS/Atom feed alongside JSON Feed
+
+### Phase 2: Content & Navigation (Medium Impact)
+
+- [ ] Create About page with author bio and h-card microformat
+- [ ] Add related posts section (tag-based suggestions)
+- [ ] Add h-entry microformat classes to post template
+
+### Phase 3: IndieWeb & Engagement (Lower Priority)
+
+- [ ] Implement webmentions support (webmentions.io)
+- [ ] Add client-side search (Pagefind or Lunr.js)
+- [ ] Consider newsletter signup integration
+
+---
+
 ## License
 
 - **Code**: [ISC License](https://opensource.org/license/isc-license-txt)
