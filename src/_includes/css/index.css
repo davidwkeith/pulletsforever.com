@@ -55,7 +55,8 @@ html {
 }
 
 body {
-    max-width: 40em;
+    max-width: 1000px;
+    min-width: 320px;
 }
 
 /* https://www.a11yproject.com/posts/how-to-hide-content/ */
