@@ -3,8 +3,8 @@
 
   {#- Read more about `eleventy-navigation` at https://www.11ty.dev/docs/plugins/navigation/ #}
   {% if metadata.useNavigation %}
-    <nav>
-      <ul class="nav">
+    <nav aria-label="Main">
+      <ul class="nav" role="list">
       {%- for entry in collections.all | eleventyNavigation %}
         <li class="nav-item"><a href="{{ entry.url }}"{% if entry.url == page.url %} aria-current="page"{% endif %}>{{ entry.title }}</a></li>
       {%- endfor %}

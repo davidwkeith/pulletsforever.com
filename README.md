@@ -71,11 +71,11 @@ Blog posts support the following frontmatter fields (see [frontmatter.json](fron
 - [x] All interactive elements keyboard accessible (native HTML)
 - [x] Focus trap for modals (N/A - no modals)
 
-### Phase 3: Screen Reader Improvements (Medium)
+### Phase 3: Screen Reader Improvements (Medium) ✅
 
-- [ ] Add `aria-label` to nav element
-- [ ] Add `role="list"` to styled lists if needed
-- [ ] Ensure header anchors have accessible names
+- [x] Add `aria-label` to nav element
+- [x] Add `role="list"` to styled lists
+- [x] Ensure header anchors have accessible names (aria-label on anchor links)
 
 ### Phase 4: Motion & Preferences (Low)
 

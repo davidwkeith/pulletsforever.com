@@ -15,11 +15,11 @@ export default function(eleventyConfig) {
          .use(mark)
          .use(sup)
          .use(markdownItAnchor, {
-      permalink: markdownItAnchor.permalink.ariaHidden({
+      permalink: markdownItAnchor.permalink.linkInsideHeader({
         placement: "after",
         class: "header-anchor",
-        symbol: "#",
-        ariaHidden: false,
+        symbol: "<span aria-hidden=\"true\">🔗</span>",
+        renderAttrs: (slug) => ({ "aria-label": `Link to section: ${slug.replace(/-/g, ' ')}` }),
       }),
       level: [1,2,3,4],
       slugify: eleventyConfig.getFilter("slugify")
