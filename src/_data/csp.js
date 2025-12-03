@@ -17,9 +17,12 @@ export default {
     "self",
     // Webmention.io API for client-side fetching
     "https://webmention.io",
+    // Cloudflare Web Analytics RUM endpoint
+    "https://cloudflareinsights.com",
   ],
   "script-src-elem": [
     "self",
+    "unsafe-inline",
     "https://static.cloudflareinsights.com/beacon.min.js",
     "https://static.cloudflareinsights.com/beacon.min.js/*",
   ],
