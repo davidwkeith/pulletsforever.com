@@ -1,5 +1,7 @@
 {# Resource hints for external origins #}
+{% if env.isProduction %}
 <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+{% endif %}
 <link rel="dns-prefetch" href="https://app.greenweb.org">
 <link rel="dns-prefetch" href="https://mirrors.creativecommons.org">
 
