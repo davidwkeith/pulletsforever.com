@@ -29,6 +29,11 @@
 {# http://microformats.org/wiki/rel-canonical #}
 <link rel="canonical" href="{{metadata.url}}{{page.url}}">
 
+{# Markdown source discovery for blog posts - RFC 7763 #}
+{% if tags and "posts" in tags %}
+<link rel="alternate" href="index.md" type="text/markdown" title="Markdown source">
+{% endif %}
+
 {% if index %}
 <link rel="index" href="{{index}}" type="text/html">
 {% endif %}

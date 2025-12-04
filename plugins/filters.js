@@ -1,4 +1,6 @@
 import { DateTime } from 'luxon';
+import Image from "@11ty/eleventy-img";
+import path from "path";
 
 export default function(eleventyConfig) {
   /**
@@ -139,6 +141,79 @@ export default function(eleventyConfig) {
       const dateB = new Date(b.published || b["wm-received"]);
       return dateB - dateA;
     });
+  });
+
+  /**
+   * Fix relative image paths in markdown content to use optimized images
+   * Uses Eleventy Image to get the same processed URLs as HTML output
+   * @param {string} content - Raw markdown content
+   * @param {string} inputPath - The source file path (e.g., ./src/blog/copper-charlie/index.md)
+   */
+  eleventyConfig.addAsyncFilter("fixMarkdownImagePaths", async (content, inputPath) => {
+    if (!content || !inputPath) return content;
+
+    // Find all markdown image references, including optional titles
+    // Matches: ![alt](path) or ![alt](path "title")
+    const imageRegex = /!\[([^\]]*)\]\(([^\s")]+)(?:\s+"([^"]*)")?\)/g;
+    const matches = [...content.matchAll(imageRegex)];
+
+    if (matches.length === 0) return content;
+
+    // Get the source directory for resolving relative paths
+    const sourceDir = path.dirname(inputPath);
+
+    // Process each image and build replacement map
+    const replacements = new Map();
+
+    for (const match of matches) {
+      const [fullMatch, alt, imagePath, title] = match;
+
+      // Skip URLs
+      if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+        continue;
+      }
+
+      // Resolve the full path to the source image
+      let fullImagePath;
+      if (imagePath.startsWith('/')) {
+        // Absolute path from site root - prepend src/
+        fullImagePath = path.join('./src', imagePath);
+      } else {
+        // Relative path - resolve from source file directory
+        fullImagePath = path.join(sourceDir, imagePath);
+      }
+
+      try {
+        // Use Eleventy Image to get the processed URL
+        // This uses the same settings as the HTML image transform
+        const metadata = await Image(fullImagePath, {
+          widths: ["auto"],
+          formats: ["jpeg"], // Use jpeg for markdown (simpler than picture element)
+          outputDir: "./_site/img/",
+          urlPath: "/img/",
+        });
+
+        // Get the jpeg output (primary format for markdown)
+        const jpeg = metadata.jpeg?.[0];
+        if (jpeg) {
+          // Preserve the title if it existed
+          const titlePart = title ? ` "${title}"` : '';
+          replacements.set(fullMatch, `![${alt}](${jpeg.url}${titlePart})`);
+        }
+      } catch (error) {
+        // If image processing fails, leave the original reference
+        // This handles cases like missing files or unsupported formats
+        console.warn(`[fixMarkdownImagePaths] Could not process image: ${fullImagePath}`, error.message);
+      }
+    }
+
+    // Apply all replacements
+    let result = content;
+    for (const [original, replacement] of replacements) {
+      result = result.replace(original, replacement);
+    }
+
+    return result;
   });
 
 }

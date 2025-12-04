@@ -1,0 +1,10 @@
+---
+eleventyExcludeFromCollections: true
+pagination:
+  data: collections.posts
+  size: 1
+  alias: post
+permalink: "{{ post.url }}index.md"
+permalinkBypassOutputDir: false
+---
+{{ post.rawInput | fixMarkdownImagePaths(post.inputPath) | safe }}
