@@ -1,8 +1,9 @@
 <header>
-  <h1><a href="/"><img eleventy:widths="64,128" width="64" height="64" src="{{metadata.logo.src}}" alt="{{metadata.logo.alt}}"></a> {{ metadata.title }}</h1>
-
-  {#- Read more about `eleventy-navigation` at https://www.11ty.dev/docs/plugins/navigation/ #}
-  {% if metadata.useNavigation %}
+  <a href="/" class="header-logo"><img eleventy:widths="64,128" width="64" height="64" src="{{metadata.logo.src}}" alt="{{metadata.logo.alt}}"></a>
+  <div class="header-title">
+    <h1>{{ metadata.title }}</h1>
+    {#- Read more about `eleventy-navigation` at https://www.11ty.dev/docs/plugins/navigation/ #}
+    {% if metadata.useNavigation %}
     <nav aria-label="Main">
       <ul class="nav" role="list">
       {%- for entry in collections.all | eleventyNavigation %}
@@ -10,5 +11,6 @@
       {%- endfor %}
       </ul>
     </nav>
-  {% endif %}
+    {% endif %}
+  </div>
 </header>

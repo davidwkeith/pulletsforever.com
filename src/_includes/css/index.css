@@ -204,30 +204,36 @@ code {
 /* Header */
 header {
     display: flex;
-    gap: 1em .5em;
-    flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-end;
+    gap: 0.5em;
     padding: 1em;
 }
 
-header img {
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 0.5em;
+.header-logo {
+    flex-shrink: 0;
 }
 
-.home-link {
-    font-size: 1em;
-    /* 16px /16 */
-    font-weight: 700;
-    margin-right: 2em;
-    text-transform: uppercase;
-    position: relative;
-    top: 0.05em;
+.header-logo img {
+    display: block;
 }
 
-.home-link:link:not(:hover) {
-    text-decoration: none;
+.header-title {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    align-self: stretch;
+    margin-top: 1.5em; /* Align title top with logo head (below feathers ~12px) */
+}
+
+.header-title nav {
+    margin-bottom: 0em; /* Align nav text baseline with logo bottom */
+}
+
+.header-title h1 {
+    margin: 0;
+    font-size: 3rem;
+    line-height: 1;
 }
 
 /* Nav */
@@ -236,6 +242,7 @@ header img {
     padding: 0;
     margin: 0;
     list-style: none;
+    line-height: 1;
 }
 
 .nav-item {
