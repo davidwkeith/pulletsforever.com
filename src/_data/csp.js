@@ -26,5 +26,6 @@ export default {
     "https://static.cloudflareinsights.com/beacon.min.js",
     "https://static.cloudflareinsights.com/beacon.min.js/*",
   ],
-  "style-src-elem": ["self", "sha256", "unsafe-inline"],
+  "style-src": ["self", "unsafe-inline"],
+  "style-src-elem": ["self", "unsafe-inline"],
 };
