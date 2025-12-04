@@ -7,4 +7,4 @@ pagination:
 permalink: "{{ post.url }}index.md"
 permalinkBypassOutputDir: false
 ---
-{{ post.rawInput | fixMarkdownImagePaths(post.inputPath) | safe }}
+{{ post.rawInput | fixMarkdownImagePaths(post.inputPath, post.url) | safe }}

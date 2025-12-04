@@ -148,8 +148,9 @@ export default function(eleventyConfig) {
    * Uses Eleventy Image to get the same processed URLs as HTML output
    * @param {string} content - Raw markdown content
    * @param {string} inputPath - The source file path (e.g., ./src/blog/copper-charlie/index.md)
+   * @param {string} pageUrl - The output URL for the page (e.g., /copper-charlie/)
    */
-  eleventyConfig.addAsyncFilter("fixMarkdownImagePaths", async (content, inputPath) => {
+  eleventyConfig.addAsyncFilter("fixMarkdownImagePaths", async (content, inputPath, pageUrl) => {
     if (!content || !inputPath) return content;
 
     // Find all markdown image references, including optional titles
@@ -161,6 +162,10 @@ export default function(eleventyConfig) {
 
     // Get the source directory for resolving relative paths
     const sourceDir = path.dirname(inputPath);
+
+    // Determine output paths - use page URL if available, fallback to /img/
+    const outputUrl = pageUrl || "/img/";
+    const outputDir = pageUrl ? path.join("./_site", pageUrl) : "./_site/img/";
 
     // Process each image and build replacement map
     const replacements = new Map();
@@ -185,12 +190,12 @@ export default function(eleventyConfig) {
 
       try {
         // Use Eleventy Image to get the processed URL
-        // This uses the same settings as the HTML image transform
+        // Output images relative to the page's URL
         const metadata = await Image(fullImagePath, {
           widths: ["auto"],
           formats: ["jpeg"], // Use jpeg for markdown (simpler than picture element)
-          outputDir: "./_site/img/",
-          urlPath: "/img/",
+          outputDir: outputDir,
+          urlPath: outputUrl,
         });
 
         // Get the jpeg output (primary format for markdown)
