@@ -19,7 +19,10 @@
       "Bash(xargs:*)",
       "Bash(gh pr:*)",
       "Bash(done)",
-      "Bash(npm run webmentions:send:dry:*)"
+      "Bash(npm run webmentions:send:dry:*)",
+      "Bash(git push:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []
