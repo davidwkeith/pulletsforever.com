@@ -70,6 +70,61 @@ Sent webmentions are tracked in `.cache/webmentions-sent.json` to avoid duplicat
 
 ---
 
+## Micropub (Planned)
+
+Support for [Micropub](https://indieweb.org/Micropub) is planned to enable posting from IndieWeb clients.
+
+### Implementation Plan
+
+1. **Site discovery** - Add `rel` links to HTML head
+   - `rel="micropub"` pointing to Cloudflare Worker endpoint
+   - `rel="authorization_endpoint"` → `https://indieauth.com/auth`
+   - `rel="token_endpoint"` → `https://indieauth.com/token`
+
+2. **Micropub endpoint** - Cloudflare Worker to handle requests
+   - Accept `h-entry` posts (notes, articles, photos)
+   - Parse form-encoded and JSON payloads
+   - Support `q=config` and `q=syndicate-to` queries
+
+3. **IndieAuth integration** - Token verification via indieauth.com
+   - Verify tokens by calling `https://indieauth.com/token` with the bearer token
+   - Confirm `me` matches site URL
+   - Scope checking (`create`, `update`, `delete`)
+
+4. **Content creation** - Generate markdown files
+   - Create frontmatter from Micropub properties
+   - Slug generation from title or timestamp
+   - Handle post types: articles (with `name`), notes (no `name`), replies (`in-reply-to`)
+   - Commit to git repository via GitLab API
+
+5. **Media endpoint** - Photo/file uploads
+   - Accept multipart uploads
+   - Store in repository or Cloudflare R2
+   - Return URL for embedding
+
+6. **Build trigger** - Automatic deployment
+   - GitLab CI/CD pipeline triggers on commit
+   - Cloudflare Pages rebuild
+
+7. **Update/delete support** (optional, phase 2)
+   - `action=update` with `replace`/`add`/`delete` operations
+   - `action=delete` to remove posts
+
+### Micropub Properties Mapping
+
+| Micropub Property | Frontmatter Field | Notes |
+|-------------------|-------------------|-------|
+| `name` | `title` | If absent, treat as note |
+| `content` | Post body | HTML or plain text |
+| `published` | `date` | ISO 8601 |
+| `category` | `tags` | Array |
+| `summary` | `description` | Meta description |
+| `photo` | Embedded image | Upload to media endpoint |
+| `in-reply-to` | `in-reply-to` | URL being replied to |
+| `mp-slug` | Filename/URL slug | Auto-generate if absent |
+
+---
+
 ## License
 
 - **Code**: [ISC License](https://opensource.org/license/isc-license-txt)
