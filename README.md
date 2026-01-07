@@ -76,22 +76,23 @@ Support for [Micropub](https://indieweb.org/Micropub) is planned to enable posti
 
 ### Implementation Plan
 
-1. **Site discovery** - Add `rel` links to HTML head
-   - `rel="micropub"` pointing to Cloudflare Worker endpoint
+1. ~~**Site discovery** - Add `rel` links to HTML head~~ ✓
+   - `rel="micropub"` → `https://micropub.pulletsforever.com/micropub`
    - `rel="authorization_endpoint"` → `https://indieauth.com/auth`
    - `rel="token_endpoint"` → `https://indieauth.com/token`
 
-2. **Micropub endpoint** - Cloudflare Worker to handle requests
+2. ~~**Micropub endpoint** - Cloudflare Worker to handle requests~~ ✓
    - Accept `h-entry` posts (notes, articles, photos)
    - Parse form-encoded and JSON payloads
    - Support `q=config` and `q=syndicate-to` queries
+   - See `workers/micropub/`
 
-3. **IndieAuth integration** - Token verification via indieauth.com
+3. ~~**IndieAuth integration** - Token verification via indieauth.com~~ ✓
    - Verify tokens by calling `https://indieauth.com/token` with the bearer token
    - Confirm `me` matches site URL
    - Scope checking (`create`, `update`, `delete`)
 
-4. **Content creation** - Generate markdown files
+4. ~~**Content creation** - Generate markdown files~~ ✓
    - Create frontmatter from Micropub properties
    - Slug generation from title or timestamp
    - Handle post types: articles (with `name`), notes (no `name`), replies (`in-reply-to`)

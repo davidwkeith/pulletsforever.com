@@ -14,6 +14,19 @@ const webmention = {
   // API token loaded from WEBMENTION_IO_TOKEN environment variable at build time
 };
 
+// IndieAuth configuration (using indieauth.com)
+const indieauth = {
+  authorization_endpoint: "https://indieauth.com/auth",
+  token_endpoint: "https://indieauth.com/token",
+};
+
+// Micropub configuration
+const micropub = {
+  // TODO: Update with actual Cloudflare Worker URL once deployed
+  endpoint: `https://micropub.${site}/micropub`,
+  media_endpoint: `https://micropub.${site}/media`,
+};
+
 export default {
   // Global metadata
   language: "en",
@@ -58,6 +71,13 @@ export default {
     // Webmention discovery links
     { rel: "webmention", href: webmention.endpoint },
     { rel: "pingback", href: webmention.pingback },
+    // IndieAuth discovery links
+    { rel: "authorization_endpoint", href: indieauth.authorization_endpoint },
+    { rel: "token_endpoint", href: indieauth.token_endpoint },
+    // Micropub discovery links
+    { rel: "micropub", href: micropub.endpoint },
   ],
+  indieauth,
+  micropub,
   schema,
 };
