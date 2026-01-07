@@ -22,7 +22,11 @@
       "Bash(npm run webmentions:send:dry:*)",
       "Bash(git push:*)",
       "Bash(grep:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(npm audit:*)",
+      "Bash(npm search:*)",
+      "Bash(npm view:*)",
+      "Bash(npm uninstall:*)"
     ],
     "deny": [],
     "ask": []
