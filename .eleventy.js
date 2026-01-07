@@ -4,7 +4,7 @@ dotenv.config()
 // 11ty Plugins
 import pluginBundle from "@11ty/eleventy-plugin-bundle"
 import pluginFavicon from "eleventy-plugin-gen-favicons"
-import pluginFilesMinifier from "@sherby/eleventy-plugin-files-minifier"
+import pluginHtmlMinifier from "./plugins/html-minifier.js"
 import pluginNavigation from "@11ty/eleventy-navigation"
 import pluginRss from '@11ty/eleventy-plugin-rss'
 import pluginSocialImages from "./plugins/social-images.js"
@@ -37,7 +37,7 @@ export default function (eleventyConfig) {
   // Plugins
   eleventyConfig.addPlugin(pluginBundle);
   eleventyConfig.addPlugin(pluginFavicon, { outputDir: output });
-  eleventyConfig.addPlugin(pluginFilesMinifier);
+  eleventyConfig.addPlugin(pluginHtmlMinifier);
   eleventyConfig.addPlugin(pluginFilters);
   eleventyConfig.addPlugin(pluginImages);
   eleventyConfig.addPlugin(pluginNavigation);
