@@ -4,6 +4,7 @@
  */
 
 import { verifyToken } from "./auth.js";
+import { handleMediaUpload } from "./media.js";
 import { createPost } from "./post.js";
 import { handleQuery } from "./query.js";
 
@@ -18,7 +19,11 @@ export default {
       });
     }
 
-    // Only handle /micropub path
+    // Route requests
+    if (url.pathname === "/media") {
+      return handleMediaRoute(request, env);
+    }
+
     if (url.pathname !== "/micropub") {
       return new Response("Not Found", { status: 404 });
     }
@@ -90,6 +95,43 @@ export default {
     }
   },
 };
+
+/**
+ * Handle media endpoint requests
+ */
+async function handleMediaRoute(request, env) {
+  // Only POST is allowed for media uploads
+  if (request.method !== "POST") {
+    return new Response("Method Not Allowed", {
+      status: 405,
+      headers: {
+        ...corsHeaders(),
+        Allow: "POST",
+      },
+    });
+  }
+
+  try {
+    // Verify IndieAuth token
+    const authResult = await verifyToken(request, env);
+    if (!authResult.valid) {
+      return jsonResponse({ error: "unauthorized", error_description: authResult.error }, 401);
+    }
+
+    // Check for media or create scope (media scope preferred, create scope also accepted)
+    if (!authResult.scope.includes("media") && !authResult.scope.includes("create")) {
+      return jsonResponse(
+        { error: "insufficient_scope", error_description: "Token lacks media or create scope" },
+        403
+      );
+    }
+
+    return handleMediaUpload(request, env);
+  } catch (err) {
+    console.error("Media upload error:", err);
+    return jsonResponse({ error: "server_error", error_description: err.message }, 500);
+  }
+}
 
 /**
  * Convert FormData to Micropub JSON format

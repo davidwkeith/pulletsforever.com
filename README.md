@@ -98,10 +98,11 @@ Support for [Micropub](https://indieweb.org/Micropub) is planned to enable posti
    - Handle post types: articles (with `name`), notes (no `name`), replies (`in-reply-to`)
    - Commit to git repository via GitLab API
 
-5. **Media endpoint** - Photo/file uploads
-   - Accept multipart uploads
-   - Store in repository or Cloudflare R2
+5. ~~**Media endpoint** - Photo/file uploads~~ ✓
+   - Accept multipart uploads at `/media`
+   - Store in Cloudflare R2 bucket
    - Return URL for embedding
+   - See `workers/micropub/src/media.js`
 
 6. **Build trigger** - Automatic deployment
    - GitLab CI/CD pipeline triggers on commit
