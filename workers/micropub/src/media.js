@@ -3,6 +3,8 @@
  * https://www.w3.org/TR/micropub/#media-endpoint
  */
 
+import { errorResponse } from "./utils.js";
+
 // Allowed MIME types for upload
 // Note: SVG intentionally excluded due to XSS risk (can contain JavaScript)
 const ALLOWED_TYPES = new Set([
@@ -136,17 +138,4 @@ function formatBytes(bytes) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-/**
- * Create error response in Micropub format
- */
-function errorResponse(error, description, status) {
-  return new Response(JSON.stringify({ error, error_description: description }), {
-    status,
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
-  });
 }

@@ -7,6 +7,7 @@ import { verifyToken } from "./auth.js";
 import { handleMediaUpload } from "./media.js";
 import { createPost } from "./post.js";
 import { handleQuery } from "./query.js";
+import { corsHeaders, jsonResponse } from "./utils.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -168,22 +169,4 @@ function formDataToMicropub(formData) {
   }
 
   return data;
-}
-
-function jsonResponse(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: {
-      ...corsHeaders(),
-      "Content-Type": "application/json",
-    },
-  });
-}
-
-function corsHeaders() {
-  return {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Authorization, Content-Type",
-  };
 }

@@ -3,6 +3,8 @@
  * https://www.w3.org/TR/micropub/#querying
  */
 
+import { jsonResponse } from "./utils.js";
+
 /**
  * Handle Micropub GET queries
  * @param {URL} url
@@ -48,14 +50,4 @@ export function handleQuery(url, env) {
     default:
       return jsonResponse({ error: "invalid_request", error_description: `Unknown query: ${q}` }, 400);
   }
-}
-
-function jsonResponse(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
-  });
 }
