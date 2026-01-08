@@ -7,6 +7,7 @@ import { verifyToken } from "./auth.js";
 import { handleMediaUpload } from "./media.js";
 import { createPost } from "./post.js";
 import { handleQuery } from "./query.js";
+import { updatePost, deletePost } from "./update.js";
 import { corsHeaders, jsonResponse } from "./utils.js";
 
 export default {
@@ -88,9 +89,45 @@ export default {
           });
         }
 
-        if (action === "update" || action === "delete") {
-          console.log(`[${requestId}] Unsupported action: ${action}`);
-          return jsonResponse({ error: "not_implemented", error_description: `${action} not yet supported` }, 501);
+        if (action === "update") {
+          // Check scope
+          if (!authResult.scope.includes("update")) {
+            return jsonResponse({ error: "insufficient_scope", error_description: "Token lacks update scope" }, 403);
+          }
+
+          const result = await updatePost(data, env);
+          if (result.error) {
+            console.error(`[${requestId}] Post update failed: ${result.error}`);
+            // Return 404 for "Post not found", 400 for validation errors, 500 for server errors
+            const status = result.error === "Post not found" ? 404 : result.error.includes("Missing") ? 400 : 500;
+            return jsonResponse({ error: status === 404 ? "not_found" : "server_error", error_description: result.error }, status);
+          }
+
+          console.log(`[${requestId}] Post updated: ${data.url}`);
+          return new Response(null, {
+            status: 200,
+            headers: corsHeaders(),
+          });
+        }
+
+        if (action === "delete") {
+          // Check scope
+          if (!authResult.scope.includes("delete")) {
+            return jsonResponse({ error: "insufficient_scope", error_description: "Token lacks delete scope" }, 403);
+          }
+
+          const result = await deletePost(data, env);
+          if (result.error) {
+            console.error(`[${requestId}] Post delete failed: ${result.error}`);
+            const status = result.error === "Post not found" ? 404 : result.error.includes("Missing") ? 400 : 500;
+            return jsonResponse({ error: status === 404 ? "not_found" : "server_error", error_description: result.error }, status);
+          }
+
+          console.log(`[${requestId}] Post deleted: ${data.url}`);
+          return new Response(null, {
+            status: 200,
+            headers: corsHeaders(),
+          });
         }
 
         return jsonResponse({ error: "invalid_request", error_description: "Unknown action" }, 400);

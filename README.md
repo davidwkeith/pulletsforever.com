@@ -108,23 +108,10 @@ Support for [Micropub](https://indieweb.org/Micropub) is planned to enable posti
    - GitLab CI/CD pipeline triggers on commit
    - Cloudflare Pages rebuild
 
-7. **Update/delete support** (optional, phase 2)
+7. ~~**Update/delete support**~~ ✓
    - `action=update` with `replace`/`add`/`delete` operations
    - `action=delete` to remove posts
-
-### TODOs
-
-Before deploying:
-- [x] Verify post URLs match Eleventy permalinks — **Verified**: `blog.11tydata.js` uses `permalink: "{{ page.fileSlug }}/"` so `/{slug}/` is correct
-- [x] Remove SVG from allowed upload types — SVGs excluded from `ALLOWED_TYPES` in `media.js`
-
-Improvements:
-- [x] Handle `photo` property in post creation — photos embedded as markdown images at start of content
-- [x] Extract shared `jsonResponse`/`corsHeaders` to `utils.js`
-- [x] Add tests for `post.js` — unit tests for `generateSlug`, `parsePhotoValue`, `toYaml`
-- [x] Add `photo` post type to `q=config` response
-- [x] Add request logging for debugging — logs include request ID for tracing
-- [x] Require at least `content` or `name` to prevent empty posts — also accepts `photo`
+   - See `workers/micropub/src/update.js`
 
 ### Micropub Properties Mapping
 
