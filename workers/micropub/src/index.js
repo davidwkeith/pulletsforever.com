@@ -12,6 +12,10 @@ import { corsHeaders, jsonResponse } from "./utils.js";
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    const requestId = crypto.randomUUID().slice(0, 8);
+
+    // Log incoming request
+    console.log(`[${requestId}] ${request.method} ${url.pathname}`);
 
     // Handle CORS preflight
     if (request.method === "OPTIONS") {
@@ -22,7 +26,7 @@ export default {
 
     // Route requests
     if (url.pathname === "/media") {
-      return handleMediaRoute(request, env);
+      return handleMediaRoute(request, env, requestId);
     }
 
     if (url.pathname !== "/micropub") {
@@ -70,9 +74,11 @@ export default {
 
           const result = await createPost(data, env);
           if (result.error) {
+            console.error(`[${requestId}] Post creation failed: ${result.error}`);
             return jsonResponse({ error: "server_error", error_description: result.error }, 500);
           }
 
+          console.log(`[${requestId}] Post created: ${result.url}`);
           return new Response(null, {
             status: 201,
             headers: {
@@ -83,6 +89,7 @@ export default {
         }
 
         if (action === "update" || action === "delete") {
+          console.log(`[${requestId}] Unsupported action: ${action}`);
           return jsonResponse({ error: "not_implemented", error_description: `${action} not yet supported` }, 501);
         }
 
@@ -91,7 +98,7 @@ export default {
 
       return new Response("Method Not Allowed", { status: 405 });
     } catch (err) {
-      console.error("Micropub error:", err);
+      console.error(`[${requestId}] Micropub error:`, err);
       return jsonResponse({ error: "server_error", error_description: err.message }, 500);
     }
   },
@@ -100,7 +107,7 @@ export default {
 /**
  * Handle media endpoint requests
  */
-async function handleMediaRoute(request, env) {
+async function handleMediaRoute(request, env, requestId) {
   // Only POST is allowed for media uploads
   if (request.method !== "POST") {
     return new Response("Method Not Allowed", {
@@ -116,20 +123,26 @@ async function handleMediaRoute(request, env) {
     // Verify IndieAuth token
     const authResult = await verifyToken(request, env);
     if (!authResult.valid) {
+      console.log(`[${requestId}] Media auth failed: ${authResult.error}`);
       return jsonResponse({ error: "unauthorized", error_description: authResult.error }, 401);
     }
 
     // Check for media or create scope (media scope preferred, create scope also accepted)
     if (!authResult.scope.includes("media") && !authResult.scope.includes("create")) {
+      console.log(`[${requestId}] Media insufficient scope`);
       return jsonResponse(
         { error: "insufficient_scope", error_description: "Token lacks media or create scope" },
         403
       );
     }
 
-    return handleMediaUpload(request, env);
+    const result = await handleMediaUpload(request, env);
+    if (result.status === 201) {
+      console.log(`[${requestId}] Media uploaded: ${result.headers.get("Location")}`);
+    }
+    return result;
   } catch (err) {
-    console.error("Media upload error:", err);
+    console.error(`[${requestId}] Media upload error:`, err);
     return jsonResponse({ error: "server_error", error_description: err.message }, 500);
   }
 }

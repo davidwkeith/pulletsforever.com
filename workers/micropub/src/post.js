@@ -21,6 +21,11 @@ export async function createPost(data, env) {
   const photos = props.photo || [];
   const slug = getFirst(props["mp-slug"]) || generateSlug(name, published);
 
+  // Validate: require at least content, name, or photo
+  if (!name && !content && photos.length === 0) {
+    return { error: "Post must have at least a title, content, or photo" };
+  }
+
   // Determine post type
   const isNote = !name;
   const isReply = !!inReplyTo;

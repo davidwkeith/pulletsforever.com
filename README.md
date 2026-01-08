@@ -123,8 +123,8 @@ Improvements:
 - [x] Extract shared `jsonResponse`/`corsHeaders` to `utils.js`
 - [x] Add tests for `post.js` — unit tests for `generateSlug`, `parsePhotoValue`, `toYaml`
 - [x] Add `photo` post type to `q=config` response
-- [ ] Add request logging for debugging
-- [ ] Require at least `content` or `name` to prevent empty posts
+- [x] Add request logging for debugging — logs include request ID for tracing
+- [x] Require at least `content` or `name` to prevent empty posts — also accepts `photo`
 
 ### Micropub Properties Mapping
 
