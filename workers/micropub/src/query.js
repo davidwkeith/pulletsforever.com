@@ -33,6 +33,10 @@ export function handleQuery(url, env) {
             name: "Article",
           },
           {
+            type: "photo",
+            name: "Photo",
+          },
+          {
             type: "reply",
             name: "Reply",
           },
