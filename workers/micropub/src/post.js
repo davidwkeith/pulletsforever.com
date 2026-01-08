@@ -114,8 +114,11 @@ async function commitToGitLab({ filePath, content, message, env }) {
 
 /**
  * Generate a URL slug from title or timestamp
+ * @param {string} title - Post title (optional)
+ * @param {string} published - ISO 8601 date string
+ * @returns {string} URL-safe slug
  */
-function generateSlug(title, published) {
+export function generateSlug(title, published) {
   if (title) {
     return title
       .toLowerCase()
@@ -156,7 +159,7 @@ function getFirst(value) {
  * @param {string|object} photo - Photo URL or object with value and alt
  * @returns {{url: string, alt: string}}
  */
-function parsePhotoValue(photo) {
+export function parsePhotoValue(photo) {
   if (typeof photo === "string") {
     return { url: photo, alt: "" };
   }
@@ -169,8 +172,11 @@ function parsePhotoValue(photo) {
 
 /**
  * Convert object to YAML frontmatter
+ * @param {object} obj - Object to convert
+ * @param {number} indent - Indentation level
+ * @returns {string} YAML string
  */
-function toYaml(obj, indent = 0) {
+export function toYaml(obj, indent = 0) {
   let yaml = "";
   const prefix = "  ".repeat(indent);
 

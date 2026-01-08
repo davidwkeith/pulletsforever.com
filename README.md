@@ -121,7 +121,7 @@ Before deploying:
 Improvements:
 - [x] Handle `photo` property in post creation — photos embedded as markdown images at start of content
 - [x] Extract shared `jsonResponse`/`corsHeaders` to `utils.js`
-- [ ] Add tests for `post.js` (slug generation, YAML output, GitLab API)
+- [x] Add tests for `post.js` — unit tests for `generateSlug`, `parsePhotoValue`, `toYaml`
 - [ ] Add `photo` post type to `q=config` response
 - [ ] Add request logging for debugging
 - [ ] Require at least `content` or `name` to prevent empty posts
