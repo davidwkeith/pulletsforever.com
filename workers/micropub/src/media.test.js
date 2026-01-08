@@ -120,6 +120,38 @@ describe("Media Endpoint", () => {
       expect(body.error_description).toContain("not allowed");
     });
 
+    it("rejects SVG uploads due to XSS risk", async () => {
+      verifyToken.mockResolvedValue({
+        valid: true,
+        scope: ["media"],
+        me: "https://pulletsforever.com",
+      });
+
+      const formData = new FormData();
+      const svgContent = '<svg xmlns="http://www.w3.org/2000/svg"><script>alert("xss")</script></svg>';
+      const file = new File([svgContent], "image.svg", {
+        type: "image/svg+xml",
+      });
+      formData.append("file", file);
+
+      const request = new Request(`${baseUrl}/media`, {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer test-token",
+        },
+        body: formData,
+      });
+
+      const ctx = createExecutionContext();
+      const response = await worker.fetch(request, env, ctx);
+      await waitOnExecutionContext(ctx);
+
+      expect(response.status).toBe(400);
+      const body = await response.json();
+      expect(body.error).toBe("invalid_request");
+      expect(body.error_description).toContain("not allowed");
+    });
+
     it("returns 201 with Location header for valid image upload", async () => {
       verifyToken.mockResolvedValue({
         valid: true,

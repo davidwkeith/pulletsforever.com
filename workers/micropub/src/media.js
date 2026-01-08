@@ -4,12 +4,12 @@
  */
 
 // Allowed MIME types for upload
+// Note: SVG intentionally excluded due to XSS risk (can contain JavaScript)
 const ALLOWED_TYPES = new Set([
   "image/jpeg",
   "image/png",
   "image/gif",
   "image/webp",
-  "image/svg+xml",
   "image/heic",
   "image/heif",
   "video/mp4",
@@ -26,7 +26,6 @@ const EXTENSIONS = {
   "image/png": "png",
   "image/gif": "gif",
   "image/webp": "webp",
-  "image/svg+xml": "svg",
   "image/heic": "heic",
   "image/heif": "heif",
   "video/mp4": "mp4",

@@ -112,6 +112,20 @@ Support for [Micropub](https://indieweb.org/Micropub) is planned to enable posti
    - `action=update` with `replace`/`add`/`delete` operations
    - `action=delete` to remove posts
 
+### TODOs
+
+Before deploying:
+- [x] Verify post URLs match Eleventy permalinks — **Verified**: `blog.11tydata.js` uses `permalink: "{{ page.fileSlug }}/"` so `/{slug}/` is correct
+- [x] Remove SVG from allowed upload types — SVGs excluded from `ALLOWED_TYPES` in `media.js`
+
+Improvements:
+- [ ] Handle `photo` property in post creation (embed uploaded images in posts)
+- [ ] Extract shared `jsonResponse`/`corsHeaders` to `utils.js`
+- [ ] Add tests for `post.js` (slug generation, YAML output, GitLab API)
+- [ ] Add `photo` post type to `q=config` response
+- [ ] Add request logging for debugging
+- [ ] Require at least `content` or `name` to prevent empty posts
+
 ### Micropub Properties Mapping
 
 | Micropub Property | Frontmatter Field | Notes |
