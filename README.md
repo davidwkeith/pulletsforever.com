@@ -119,7 +119,7 @@ Before deploying:
 - [x] Remove SVG from allowed upload types — SVGs excluded from `ALLOWED_TYPES` in `media.js`
 
 Improvements:
-- [ ] Handle `photo` property in post creation (embed uploaded images in posts)
+- [x] Handle `photo` property in post creation — photos embedded as markdown images at start of content
 - [ ] Extract shared `jsonResponse`/`corsHeaders` to `utils.js`
 - [ ] Add tests for `post.js` (slug generation, YAML output, GitLab API)
 - [ ] Add `photo` post type to `q=config` response

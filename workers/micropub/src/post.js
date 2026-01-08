@@ -18,6 +18,7 @@ export async function createPost(data, env) {
   const categories = props.category || [];
   const summary = getFirst(props.summary);
   const inReplyTo = getFirst(props["in-reply-to"]);
+  const photos = props.photo || [];
   const slug = getFirst(props["mp-slug"]) || generateSlug(name, published);
 
   // Determine post type
@@ -46,6 +47,12 @@ export async function createPost(data, env) {
   let markdown = "---\n";
   markdown += toYaml(frontmatter);
   markdown += "---\n\n";
+
+  // Add photos at the beginning (before text content)
+  for (const photo of photos) {
+    const { url, alt } = parsePhotoValue(photo);
+    markdown += `![${alt}](${url})\n\n`;
+  }
 
   // Handle content (could be string or object with html/value)
   const bodyContent = typeof content === "object" ? content.html || content.value || "" : content || "";
@@ -142,6 +149,22 @@ function getFirst(value) {
     return value[0];
   }
   return value;
+}
+
+/**
+ * Parse a photo value which can be a string URL or an object with value/alt
+ * @param {string|object} photo - Photo URL or object with value and alt
+ * @returns {{url: string, alt: string}}
+ */
+function parsePhotoValue(photo) {
+  if (typeof photo === "string") {
+    return { url: photo, alt: "" };
+  }
+  // Object format: { value: "url", alt: "description" }
+  return {
+    url: photo.value || photo.url || "",
+    alt: photo.alt || "",
+  };
 }
 
 /**
