@@ -25,6 +25,8 @@ pulletsforever.com/
 │   ├── _includes/    # Layouts, partials, macros, CSS, JS
 │   └── ...
 ├── plugins/          # Custom Eleventy plugins
+├── workers/          # Cloudflare Workers
+│   └── micropub/     # Micropub endpoint
 └── _site/            # Generated output (gitignored)
 ```
 
@@ -70,61 +72,184 @@ Sent webmentions are tracked in `.cache/webmentions-sent.json` to avoid duplicat
 
 ---
 
-## Micropub (Planned)
+## Micropub
 
-Support for [Micropub](https://indieweb.org/Micropub) is planned to enable posting from IndieWeb clients.
+This site supports [Micropub](https://indieweb.org/Micropub), enabling posting from IndieWeb clients like [Quill](https://quill.p3k.io/), [Indigenous](https://indigenous.realize.be/), or [iA Writer](https://ia.net/writer).
 
-### Implementation Plan
+### Features
 
-1. ~~**Site discovery** - Add `rel` links to HTML head~~ ✓
-   - `rel="micropub"` → `https://micropub.pulletsforever.com/micropub`
-   - `rel="authorization_endpoint"` → `https://indieauth.com/auth`
-   - `rel="token_endpoint"` → `https://indieauth.com/token`
+- **Create posts**: Articles, notes, photos, and replies
+- **Update posts**: Modify title, tags, content, and other properties
+- **Delete posts**: Remove posts from the repository
+- **Media uploads**: Images and videos stored in Cloudflare R2
+- **IndieAuth**: Secure authentication via [indieauth.com](https://indieauth.com/)
 
-2. ~~**Micropub endpoint** - Cloudflare Worker to handle requests~~ ✓
-   - Accept `h-entry` posts (notes, articles, photos)
-   - Parse form-encoded and JSON payloads
-   - Support `q=config` and `q=syndicate-to` queries
-   - See `workers/micropub/`
+### Endpoints
 
-3. ~~**IndieAuth integration** - Token verification via indieauth.com~~ ✓
-   - Verify tokens by calling `https://indieauth.com/token` with the bearer token
-   - Confirm `me` matches site URL
-   - Scope checking (`create`, `update`, `delete`)
+| Endpoint | URL |
+|----------|-----|
+| Micropub | `https://micropub.pulletsforever.com/micropub` |
+| Media | `https://micropub.pulletsforever.com/media` |
+| Authorization | `https://indieauth.com/auth` |
+| Token | `https://indieauth.com/token` |
 
-4. ~~**Content creation** - Generate markdown files~~ ✓
-   - Create frontmatter from Micropub properties
-   - Slug generation from title or timestamp
-   - Handle post types: articles (with `name`), notes (no `name`), replies (`in-reply-to`)
-   - Commit to git repository via GitLab API
+### Supported Post Types
 
-5. ~~**Media endpoint** - Photo/file uploads~~ ✓
-   - Accept multipart uploads at `/media`
-   - Store in Cloudflare R2 bucket
-   - Return URL for embedding
-   - See `workers/micropub/src/media.js`
-
-6. **Build trigger** - Automatic deployment
-   - GitLab CI/CD pipeline triggers on commit
-   - Cloudflare Pages rebuild
-
-7. ~~**Update/delete support**~~ ✓
-   - `action=update` with `replace`/`add`/`delete` operations
-   - `action=delete` to remove posts
-   - See `workers/micropub/src/update.js`
+| Type | Description |
+|------|-------------|
+| Article | Post with `name` (title) and `content` |
+| Note | Post with `content` only (no title) |
+| Photo | Post with `photo` property |
+| Reply | Post with `in-reply-to` URL |
 
 ### Micropub Properties Mapping
 
 | Micropub Property | Frontmatter Field | Notes |
 |-------------------|-------------------|-------|
-| `name` | `title` | If absent, treat as note |
+| `name` | `title` | If absent, treated as note |
 | `content` | Post body | HTML or plain text |
-| `published` | `date` | ISO 8601 |
-| `category` | `tags` | Array |
+| `published` | `date` | ISO 8601 format |
+| `category` | `tags` | Array of tags |
 | `summary` | `description` | Meta description |
-| `photo` | Embedded image | Upload to media endpoint |
+| `photo` | Embedded image | Rendered as markdown image |
 | `in-reply-to` | `in-reply-to` | URL being replied to |
-| `mp-slug` | Filename/URL slug | Auto-generate if absent |
+| `mp-slug` | Filename/URL slug | Auto-generated if absent |
+
+### Deployment
+
+The Micropub endpoint runs as a Cloudflare Worker. See `workers/micropub/` for source code.
+
+#### Prerequisites
+
+- [Cloudflare account](https://dash.cloudflare.com/sign-up)
+- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/)
+- GitLab personal access token with `api` scope
+
+#### 1. Create R2 Bucket
+
+```bash
+# Create the media storage bucket
+wrangler r2 bucket create pulletsforever-media
+```
+
+#### 2. Configure Custom Domain (Optional)
+
+In the Cloudflare dashboard:
+1. Go to **Workers & Pages** → **pulletsforever-micropub**
+2. Click **Settings** → **Triggers** → **Custom Domains**
+3. Add `micropub.pulletsforever.com`
+
+For media serving, create a public R2 bucket custom domain:
+1. Go to **R2** → **pulletsforever-media** → **Settings**
+2. Under **Public access**, connect a custom domain: `media.pulletsforever.com`
+
+#### 3. Set Secrets
+
+```bash
+cd workers/micropub
+
+# GitLab token for committing posts
+wrangler secret put GITLAB_TOKEN
+# Paste your GitLab personal access token (api scope)
+```
+
+#### 4. Deploy
+
+```bash
+cd workers/micropub
+npm install
+wrangler deploy
+```
+
+#### Environment Variables
+
+Configured in `wrangler.toml`:
+
+| Variable | Description |
+|----------|-------------|
+| `SITE_URL` | Your site URL (e.g., `https://pulletsforever.com`) |
+| `GITLAB_PROJECT_ID` | GitLab project path (e.g., `username/repo`) |
+| `GITLAB_BRANCH` | Branch for commits (default: `main`) |
+| `BLOG_PATH` | Path to blog posts (default: `src/blog`) |
+| `MEDIA_URL` | Public URL for uploaded media |
+| `MAX_FILE_SIZE` | Maximum upload size in bytes (default: 10MB) |
+
+#### Required Scopes
+
+When authenticating with a Micropub client, request these scopes:
+
+| Scope | Required For |
+|-------|--------------|
+| `create` | Creating new posts, uploading media |
+| `update` | Modifying existing posts |
+| `delete` | Removing posts |
+| `media` | Uploading files (optional, `create` also works) |
+
+### Development
+
+```bash
+cd workers/micropub
+npm install
+
+# Run tests
+npm test
+
+# Start local dev server
+wrangler dev
+```
+
+### Security Notes
+
+- SVG uploads are blocked to prevent XSS attacks
+- Tokens are verified with indieauth.com on every request
+- The `me` URL must match the configured `SITE_URL`
+
+---
+
+## Site Deployment
+
+The main site is deployed to [Cloudflare Pages](https://pages.cloudflare.com/), which uses Workers under the hood to serve static files.
+
+### Prerequisites
+
+- [Cloudflare account](https://dash.cloudflare.com/sign-up)
+- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/) (already installed as a dev dependency)
+
+### Deploy via Wrangler CLI
+
+```bash
+# Build and deploy to Cloudflare Pages
+npm run deploy
+```
+
+This will:
+1. Build the site with Eleventy (`npm run build`)
+2. Deploy the `_site/` directory to Cloudflare Pages
+
+### Deploy via Git Integration (Recommended)
+
+For automatic deployments on every push:
+
+1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/) → **Workers & Pages**
+2. Click **Create application** → **Pages** → **Connect to Git**
+3. Select your GitLab repository
+4. Configure build settings:
+   - **Build command**: `npm run build`
+   - **Build output directory**: `_site`
+   - **Root directory**: `/` (or leave empty)
+5. Add environment variables if needed (e.g., `WEBMENTION_IO_TOKEN`)
+6. Click **Save and Deploy**
+
+After setup, every push to your main branch will automatically trigger a new deployment.
+
+### Custom Domain
+
+To use your custom domain (`pulletsforever.com`):
+
+1. In Cloudflare Dashboard → **Workers & Pages** → **pulletsforever**
+2. Go to **Custom domains**
+3. Click **Set up a custom domain**
+4. Enter `pulletsforever.com` and follow the DNS configuration instructions
 
 ---
 

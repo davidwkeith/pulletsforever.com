@@ -13,7 +13,9 @@
     "debugstart": "DEBUG=Eleventy* npx @11ty/eleventy --serve --quiet",
     "benchmark": "DEBUG=Eleventy:Benchmark* npx @11ty/eleventy",
     "webmentions:send": "node scripts/send-webmentions.js",
-    "webmentions:send:dry": "node scripts/send-webmentions.js --dry-run"
+    "webmentions:send:dry": "node scripts/send-webmentions.js --dry-run",
+    "deploy": "npm run build && wrangler pages deploy _site",
+    "deploy:preview": "npm run build && wrangler pages deploy _site --project-name=pulletsforever"
   },
   "author": {
     "name": "David W. Keith",
@@ -42,6 +44,7 @@
     "jsdom": "^27.2.0",
     "luxon": "^3.3.0",
     "markdown-it-anchor": "9.2.0",
-    "sharp": "0.33.5"
+    "sharp": "0.33.5",
+    "wrangler": "^4.58.0"
   }
 }
