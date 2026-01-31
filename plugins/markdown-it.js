@@ -7,6 +7,7 @@ import { sup } from "@mdit/plugin-sup";
 export default function(eleventyConfig) {
   // Customize Markdown library settings:
   let mdLib = markdownIt({
+    html: true,        // Allow raw HTML (for <details>, <summary>, etc.)
     typographer: true,
   });
 
