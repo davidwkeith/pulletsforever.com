@@ -204,7 +204,7 @@ code {
 /* Header */
 header {
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     gap: 0.5em;
     padding: 1em;
 }
@@ -221,13 +221,7 @@ header {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: space-between;
-    align-self: stretch;
-    margin-top: 1.5em; /* Align title top with logo head (below feathers ~12px) */
-}
-
-.header-title nav {
-    margin-bottom: 0em; /* Align nav text baseline with logo bottom */
+    gap: 0.25em;
 }
 
 .header-title h1 {
