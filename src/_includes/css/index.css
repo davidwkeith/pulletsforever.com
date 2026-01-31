@@ -382,6 +382,13 @@ header {
     text-decoration: none;
 }
 
+/* Post signature */
+.signature {
+    margin-top: 2em;
+    margin-bottom: 0;
+    font-style: italic;
+}
+
 /* Related Posts */
 .related-posts {
     border-top: 1px dashed var(--color-gray-20);
