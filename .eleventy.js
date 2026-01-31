@@ -27,6 +27,12 @@ export default function (eleventyConfig) {
   eleventyConfig.addGlobalData("baseURL", "https://pulletsforever.com");
 
   eleventyConfig.addPassthroughCopy(`${input}/**/*.{svg,webp,png,jpg,jpeg,gif,zip}`)
+
+  // Downloadable prompt files (copied as-is, not processed as templates)
+  eleventyConfig.addPassthroughCopy({
+    [`${input}/posts/personal-shopper/personal-shopper-prompt.md`]: "/personal-shopper/personal-shopper-prompt.md"
+  })
+  eleventyConfig.ignores.add("src/posts/**/*-prompt.md")
   eleventyConfig.addPassthroughCopy(`${input}/fonts`)
   eleventyConfig.addPassthroughCopy({
     [`${input}/.well-known/keybase.txt`]: "/.well-known/keybase.txt",

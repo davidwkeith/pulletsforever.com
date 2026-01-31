@@ -7,7 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 SITE_URL = "https://pulletsforever.com"
 GITLAB_PROJECT_ID = "dwk-io/pulletsforever.com"
 GITLAB_BRANCH = "main"
-BLOG_PATH = "src/blog"
+BLOG_PATH = "src/posts"
 MEDIA_URL = "https://media.pulletsforever.com"
 MAX_FILE_SIZE = 10485760  # 10 MB in bytes
 

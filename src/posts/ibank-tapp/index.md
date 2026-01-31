@@ -13,7 +13,7 @@ Once loaded just enter the Payee, Category and Amount and iBank will automatical
 
 Tap on the vault icon to see your balance for the currently selected account.
 
-![vault icon](/blog/_archive/ibank-tapp/vault-icon.png)
+![vault icon](vault-icon.png)
 
 iBank.tapp.zip (1.1.3)
 

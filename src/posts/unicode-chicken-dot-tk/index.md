@@ -14,15 +14,15 @@ The next step was to configure Apache so this would be an alias for pulletsforev
 
 Beautiful, because as it happens, that is how I need to write it for most social networking clients to be able to handle the URL. To start with, if you are using Safari under Lion you will see:
 
-![Screenshot of Tweet in Safari on macOS Lion](/blog/_archive/unicode-chicken-dot-tk/safari-lion.png)
+![Screenshot of Tweet in Safari on macOS Lion](safari-lion.png)
 
 My first thought was that this will work in all Lion browsers, as emoji is just a unicode font in Lion. Then I saw Chrome:
 
-![Screenshot of Tweet in Chrome on macOS Lion](/blog/_archive/unicode-chicken-dot-tk/chrome-lion.png)
+![Screenshot of Tweet in Chrome on macOS Lion](chrome-lion.png)
 
 Firefox was not much better:
 
-![Screenshot of Tweet in Firefox on macOS Lion](/blog/_archive/unicode-chicken-dot-tk/firefox-lion.png)
+![Screenshot of Tweet in Firefox on macOS Lion](firefox-lion.png)
 
 Since social networking clients all have different levels of support for Unicode, the I found that posting the link in it’s raw form of ‘http://🐔.tk’ resulted in varying link identification. Twitter saw this as a valid URL, but many clients reported it as ‘http://xn--co8h.tk' or ‘http:// .tk’. However via Twitter the link seemed to work all the time. On Facebook the link showed on my wall as ‘http://🐔.tk’ but was not clickable as a link. On Google+ it was reported as an invalid link while composing my message, and thus not clickable when the message was posted.
 

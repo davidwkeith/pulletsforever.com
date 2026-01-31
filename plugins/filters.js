@@ -147,7 +147,7 @@ export default function(eleventyConfig) {
    * Fix relative image paths in markdown content to use optimized images
    * Uses Eleventy Image to get the same processed URLs as HTML output
    * @param {string} content - Raw markdown content
-   * @param {string} inputPath - The source file path (e.g., ./src/blog/copper-charlie/index.md)
+   * @param {string} inputPath - The source file path (e.g., ./src/posts/copper-charlie/index.md)
    * @param {string} pageUrl - The output URL for the page (e.g., /copper-charlie/)
    */
   eleventyConfig.addAsyncFilter("fixMarkdownImagePaths", async (content, inputPath, pageUrl) => {

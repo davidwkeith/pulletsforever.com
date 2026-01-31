@@ -3,7 +3,7 @@
   "frontMatter.content.pageFolders": [
     {
       "title": "Blog",
-      "path": "[[workspace]]/src/blog",
+      "path": "[[workspace]]/src/posts",
       "contentTypes": [
         "blog-post"
       ]

@@ -29,7 +29,7 @@ Maybe they do and are rejecting domains that inculde the punycode string `xn--`,
 
 The last idea seems to be true, as I now own the beautiful handle of [`@dwk@xn--4t8h.dwk.io`](https://📟.dwk.io/@dwk) in Ivory.
 
-![Ivory Mastodon Profile](/blog/2024/emoji-domains-and-mastodon/ivory-profile.webp)
+![Ivory Mastodon Profile](ivory-profile.webp)
 
 #### Update
 

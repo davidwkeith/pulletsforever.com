@@ -43,10 +43,10 @@ export async function findPostByUrl(url, env) {
   }
 
   const projectId = encodeURIComponent(env.GITLAB_PROJECT_ID);
-  const blogPath = env.BLOG_PATH || "src/blog";
+  const blogPath = env.BLOG_PATH || "src/posts";
 
-  // Search for files matching the slug in the blog directory
-  // Files can be either {year}/{slug}.md or {year}/{slug}/index.md
+  // Search for files matching the slug in the posts directory
+  // Files can be either {slug}.md or {slug}/index.md
   const treeUrl = `https://gitlab.com/api/v4/projects/${projectId}/repository/tree?path=${encodeURIComponent(blogPath)}&recursive=true&per_page=100`;
 
   try {
@@ -66,10 +66,10 @@ export async function findPostByUrl(url, env) {
     for (const file of files) {
       if (file.type !== "blob") continue;
 
-      // Match {year}/{slug}.md
-      const directMatch = new RegExp(`^${blogPath}/\\d{4}/${slug}\\.md$`);
-      // Match {year}/{slug}/index.md
-      const indexMatch = new RegExp(`^${blogPath}/\\d{4}/${slug}/index\\.md$`);
+      // Match {slug}.md
+      const directMatch = new RegExp(`^${blogPath}/${slug}\\.md$`);
+      // Match {slug}/index.md
+      const indexMatch = new RegExp(`^${blogPath}/${slug}/index\\.md$`);
 
       if (directMatch.test(file.path) || indexMatch.test(file.path)) {
         return { filePath: file.path };

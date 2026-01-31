@@ -170,7 +170,7 @@ Configured in `wrangler.toml`:
 | `SITE_URL` | Your site URL (e.g., `https://pulletsforever.com`) |
 | `GITLAB_PROJECT_ID` | GitLab project path (e.g., `username/repo`) |
 | `GITLAB_BRANCH` | Branch for commits (default: `main`) |
-| `BLOG_PATH` | Path to blog posts (default: `src/blog`) |
+| `BLOG_PATH` | Path to blog posts (default: `src/posts`) |
 | `MEDIA_URL` | Public URL for uploaded media |
 | `MAX_FILE_SIZE` | Maximum upload size in bytes (default: 10MB) |
 
