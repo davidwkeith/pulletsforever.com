@@ -12,6 +12,7 @@
     "debug": "DEBUG=Eleventy* npx @11ty/eleventy",
     "debugstart": "DEBUG=Eleventy* npx @11ty/eleventy --serve --quiet",
     "benchmark": "DEBUG=Eleventy:Benchmark* npx @11ty/eleventy",
+    "new-post": "node scripts/new-post.js",
     "webmentions:send": "node scripts/send-webmentions.js",
     "webmentions:send:dry": "node scripts/send-webmentions.js --dry-run",
     "deploy": "npm run build && wrangler pages deploy _site",
