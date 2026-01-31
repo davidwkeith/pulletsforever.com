@@ -43,7 +43,7 @@ export default {
     src: "/img/logo.svg",
     alt: "Stylized pullet head logo",
   },
-  description: "Pullet surprise writing.",
+  description: "Personal blog by David W. Keith covering technology, food, and creative projects.",
   author: {
     ...author,
     email,

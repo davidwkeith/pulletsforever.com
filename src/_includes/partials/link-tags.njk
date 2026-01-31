@@ -10,7 +10,7 @@
 {% set faviconPath = inputDir + metadata.favicon %}
 {% favicons faviconPath, manifestData={ name: schema.name, description: schema.description } %}
 
-{% for service, profileURL in schema.author.alternates %}
+{% for profileURL in schema.author.sameAs %}
   {% if profileURL != metadata.url %} {# Skip author links to dwk.io from dwk.io #}
     <link href="{{profileURL}}" rel="me">
   {% endif %}
