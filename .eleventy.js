@@ -37,6 +37,8 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({
     [`${input}/.well-known/keybase.txt`]: "/.well-known/keybase.txt",
     "./node_modules/prismjs/themes/prism-okaidia.css": "/css/prism-okaidia.css",
+    "./node_modules/img-comparison-slider/dist/styles.css": "/css/img-comparison-slider.css",
+    "./node_modules/img-comparison-slider/dist/index.js": "/js/img-comparison-slider.js",
   });
 
 

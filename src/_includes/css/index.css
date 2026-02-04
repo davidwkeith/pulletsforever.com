@@ -610,3 +610,24 @@ footer img#greenweb-badge {
     font-size: 0.9em;
     color: var(--color-gray-50);
 }
+
+/* Figure captions */
+figcaption {
+    font-size: 0.875em;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 0.5em;
+}
+
+/* Image comparison slider - dark divider in light mode */
+img-comparison-slider {
+    --divider-color: #333;
+    --default-handle-color: #333;
+}
+
+@media (prefers-color-scheme: dark) {
+    img-comparison-slider {
+        --divider-color: #fff;
+        --default-handle-color: #fff;
+    }
+}
