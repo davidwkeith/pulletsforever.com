@@ -64,8 +64,9 @@ function generateSvg(title, siteName, hasImage = false) {
     .join("\n    ");
 
   // Image placeholder rect (will be composited over by Sharp)
+  // Uses same color as content card so transparent image areas blend properly
   const imagePlaceholder = hasImage
-    ? `<rect x="${IMAGE_X}" y="${IMAGE_Y}" width="${IMAGE_WIDTH}" height="${IMAGE_HEIGHT}" rx="12" fill="#2a2a2a"/>`
+    ? `<rect x="${IMAGE_X}" y="${IMAGE_Y}" width="${IMAGE_WIDTH}" height="${IMAGE_HEIGHT}" rx="12" fill="#404040"/>`
     : "";
 
   return `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
@@ -94,8 +95,8 @@ function generateSvg(title, siteName, hasImage = false) {
     ${titleLines}
   </g>
 
-  <!-- Logo (64x64, positioned bottom-left of card) -->
-  <g transform="translate(80, 476) scale(0.125)">
+  <!-- Logo (64x64, positioned bottom-left of card, bottom-aligned with site name) -->
+  <g transform="translate(80, 480) scale(0.125)">
     <polygon fill="#1095c1" points="45,95 110,95 110,0" />
     <polygon fill="#1095c1" points="120,95 185,95 185,0" />
     <polygon fill="#1095c1" points="195,95 260,95 260,0" />
