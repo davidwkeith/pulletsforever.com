@@ -45,10 +45,13 @@
     "jsdom": "^27.4.0",
     "luxon": "^3.7.2",
     "markdown-it-anchor": "9.2.0",
-    "sharp": "0.34.5",
+    "sharp": "0.33.5",
     "wrangler": "^4.59.1"
   },
   "dependencies": {
     "img-comparison-slider": "^8.0.7"
+  },
+  "overrides": {
+    "sharp": "0.33.5"
   }
 }
