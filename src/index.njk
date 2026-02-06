@@ -1,24 +1,23 @@
 ---
 layout: layouts/base.njk
 changeFreq: weekly
+hideFooterSocial: true
 numberOfLatestPostsToShow: 10
 ---
 {% set postsCount = collections.posts | length %}
 
-{% set postslist = collections.posts | head(-1 * numberOfLatestPostsToShow) %}
-{% set postslistCounter = postsCount %}
-{% include "postslist.njk" %}
+<div class="home-layout">
+  <div class="home-feed">
+    <h2 class="home-section-heading">Recent posts</h2>
+    {% set postslist = collections.posts | head(-1 * numberOfLatestPostsToShow) %}
+    {% set postslistCounter = postsCount %}
+    {% include "postfeed.njk" %}
 
-{% set morePosts = postsCount - numberOfLatestPostsToShow %}
-{% if morePosts > 0 %}
-<p>{{ morePosts }} more post{% if morePosts != 1 %}s{% endif %} can be found in <a href="/blog/">the archive</a>.</p>
-{% endif %}
+    {% set morePosts = postsCount - numberOfLatestPostsToShow %}
+    {% if morePosts > 0 %}
+    <p class="home-more-link"><a href="/blog/">View all posts &rarr;</a></p>
+    {% endif %}
+  </div>
 
-{# List every content page in the project #}
-{#
-<ul>
-	{%- for entry in collections.all %}
-	<li><a href="{{ entry.url }}"><code>{{ entry.url }}</code></a></li>
-	{%- endfor %}
-</ul>
-#}
+  {% include "partials/sidebar.njk" %}
+</div>

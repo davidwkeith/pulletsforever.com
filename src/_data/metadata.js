@@ -47,11 +47,14 @@ export default {
   author: {
     ...author,
     email,
+    bio: "Writing about technology, food, and creative projects. Based in Santa Clara, CA.",
+    avatar: "/img/avatar.jpg",
   },
   cloudflare_insights: {
     token: "5049d90e34c84a5ba463d0541825cb30",
   },
   useNavigation: true,
+  showSocialLinks: true,
   webmention,
   head_links: [
     ...head_links,

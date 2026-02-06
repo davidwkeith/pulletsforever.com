@@ -55,6 +55,22 @@ export default function(eleventyConfig) {
   });
 
   /**
+   * Generate an excerpt from HTML content
+   * Strips tags, collapses whitespace, and truncates to ~155 characters at a word boundary
+   */
+  eleventyConfig.addFilter("excerpt", (content) => {
+    if (!content) return "";
+    const text = content
+      .replace(/<[^>]+>/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (text.length <= 155) return text;
+    const truncated = text.slice(0, 155);
+    const lastSpace = truncated.lastIndexOf(" ");
+    return (lastSpace > 80 ? truncated.slice(0, lastSpace) : truncated) + "…";
+  });
+
+  /**
    * Calculate reading time from content
    * Assumes average reading speed of 200 words per minute
    */

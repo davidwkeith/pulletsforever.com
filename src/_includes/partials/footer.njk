@@ -1,13 +1,17 @@
+{% from "macros/social-icon.njk" import socialIcon %}
+
 <footer>
-  {% if metadata.showSocialLinks %}
-    <ul>
+  {% if metadata.showSocialLinks and not hideFooterSocial %}
+    <ul class="footer-social" role="list">
     {% for service, profileURL in metadata.author.alternates %}
-      <li><a href="{{profileURL}}" rel="me external">
-        <img height="32" width="32" src="/img/social/{{service}}.png" alt="{{service}}'s logo" title="{{service}}">
+      {% if service != "blog" %}
+      <li><a href="{{ profileURL }}" rel="me external" aria-label="{{ service }}">
+        {{ socialIcon(service, 24) }}
       </a></li>
+      {% endif %}
     {% endfor %}
-    <li><a href="mailto:{{metadata.author.email}}" rel="me external">
-      <img height="32" width="32" src="/img/social/email.png" alt="email icon" title="email">
+    <li><a href="mailto:{{ metadata.author.email }}" rel="me" aria-label="email">
+      {{ socialIcon("email", 24) }}
     </a></li>
     </ul>
   {% endif %}
