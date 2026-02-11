@@ -1,6 +1,28 @@
 import { DateTime } from 'luxon';
 import Image from "@11ty/eleventy-img";
 import path from "path";
+import { normalizeImageReference, parseMarkdownImageInner } from "./utils/image-reference.js";
+
+const MARKDOWN_IMAGE_PROCESSING_CONCURRENCY = 4;
+const markdownImageOutputCache = new Map();
+
+async function runWithConcurrency(items, limit, worker) {
+  if (!items.length) return;
+  const workers = [];
+  let index = 0;
+
+  for (let i = 0; i < Math.min(limit, items.length); i += 1) {
+    workers.push((async () => {
+      while (index < items.length) {
+        const current = items[index];
+        index += 1;
+        await worker(current);
+      }
+    })());
+  }
+
+  await Promise.all(workers);
+}
 
 export default function(eleventyConfig) {
   /**
@@ -80,6 +102,29 @@ export default function(eleventyConfig) {
     const wordCount = textOnly.split(/\s+/).filter(word => word.length > 0).length;
     const minutes = Math.ceil(wordCount / 200);
     return `${minutes} min read`;
+  });
+
+  /**
+   * Resolve a post-local image reference to a public URL.
+   * Supports absolute URLs, root-relative URLs, and relative paths from inputPath.
+   */
+  eleventyConfig.addFilter("postImageUrl", (imagePath, inputPath) => {
+    if (!imagePath || !inputPath) return "";
+
+    const resolvedPath = normalizeImageReference(imagePath);
+    if (!resolvedPath) return "";
+
+    if (resolvedPath.startsWith("http://") || resolvedPath.startsWith("https://")) {
+      return resolvedPath;
+    }
+    if (resolvedPath.startsWith("/")) {
+      return resolvedPath;
+    }
+
+    const sourceDir = path.dirname(inputPath).replace(/\\/g, "/");
+    const joined = path.posix.normalize(path.posix.join(sourceDir, resolvedPath));
+    const withoutSrc = joined.startsWith("src/") ? joined.slice(3) : joined;
+    return `/${withoutSrc.replace(/^\/+/, "")}`;
   });
 
   /**
@@ -170,8 +215,8 @@ export default function(eleventyConfig) {
     if (!content || !inputPath) return content;
 
     // Find all markdown image references, including optional titles
-    // Matches: ![alt](path) or ![alt](path "title")
-    const imageRegex = /!\[([^\]]*)\]\(([^\s")]+)(?:\s+"([^"]*)")?\)/g;
+    // Matches: ![alt](path) and ![alt](path "title")
+    const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
     const matches = [...content.matchAll(imageRegex)];
 
     if (matches.length === 0) return content;
@@ -185,48 +230,55 @@ export default function(eleventyConfig) {
 
     // Process each image and build replacement map
     const replacements = new Map();
+    const uniqueMatches = Array.from(new Map(matches.map((match) => [match[0], match])).values());
 
-    for (const match of matches) {
-      const [fullMatch, alt, imagePath, title] = match;
+    await runWithConcurrency(uniqueMatches, MARKDOWN_IMAGE_PROCESSING_CONCURRENCY, async (match) => {
+      const [fullMatch, alt, imageInner] = match;
+      const { path: imagePath, title } = parseMarkdownImageInner(imageInner);
+      if (!imagePath) return;
 
       // Skip URLs
-      if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-        continue;
+      if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+        return;
       }
 
       // Resolve the full path to the source image
       let fullImagePath;
-      if (imagePath.startsWith('/')) {
+      if (imagePath.startsWith("/")) {
         // Absolute path from site root - prepend src/
-        fullImagePath = path.join('./src', imagePath);
+        fullImagePath = path.join("./src", imagePath.replace(/^\/+/, ""));
       } else {
         // Relative path - resolve from source file directory
         fullImagePath = path.join(sourceDir, imagePath);
       }
+      fullImagePath = path.normalize(fullImagePath);
 
       try {
-        // Use Eleventy Image to get the processed URL
-        // Output images relative to the page's URL
-        const metadata = await Image(fullImagePath, {
-          widths: ["auto"],
-          formats: ["jpeg"], // Use jpeg for markdown (simpler than picture element)
-          outputDir: outputDir,
-          urlPath: outputUrl,
-        });
+        const cacheKey = `${fullImagePath}|${outputDir}|${outputUrl}`;
+        let cachedResult = markdownImageOutputCache.get(cacheKey);
 
-        // Get the jpeg output (primary format for markdown)
-        const jpeg = metadata.jpeg?.[0];
-        if (jpeg) {
+        if (!cachedResult) {
+          cachedResult = Image(fullImagePath, {
+            widths: ["auto"],
+            formats: ["jpeg"], // Use jpeg for markdown (simpler than picture element)
+            outputDir,
+            urlPath: outputUrl,
+          }).then((metadata) => metadata.jpeg?.[0]?.url || null);
+          markdownImageOutputCache.set(cacheKey, cachedResult);
+        }
+
+        const jpegUrl = await cachedResult;
+        if (jpegUrl) {
           // Preserve the title if it existed
-          const titlePart = title ? ` "${title}"` : '';
-          replacements.set(fullMatch, `![${alt}](${jpeg.url}${titlePart})`);
+          const titlePart = title ? ` "${title}"` : "";
+          replacements.set(fullMatch, `![${alt}](${jpegUrl}${titlePart})`);
         }
       } catch (error) {
         // If image processing fails, leave the original reference
         // This handles cases like missing files or unsupported formats
         console.warn(`[fixMarkdownImagePaths] Could not process image: ${fullImagePath}`, error.message);
       }
-    }
+    });
 
     // Apply all replacements
     let result = content;

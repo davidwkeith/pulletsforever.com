@@ -302,6 +302,58 @@ header {
     font-weight: bold;
 }
 
+/* Archive page tiles */
+.archive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+}
+
+.archive-tile {
+    margin: 0;
+}
+
+.archive-tile-link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid var(--color-gray-20);
+    border-radius: 8px;
+    overflow: hidden;
+    text-decoration: none;
+    background: var(--background-color);
+}
+
+.archive-tile-link:hover .archive-tile-title {
+    text-decoration: underline;
+}
+
+.archive-tile-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid var(--color-gray-20);
+}
+
+.archive-tile-content {
+    padding: 0.85rem 0.95rem 1rem;
+}
+
+.archive-tile-title {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.35;
+    color: var(--text-color-link);
+}
+
+.archive-tile-date {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.8125em;
+    color: var(--color-gray-90);
+}
+
 /* Tags */
 .post-tag {
     display: inline-flex;
@@ -468,7 +520,7 @@ footer p img {
 }
 
 footer img#greenweb-badge {
-    margin-top: 4rem;
+    margin-top: 1.5rem;
 }
 
 /* Reduced motion preference - disable animations for users who prefer reduced motion */
@@ -658,6 +710,23 @@ figcaption {
     border-bottom: 1px solid var(--color-gray-20);
 }
 
+.postfeed-item-has-image {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 1rem;
+    align-items: start;
+}
+
+.postfeed-media {
+    display: block;
+}
+
+.postfeed-image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
 .postfeed-item:last-child {
     border-bottom: none;
     margin-bottom: 0;
@@ -710,6 +779,13 @@ figcaption {
     margin: 0 0 0.75em;
     border-bottom: 1px solid var(--color-gray-20);
     padding-bottom: 0.4em;
+}
+
+@media (min-width: 769px) {
+    /* Align "About" divider with the home feed heading divider */
+    .sidebar-section:first-child .sidebar-heading {
+        padding-top: 0.65em;
+    }
 }
 
 .sidebar-about {
@@ -778,6 +854,10 @@ figcaption {
 
 @media (max-width: 768px) {
     .home-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .postfeed-item-has-image {
         grid-template-columns: 1fr;
     }
 

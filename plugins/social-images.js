@@ -1,6 +1,8 @@
 import sharp from "sharp";
 import fs from "fs";
 import path from "path";
+import { createHash } from "crypto";
+import { extractFirstImageReference, normalizeImageReference } from "./utils/image-reference.js";
 
 const OUTPUT_DIR = "_site/img/social-cards";
 const URL_PATH = "/img/social-cards";
@@ -46,6 +48,15 @@ function slugify(text) {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
     .trim();
+}
+
+function makeCardId(title, pageInputPath) {
+  const baseSlug = slugify(title || "post") || "post";
+  const hash = createHash("sha1")
+    .update(pageInputPath || title || baseSlug)
+    .digest("hex")
+    .slice(0, 10);
+  return `${baseSlug}-${hash}`;
 }
 
 // Generate SVG template (hasImage adjusts layout for image placeholder)
@@ -115,32 +126,27 @@ const pendingCards = new Map();
 
 // Extract first image path from markdown content
 function extractFirstImage(content) {
-  if (!content) return null;
-  // Match markdown image: ![alt](path) or HTML img: <img src="path"
-  const mdMatch = content.match(/!\[[^\]]*\]\(([^)]+)\)/);
-  if (mdMatch) return mdMatch[1];
-  const htmlMatch = content.match(/<img[^>]+src=["']([^"']+)["']/);
-  if (htmlMatch) return htmlMatch[1];
-  return null;
+  return extractFirstImageReference(content);
 }
 
 // Resolve image path relative to page
 function resolveImagePath(imagePath, pageInputPath) {
-  if (!imagePath || !pageInputPath) return null;
+  const normalizedImagePath = normalizeImageReference(imagePath);
+  if (!normalizedImagePath || !pageInputPath) return null;
 
   // Skip external URLs
-  if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+  if (normalizedImagePath.startsWith("http://") || normalizedImagePath.startsWith("https://")) {
     return null;
   }
 
   // Absolute path from src root
-  if (imagePath.startsWith("/")) {
-    return path.join("src", imagePath);
+  if (normalizedImagePath.startsWith("/")) {
+    return path.join("src", normalizedImagePath.replace(/^\/+/, ""));
   }
 
   // Relative path - resolve from page directory
   const pageDir = path.dirname(pageInputPath);
-  return path.join(pageDir, imagePath);
+  return path.normalize(path.join(pageDir, normalizedImagePath));
 }
 
 // Generate social card with optional image composite
@@ -191,11 +197,8 @@ export default function (eleventyConfig) {
   // Generate all social cards after build completes
   eleventyConfig.on("eleventy.after", async () => {
     const promises = [];
-    for (const [slug, { title, imagePath }] of pendingCards) {
-      const hasImage = imagePath && fs.existsSync(imagePath);
-      const filename = hasImage ? `${slug}-img.png` : `${slug}.png`;
-      const outputPath = path.join(OUTPUT_DIR, filename);
-
+    for (const [cardId, { title, imagePath }] of pendingCards) {
+      const outputPath = path.join(OUTPUT_DIR, `${cardId}.png`);
       promises.push(
         generateSocialCard(title, imagePath, outputPath).catch((err) => {
           console.error(`Error generating social image for "${title}":`, err.message);
@@ -214,20 +217,15 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter("socialImageUrl", function (title, imagePath, pageInputPath) {
     if (!title) return "";
 
-    const slug = slugify(title);
+    const cardId = makeCardId(title, pageInputPath);
     const resolvedImagePath = resolveImagePath(imagePath, pageInputPath);
 
     // Queue card for generation, updating imagePath if we find one
-    const existing = pendingCards.get(slug);
+    const existing = pendingCards.get(cardId);
     if (!existing || (!existing.imagePath && resolvedImagePath)) {
-      pendingCards.set(slug, { title, imagePath: resolvedImagePath });
+      pendingCards.set(cardId, { title, imagePath: resolvedImagePath });
     }
 
-    // Determine filename based on whether image exists
-    // Note: We check file existence here to return correct URL
-    const hasImage = resolvedImagePath && fs.existsSync(resolvedImagePath);
-    const filename = hasImage ? `${slug}-img.png` : `${slug}.png`;
-
-    return `${URL_PATH}/${filename}`;
+    return `${URL_PATH}/${cardId}.png`;
   });
 }

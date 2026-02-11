@@ -11,20 +11,18 @@ export default function(eleventyConfig) {
     typographer: true,
   });
 
-  eleventyConfig.amendLibrary("md", mdLib => {
-    mdLib.use(footnote)
-         .use(mark)
-         .use(sup)
-         .use(markdownItAnchor, {
-      permalink: markdownItAnchor.permalink.linkInsideHeader({
-        placement: "after",
-        class: "header-anchor",
-        symbol: "<span aria-hidden=\"true\">🔗</span>",
-        renderAttrs: (slug) => ({ "aria-label": `Link to section: ${slug.replace(/-/g, ' ')}` }),
-      }),
-      level: [1,2,3,4],
-      slugify: eleventyConfig.getFilter("slugify")
-    });
+  mdLib.use(footnote)
+       .use(mark)
+       .use(sup)
+       .use(markdownItAnchor, {
+    permalink: markdownItAnchor.permalink.linkInsideHeader({
+      placement: "after",
+      class: "header-anchor",
+      symbol: "<span aria-hidden=\"true\">🔗</span>",
+      renderAttrs: (slug) => ({ "aria-label": `Link to section: ${slug.replace(/-/g, ' ')}` }),
+    }),
+    level: [1,2,3,4],
+    slugify: eleventyConfig.getFilter("slugify")
   });
 
   eleventyConfig.setLibrary("md", mdLib);

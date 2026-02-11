@@ -6,5 +6,19 @@ eleventyNavigation:
 ---
 <h1>Archive</h1>
 
-{% set postslist = collections.posts %}
-{% include "postslist.njk" %}
+<div class="archive-grid">
+{% for post in collections.posts | reverse %}
+  {% set postTitle = post.data.title or post.url %}
+  {% set postImage = post.templateContent | firstImage %}
+  {% set socialImage = postTitle | socialImageUrl(postImage, post.inputPath) %}
+  <article class="archive-tile">
+    <a href="{{ post.url }}" class="archive-tile-link">
+      <img class="archive-tile-image" src="{{ socialImage }}" alt="" loading="lazy" eleventy:ignore>
+      <div class="archive-tile-content">
+        <h2 class="archive-tile-title">{{ postTitle }}</h2>
+        <time class="archive-tile-date" datetime="{{ post.date | htmlDateString }}">{{ post.date | readableDate("LLLL yyyy") }}</time>
+      </div>
+    </a>
+  </article>
+{% endfor %}
+</div>

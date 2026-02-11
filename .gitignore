@@ -6,6 +6,7 @@ _site/
 
 # Cache
 .cache/
+.wrangler/
 
 # Environment
 .env

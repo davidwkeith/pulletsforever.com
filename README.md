@@ -15,24 +15,6 @@ npm start
 npm run build
 ```
 
-## Project Structure
-
-```
-pulletsforever.com/
-├── src/              # Content and templates
-│   ├── blog/         # Blog posts
-│   ├── _data/        # Data files (metadata, schema, CSP, etc.)
-│   ├── _includes/    # Layouts, partials, macros, CSS, JS
-│   └── ...
-├── plugins/          # Custom Eleventy plugins
-├── workers/          # Cloudflare Workers
-│   ├── site/         # Main site worker serving static assets
-│   └── micropub/     # Micropub endpoint
-└── _site/            # Generated output (gitignored)
-```
-
----
-
 ## Blog Post Frontmatter
 
 Blog posts support the following frontmatter fields (see [frontmatter.json](frontmatter.json)):
@@ -251,6 +233,14 @@ To use your custom domain (`pulletsforever.com`):
 2. Go to **Custom domains**
 3. Click **Set up a custom domain**
 4. Enter `pulletsforever.com` and follow the DNS configuration instructions
+
+---
+
+## TODO
+
+- [ ] Redesign social media cards
+- [ ] Resesign header
+- [ ] Add 'dwk' next to Memoji
 
 ---
 

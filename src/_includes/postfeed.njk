@@ -1,14 +1,24 @@
 <div class="postfeed">
 {% for post in postslist | reverse %}
-  <article class="postfeed-item{% if post.url == url %} postfeed-item-active{% endif %}">
-    <a href="{{ post.url }}" class="postfeed-link">{% if post.data.title %}{{ post.data.title }}{% else %}<code>{{ post.url }}</code>{% endif %}</a>
-    {% set desc = post.data.description or (post.content | excerpt) %}
-    {% if desc %}
-    <p class="postfeed-excerpt">{{ desc }}</p>
+  {% set heroImage = post.rawInput | firstImage %}
+  {% set heroInputPath = post.inputPath or post.page.inputPath %}
+  <article class="postfeed-item{% if post.url == url %} postfeed-item-active{% endif %}{% if heroImage %} postfeed-item-has-image{% endif %}">
+    {% if heroImage %}
+      {% set heroSrc = heroImage | postImageUrl(heroInputPath) %}
+      <a href="{{ post.url }}" class="postfeed-media">
+        <img class="postfeed-image" src="{{ heroSrc }}" alt="" loading="lazy" eleventy:ignore>
+      </a>
     {% endif %}
-    <div class="postfeed-meta">
-      <time datetime="{{ post.date | htmlDateString }}">{{ post.date | readableDate("LLLL yyyy") }}</time>
-      <span class="postfeed-reading-time">{{ post.content | readingTime }}</span>
+    <div class="postfeed-content">
+      <a href="{{ post.url }}" class="postfeed-link">{% if post.data.title %}{{ post.data.title }}{% else %}<code>{{ post.url }}</code>{% endif %}</a>
+      {% set desc = post.data.description or (post.content | excerpt) %}
+      {% if desc %}
+      <p class="postfeed-excerpt">{{ desc }}</p>
+      {% endif %}
+      <div class="postfeed-meta">
+        <time datetime="{{ post.date | htmlDateString }}">{{ post.date | readableDate("LLLL yyyy") }}</time>
+        <span class="postfeed-reading-time">{{ post.content | readingTime }}</span>
+      </div>
     </div>
   </article>
 {% endfor %}

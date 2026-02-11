@@ -22,7 +22,7 @@ layout: layouts/base.njk
 	{% endfor %}
 </ul>
 <a class="u-url" href="{{ page.url }}" aria-hidden="true" tabindex="-1"></a>
-<a class="p-author h-card" href="/about/">{{ metadata.author.name }}</a>
+<a class="p-author h-card" href="https://dwk.io">{{ metadata.author.name }}</a>
 
 {% set toc = content | tableOfContents %}
 {% if toc.length >= 3 %}

@@ -12,8 +12,10 @@ const htmlMinifierOptions = {
 }
 
 export default function (eleventyConfig) {
+  const isProduction = !!process.env.CF_PAGES || process.env.NODE_ENV === "production"
+
   eleventyConfig.addTransform("htmlmin", async function (content) {
-    if ((this.page.outputPath || "").endsWith(".html")) {
+    if (isProduction && (this.page.outputPath || "").endsWith(".html")) {
       return await minify(content, htmlMinifierOptions)
     }
     return content
