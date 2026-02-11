@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "npx @11ty/eleventy",
+    "dev": "wrangler dev",
     "pretest": "npm install",
     "test": "npx @11ty/eleventy",
     "start": "npx @11ty/eleventy --serve --quiet",
@@ -16,7 +17,8 @@
     "webmentions:send": "node scripts/send-webmentions.js",
     "webmentions:send:dry": "node scripts/send-webmentions.js --dry-run",
     "deploy": "npm run build && wrangler deploy",
-    "deploy:preview": "npm run build && wrangler deploy --dry-run"
+    "deploy:preview": "npm run build && wrangler deploy --dry-run",
+    "cf-typegen": "wrangler types"
   },
   "author": {
     "name": "David W. Keith",

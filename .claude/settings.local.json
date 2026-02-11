@@ -26,7 +26,10 @@
       "Bash(npm audit:*)",
       "Bash(npm search:*)",
       "Bash(npm view:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(npm test:*)",
+      "Bash(npx vitest:*)",
+      "WebFetch(domain:www.npmjs.com)"
     ],
     "deny": [],
     "ask": []
