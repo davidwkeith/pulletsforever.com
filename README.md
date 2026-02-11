@@ -26,6 +26,7 @@ pulletsforever.com/
 │   └── ...
 ├── plugins/          # Custom Eleventy plugins
 ├── workers/          # Cloudflare Workers
+│   ├── site/         # Main site worker serving static assets
 │   └── micropub/     # Micropub endpoint
 └── _site/            # Generated output (gitignored)
 ```
@@ -208,7 +209,7 @@ wrangler dev
 
 ## Site Deployment
 
-The main site is deployed to [Cloudflare Pages](https://pages.cloudflare.com/), which uses Workers under the hood to serve static files.
+The main site is deployed as a [Cloudflare Worker](https://developers.cloudflare.com/workers/) with statically built assets from Eleventy.
 
 ### Prerequisites
 
@@ -218,24 +219,24 @@ The main site is deployed to [Cloudflare Pages](https://pages.cloudflare.com/), 
 ### Deploy via Wrangler CLI
 
 ```bash
-# Build and deploy to Cloudflare Pages
+# Build and deploy the Worker + static assets
 npm run deploy
 ```
 
 This will:
 1. Build the site with Eleventy (`npm run build`)
-2. Deploy the `_site/` directory to Cloudflare Pages
+2. Deploy a Worker (`workers/site/index.js`) with `_site/` as static assets
 
 ### Deploy via Git Integration (Recommended)
 
 For automatic deployments on every push:
 
 1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/) → **Workers & Pages**
-2. Click **Create application** → **Pages** → **Connect to Git**
+2. Click **Create application** → **Workers** → **Import a repository**
 3. Select your GitLab repository
 4. Configure build settings:
    - **Build command**: `npm run build`
-   - **Build output directory**: `_site`
+   - **Deploy command**: `npx wrangler deploy`
    - **Root directory**: `/` (or leave empty)
 5. Add environment variables if needed (e.g., `WEBMENTION_IO_TOKEN`)
 6. Click **Save and Deploy**

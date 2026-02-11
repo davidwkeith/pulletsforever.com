@@ -15,8 +15,8 @@
     "new-post": "node scripts/new-post.js",
     "webmentions:send": "node scripts/send-webmentions.js",
     "webmentions:send:dry": "node scripts/send-webmentions.js --dry-run",
-    "deploy": "npm run build && wrangler pages deploy _site",
-    "deploy:preview": "npm run build && wrangler pages deploy _site --project-name=pulletsforever"
+    "deploy": "npm run build && wrangler deploy",
+    "deploy:preview": "npm run build && wrangler deploy --dry-run"
   },
   "author": {
     "name": "David W. Keith",

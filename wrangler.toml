@@ -1,3 +1,7 @@
-name = "pulletsforever-com"
+name = "pulletsforever"
 compatibility_date = "2024-01-01"
-pages_build_output_dir = "_site"
+main = "workers/site/index.js"
+
+[assets]
+directory = "./_site"
+binding = "ASSETS"
