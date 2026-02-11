@@ -8,6 +8,7 @@ export default {
     "self",
     "https://mirrors.creativecommons.org",
     "https://app.greenweb.org",
+    "https://s3.nl-ams.scw.cloud",
     // Webmention avatars can come from various sources
     "https://webmention.io",
     "https://*.gravatar.com",
