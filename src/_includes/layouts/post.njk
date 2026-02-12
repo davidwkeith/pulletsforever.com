@@ -18,7 +18,7 @@ layout: layouts/base.njk
 	<li>{{ content | readingTime }}</li>
 	{% for tag in tags | filterTagList %}
 	{% set tagUrl %}/tags/{{ tag | slugify }}/{% endset %}
-	<li><a href="{{ tagUrl }}" class="post-tag p-category">{{ tag }}</a>{% if not loop.last %}, {% endif %}</li>
+	<li><a href="{{ tagUrl }}" class="post-tag p-category" aria-label="Posts tagged {{ tag }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}</li>
 	{% endfor %}
 </ul>
 <a class="u-url" href="{{ page.url }}" aria-hidden="true" tabindex="-1"></a>

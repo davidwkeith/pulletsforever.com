@@ -21,7 +21,7 @@ npx @dwk/noodle
 On first run it asks which provider you want (Claude CLI or OpenAI), and what port to use. Then you open localhost:3000 and search. There's even a "Lucky Me" button that jumps straight to the top result, back when "I'm Feeling Lucky" wasn't a joke.
 
 <figure>
-  <img-comparison-slider>
+  <img-comparison-slider role="slider" aria-label="Compare Google and Noodle search results">
     <picture slot="first"><img src="google_results.png" alt="Google search results for thermostat showing sponsored product ads"/></picture>
     <picture slot="second"><img src="search_results.png" alt="Noodle search results for thermostat showing Wikipedia and informational links"/></picture>
   </img-comparison-slider>

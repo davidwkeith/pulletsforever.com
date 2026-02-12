@@ -101,7 +101,7 @@
                     : '<span class="wm-avatar-placeholder" aria-hidden="true"></span>'}
                   <span class="p-name">${escapeHtml(reply.author?.name || 'Anonymous')}</span>
                 </a>
-                <time class="dt-published" datetime="${reply.published || reply['wm-received']}">
+                <time class="dt-published" datetime="${escapeHtml(reply.published || reply['wm-received'])}">
                   ${formatDate(reply.published || reply['wm-received'])}
                 </time>
               </div>
@@ -153,6 +153,7 @@
       return;
     }
 
+    section.setAttribute('aria-live', 'polite');
     section.innerHTML = `
       <h3 id="webmentions-heading">Webmentions</h3>
       ${renderFacepile(data.likes, 'like')}

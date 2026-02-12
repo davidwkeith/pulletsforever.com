@@ -128,9 +128,6 @@ main :first-child {
     margin-top: 0;
 }
 
-header {
-}
-
 header:after {
     content: "";
     display: table;
@@ -436,6 +433,11 @@ header {
     text-decoration: underline;
 }
 
+.archive-tile-link:focus-visible {
+    outline: 2px solid var(--text-color-link);
+    outline-offset: 2px;
+}
+
 .archive-tile-image {
     display: block;
     width: 100%;
@@ -596,6 +598,11 @@ header {
 
 .related-post-tile-link:hover .related-post-tile-title {
     text-decoration: underline;
+}
+
+.related-post-tile-link:focus-visible {
+    outline: 2px solid var(--text-color-link);
+    outline-offset: 2px;
 }
 
 /* Direct Links / Markdown Headers */
@@ -846,9 +853,14 @@ footer img#greenweb-badge {
     color: inherit;
 }
 
-.wm-mention-tile:hover,
+.wm-mention-tile:hover {
+    border-color: var(--color-gray-50);
+}
+
 .wm-mention-tile:focus-visible {
     border-color: var(--color-gray-50);
+    outline: 2px solid var(--text-color-link);
+    outline-offset: 2px;
 }
 
 .wm-mention-meta {
