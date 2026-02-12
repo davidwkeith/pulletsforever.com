@@ -51,7 +51,22 @@ export default function (eleventyConfig) {
   eleventyConfig.addPlugin(pluginNavigation);
   eleventyConfig.addPlugin(pluginRss);
   eleventyConfig.addPlugin(pluginSchema);
-  eleventyConfig.addPlugin(pluginSyntaxHighlight);
+  eleventyConfig.addPlugin(pluginSyntaxHighlight, {
+    preAttributes: {
+      "data-language": function({ language }) {
+        const names = {
+          bash: "Bash", css: "CSS", diff: "Diff", html: "HTML",
+          javascript: "JavaScript", js: "JavaScript", json: "JSON",
+          markdown: "Markdown", md: "Markdown", njk: "Nunjucks",
+          php: "PHP", python: "Python", ruby: "Ruby",
+          shell: "Shell", sql: "SQL", swift: "Swift",
+          text: "Text", ts: "TypeScript", typescript: "TypeScript",
+          xml: "XML", yaml: "YAML", yml: "YAML",
+        };
+        return names[language] || language;
+      },
+    },
+  });
   eleventyConfig.addPlugin(pluginMarkdown);
 
   eleventyConfig.addPlugin(pluginSocialImages);

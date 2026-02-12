@@ -57,6 +57,15 @@
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   }
 
+  function getHost(urlStr) {
+    if (!urlStr) return '';
+    try {
+      return new URL(urlStr).hostname.replace(/^www\./, '');
+    } catch {
+      return '';
+    }
+  }
+
   function renderFacepile(items, label) {
     if (!items.length) return '';
     return `
@@ -115,12 +124,20 @@
         <ul class="wm-mention-list">
           ${mentions.map(mention => `
             <li class="wm-mention h-cite">
-              <a href="${escapeHtml(mention.url)}" class="u-url" rel="nofollow ugc">
-                ${mention.author?.name ? escapeHtml(mention.author.name) : escapeHtml(truncate(mention.url, 60))}
+              <a href="${escapeHtml(mention.url)}" class="u-url wm-mention-tile" rel="nofollow ugc">
+                ${(mention.published || mention['wm-received'] || getHost(mention.url)) ? `
+                  <p class="wm-mention-meta">
+                    ${mention.published || mention['wm-received']
+                      ? `<time datetime="${escapeHtml(mention.published || mention['wm-received'])}">${formatDate(mention.published || mention['wm-received'])}</time>`
+                      : ''}
+                    ${(mention.published || mention['wm-received']) && getHost(mention.url) ? '<span aria-hidden="true">&middot;</span>' : ''}
+                    ${getHost(mention.url) ? `<span>${escapeHtml(getHost(mention.url))}</span>` : ''}
+                  </p>
+                ` : ''}
+                ${mention.content?.text
+                  ? `<p class="p-content">${escapeHtml(truncate(mention.content.text, 200))}</p>`
+                  : ''}
               </a>
-              ${mention.content?.text
-                ? `<p class="p-content">${escapeHtml(truncate(mention.content.text, 200))}</p>`
-                : ''}
             </li>
           `).join('')}
         </ul>

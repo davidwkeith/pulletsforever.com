@@ -8,7 +8,7 @@ numberOfLatestPostsToShow: 10
 
 <div class="home-layout">
   <div class="home-feed">
-    <h2 class="home-section-heading">Recent posts</h2>
+    <hr class="home-section-divider">
     {% set postslist = collections.posts | head(-1 * numberOfLatestPostsToShow) %}
     {% set postslistCounter = postsCount %}
     {% include "postfeed.njk" %}

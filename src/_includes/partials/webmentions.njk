@@ -85,17 +85,25 @@
     <h4>{{ mentions.mentions.length }} Mention{% if mentions.mentions.length != 1 %}s{% endif %}</h4>
     <ul class="wm-mention-list">
       {% for mention in mentions.mentions | sortWebmentions %}
+      {% set mentionDate = mention.published or mention['wm-received'] %}
+      {% set mentionHost = mention.url | urlHost %}
       <li class="wm-mention h-cite">
-        <a href="{{ mention.url }}" class="u-url" rel="nofollow ugc">
-          {% if mention.author and mention.author.name %}
-          {{ mention.author.name }}
-          {% else %}
-          {{ mention.url | truncate(60) }}
+        <a href="{{ mention.url }}" class="u-url wm-mention-tile" rel="nofollow ugc">
+          {% if mentionDate or mentionHost %}
+          <p class="wm-mention-meta">
+            {% if mentionDate %}
+            <time datetime="{{ mentionDate }}">{{ mentionDate | readableDate }}</time>
+            {% endif %}
+            {% if mentionDate and mentionHost %}<span aria-hidden="true">&middot;</span>{% endif %}
+            {% if mentionHost %}
+            <span>{{ mentionHost }}</span>
+            {% endif %}
+          </p>
+          {% endif %}
+          {% if mention.content and mention.content.text %}
+          <p class="p-content">{{ mention.content.text | truncate(200) }}</p>
           {% endif %}
         </a>
-        {% if mention.content and mention.content.text %}
-        <p class="p-content">{{ mention.content.text | truncate(200) }}</p>
-        {% endif %}
       </li>
       {% endfor %}
     </ul>

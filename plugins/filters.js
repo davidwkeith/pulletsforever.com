@@ -205,6 +205,19 @@ export default function(eleventyConfig) {
   });
 
   /**
+   * Return the hostname for a URL (without leading www.)
+   */
+  eleventyConfig.addFilter("urlHost", (value) => {
+    if (!value || typeof value !== "string") return "";
+    try {
+      const host = new URL(value).hostname || "";
+      return host.replace(/^www\./, "");
+    } catch {
+      return "";
+    }
+  });
+
+  /**
    * Fix relative image paths in markdown content to use optimized images
    * Uses Eleventy Image to get the same processed URLs as HTML output
    * @param {string} content - Raw markdown content

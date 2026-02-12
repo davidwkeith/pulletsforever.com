@@ -1,10 +1,20 @@
 {% from "macros/social-icon.njk" import socialIcon %}
 
 <aside class="sidebar" aria-label="About and navigation">
+  <hr class="sidebar-top-divider">
+
+  <section class="sidebar-section sidebar-quote-section" aria-label="Quote">
+    <p class="sidebar-quote">"You have to treat the chickens pretty well, 'cause they've got a very tough union."</p>
+    <p class="sidebar-quote-attribution">&mdash; <a href="https://muppet.fandom.com/wiki/Episode_207:_Edgar_Bergen/transcript#:~:text=You%20have%20to%20treat%20the%20chickens%20pretty%20well%2C%20'cause%20they've%20got%20a%20very%20tough%20union." rel="external">Kermit the Frog</a></p>
+  </section>
+
   <section class="sidebar-section">
     <h2 class="sidebar-heading">About</h2>
     <div class="sidebar-about">
-      <img class="sidebar-avatar" src="/img/avatar.png" alt="{{ metadata.author.name }}" width="80" height="80" eleventy:widths="80,160" eleventy:output="/img/">
+      <div class="sidebar-identity">
+        <img class="sidebar-avatar" src="/img/avatar.png" alt="{{ metadata.author.name }}" width="80" height="80" eleventy:widths="80,160" eleventy:output="/img/">
+        <a class="sidebar-handle" href="https://dwk.io" rel="me">dwk</a>
+      </div>
       <p>{{ metadata.author.bio }}</p>
     </div>
   </section>
