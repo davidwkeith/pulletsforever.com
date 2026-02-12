@@ -1,5 +1,3 @@
-{% from "macros/social-icon.njk" import socialIcon %}
-
 <aside class="sidebar" aria-label="About and navigation">
   <hr class="sidebar-top-divider">
 
@@ -39,7 +37,7 @@
       {% if service != "blog" %}
       <li>
         <a href="{{ profileURL }}" rel="me external">
-          {{ socialIcon(service, 20) }}
+          {% renderTemplate "webc", {serviceName: service} %}<social-icon :service="serviceName" size="20"></social-icon>{% endrenderTemplate %}
           <span>{{ service }}</span>
         </a>
       </li>
@@ -47,7 +45,7 @@
     {% endfor %}
       <li>
         <a href="mailto:{{ metadata.author.email }}" rel="me">
-          {{ socialIcon("email", 20) }}
+          {% renderTemplate "webc" %}<social-icon service="email" size="20"></social-icon>{% endrenderTemplate %}
           <span>email</span>
         </a>
       </li>

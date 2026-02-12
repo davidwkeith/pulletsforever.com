@@ -1,17 +1,15 @@
-{% from "macros/social-icon.njk" import socialIcon %}
-
 <footer>
   {% if metadata.showSocialLinks and not hideFooterSocial %}
     <ul class="footer-social" role="list">
     {% for service, profileURL in metadata.author.alternates %}
       {% if service != "blog" %}
       <li><a href="{{ profileURL }}" rel="me external" aria-label="{{ service }}">
-        {{ socialIcon(service, 24) }}
+        {% renderTemplate "webc", {serviceName: service} %}<social-icon :service="serviceName" size="24"></social-icon>{% endrenderTemplate %}
       </a></li>
       {% endif %}
     {% endfor %}
     <li><a href="mailto:{{ metadata.author.email }}" rel="me" aria-label="email">
-      {{ socialIcon("email", 24) }}
+      {% renderTemplate "webc" %}<social-icon service="email" size="24"></social-icon>{% endrenderTemplate %}
     </a></li>
     </ul>
   {% endif %}

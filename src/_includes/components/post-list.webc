@@ -1,0 +1,22 @@
+<script webc:type="js">
+const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
+
+const posts = this.posts || [];
+const currentUrl = this.url || '';
+
+const items = [...posts].reverse().map(post => {
+  const title = post.data.title
+    ? esc(post.data.title)
+    : `<code>${esc(post.url)}</code>`;
+  const activeClass = post.url === currentUrl ? ' postlist-item-active' : '';
+  const dateIso = htmlDateString(post.date);
+  const dateReadable = readableDate(post.date, "LLLL yyyy");
+
+  return `<li class="postlist-item${activeClass}">
+		<a href="${post.url}" class="postlist-link">${title}</a>
+		<time class="postlist-date" datetime="${dateIso}">${dateReadable}</time>
+	</li>`;
+}).join('\n');
+
+`<ul class="postlist">\n${items}\n</ul>`;
+</script>

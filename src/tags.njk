@@ -17,6 +17,6 @@ permalink: /tags/{{ tag | slugify }}/
 <h1>Tagged “{{ tag }}”</h1>
 
 {% set postslist = collections[ tag ] %}
-{% include "postslist.njk" %}
+{% renderTemplate "webc", {posts: postslist, url: page.url} %}<post-list :posts="posts" :url="url"></post-list>{% endrenderTemplate %}
 
 <p>See <a href="/tags/">all tags</a>.</p>

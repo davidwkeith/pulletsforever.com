@@ -51,6 +51,8 @@
     "wrangler": "^4.59.1"
   },
   "dependencies": {
+    "@11ty/eleventy-plugin-webc": "^0.11.2",
+    "@11ty/webc": "^0.11.4",
     "img-comparison-slider": "^8.0.7"
   },
   "overrides": {

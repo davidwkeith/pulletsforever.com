@@ -1,0 +1,44 @@
+<script webc:type="js">
+const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
+
+const posts = this.posts || [];
+const currentUrl = this.url || '';
+
+const items = [...posts].reverse().map(post => {
+  const heroImage = firstImage(post.rawInput);
+  const heroInputPath = post.inputPath || (post.page && post.page.inputPath);
+  const title = post.data.title
+    ? esc(post.data.title)
+    : `<code>${esc(post.url)}</code>`;
+  const activeClass = post.url === currentUrl ? ' postfeed-item-active' : '';
+  const hasImageClass = heroImage ? ' postfeed-item-has-image' : '';
+
+  let imageHtml = '';
+  if (heroImage) {
+    const heroSrc = postImageUrl(heroImage, heroInputPath);
+    imageHtml = `<a href="${post.url}" class="postfeed-media">
+        <img class="postfeed-image" src="${heroSrc}" alt="" loading="lazy" eleventy:ignore>
+      </a>`;
+  }
+
+  const desc = post.data.description || excerpt(post.content);
+  const descHtml = desc ? `\n      <p class="postfeed-excerpt">${esc(desc)}</p>` : '';
+
+  const dateIso = htmlDateString(post.date);
+  const dateReadable = readableDate(post.date, "LLLL yyyy");
+  const readTime = readingTime(post.content);
+
+  return `  <article class="postfeed-item${activeClass}${hasImageClass}">
+    ${imageHtml}
+    <div class="postfeed-content">
+      <a href="${post.url}" class="postfeed-link">${title}</a>${descHtml}
+      <div class="postfeed-meta">
+        <time datetime="${dateIso}">${dateReadable}</time>
+        <span class="postfeed-reading-time">${readTime}</span>
+      </div>
+    </div>
+  </article>`;
+}).join('\n');
+
+`<div class="postfeed">\n${items}\n</div>`;
+</script>

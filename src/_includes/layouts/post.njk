@@ -1,7 +1,6 @@
 ---
 layout: layouts/base.njk
 ---
-{% from "macros/article.njk" import article %}
 {# Only include the syntax highlighter CSS on blog posts #}
 {% css %}{% include "node_modules/prismjs/themes/prism-okaidia.css" %}{% endcss %}
 {% css %}{% include "css/prism-diff.css" %}{% endcss %}
@@ -37,7 +36,17 @@ layout: layouts/base.njk
 {% endif %}
 
 <article class="e-content">
-  {{ article(page, content) }}
+  {% if hero %}
+    <figure class="hero-image">
+      {% set src = page.filePathStem + '/' + hero.src %}
+      {{ src }}
+      {% if hero.caption %}
+        <figcaption>{{ hero.caption }}</figcaption>
+      {% endif %}
+    </figure>
+  {% endif %}
+  {{ content | safe }}
+  <p class="signature">-dwk</p>
 </article>
 </div>
 

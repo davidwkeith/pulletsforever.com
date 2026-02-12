@@ -239,8 +239,6 @@ To use your custom domain (`pulletsforever.com`):
 ## TODO
 
 - [ ] Redesign social media cards
-- [ ] Resesign header
-- [ ] Add 'dwk' next to Memoji
 
 ---
 

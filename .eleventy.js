@@ -9,6 +9,8 @@ import pluginNavigation from "@11ty/eleventy-navigation"
 import pluginRss from '@11ty/eleventy-plugin-rss'
 import pluginSocialImages from "./plugins/social-images.js"
 import pluginSyntaxHighlight from "@11ty/eleventy-plugin-syntaxhighlight"
+import pluginWebc from "@11ty/eleventy-plugin-webc"
+import { RenderPlugin } from "@11ty/eleventy"
 import { contentSecurityPolicyPlugin } from "@jackdbd/eleventy-plugin-content-security-policy"
 
 // Local Plugins
@@ -68,6 +70,10 @@ export default function (eleventyConfig) {
     },
   });
   eleventyConfig.addPlugin(pluginMarkdown);
+  eleventyConfig.addPlugin(RenderPlugin);
+  eleventyConfig.addPlugin(pluginWebc, {
+    components: "src/_includes/components/**/*.webc",
+  });
 
   eleventyConfig.addPlugin(pluginSocialImages);
 
@@ -91,7 +97,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addShortcode("expiryDate", () => ((new Date()).setFullYear(new Date().getFullYear() + 1)).toISOString())
 
   return {
-    templateFormats: ["html", "md", "njk"],
+    templateFormats: ["html", "md", "njk", "webc"],
     markdownTemplateEngine: "njk",
     htmlTemplateEngine: "njk",
     dir: {

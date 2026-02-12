@@ -10,8 +10,7 @@ numberOfLatestPostsToShow: 10
   <div class="home-feed">
     <hr class="home-section-divider">
     {% set postslist = collections.posts | head(-1 * numberOfLatestPostsToShow) %}
-    {% set postslistCounter = postsCount %}
-    {% include "postfeed.njk" %}
+    {% renderTemplate "webc", {posts: postslist, url: page.url} %}<post-feed :posts="posts" :url="url"></post-feed>{% endrenderTemplate %}
 
     {% set morePosts = postsCount - numberOfLatestPostsToShow %}
     {% if morePosts > 0 %}
