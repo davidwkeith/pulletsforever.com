@@ -21,13 +21,14 @@
   <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    {% include "partials/header.njk" %}
+    {% set navEntries = collections.all | eleventyNavigation %}
+    {% renderTemplate "webc", {metadata: metadata, currentUrl: page.url, navEntries: navEntries} %}<site-header :metadata="metadata" :current-url="currentUrl" :nav-entries="navEntries"></site-header>{% endrenderTemplate %}
 
     <main id="main-content">
       {{ content | safe }}
     </main>
  
-    {% include "partials/footer.njk" %}
+    {% renderTemplate "webc", {metadata: metadata, hideFooterSocial: hideFooterSocial} %}<site-footer :metadata="metadata" :hide-footer-social="hideFooterSocial"></site-footer>{% endrenderTemplate %}
     
     {%- js %}
       {% include "js/index.js" %}

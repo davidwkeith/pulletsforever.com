@@ -1,0 +1,117 @@
+---
+layout: layouts/base.njk
+---
+<prism-styles></prism-styles>
+<script webc:type="js">
+const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
+const meta = $data.metadata;
+const page = $data.page;
+const postContent = $data.content || '';
+const postTitle = $data.title || '';
+const postTags = filterTagList($data.tags || []);
+const postHero = $data.hero;
+const collections = $data.collections || {};
+
+// Tag list items
+const tagItems = postTags.map((tag, i) => {
+  const tagUrl = `/tags/${slugify(tag)}/`;
+  const comma = i < postTags.length - 1 ? ', ' : '';
+  return `<li><a href="${tagUrl}" class="post-tag p-category" aria-label="Posts tagged ${esc(tag)}">${esc(tag)}</a>${comma}</li>`;
+}).join('\n\t');
+
+// Table of contents
+const toc = tableOfContents(postContent);
+let tocHtml = '';
+if (toc.length >= 3) {
+  const tocItems = toc.map(item =>
+    `\t\t<li class="toc-level-${item.level}"><a href="#${item.id}">${esc(item.text)}</a></li>`
+  ).join('\n');
+  tocHtml = `
+<nav class="toc" aria-labelledby="toc-heading">
+\t<h3 id="toc-heading">Table of Contents</h3>
+\t<ol>
+${tocItems}
+\t</ol>
+</nav>`;
+}
+
+// Hero image
+let heroHtml = '';
+if (postHero) {
+  const heroSrc = page.filePathStem + '/' + postHero.src;
+  const captionHtml = postHero.caption ? `\n      <figcaption>${esc(postHero.caption)}</figcaption>` : '';
+  heroHtml = `
+    <figure class="hero-image">
+      ${heroSrc}${captionHtml}
+    </figure>`;
+}
+
+// Related posts
+const relatedList = relatedPosts($data.tags || [], page.url, collections.posts || []);
+let relatedHtml = '';
+if (relatedList.length > 0) {
+  const relatedItems = relatedList.map(post => {
+    const pTitle = (post.data && post.data.title) || post.url;
+    const pImage = firstImage(post.templateContent || '');
+    const pSocialImage = socialImageUrl(pTitle, pImage, post.inputPath);
+    return `\t\t<li class="related-post-tile">
+\t\t\t<a href="${post.url}" class="related-post-tile-link">
+\t\t\t\t<img class="related-post-tile-image" src="${esc(pSocialImage)}" alt="" loading="lazy" eleventy:ignore>
+\t\t\t\t<span class="related-post-tile-title">${esc(pTitle)}</span>
+\t\t\t</a>
+\t\t</li>`;
+  }).join('\n');
+  relatedHtml = `
+<aside class="related-posts" aria-labelledby="related-heading">
+\t<h3 id="related-heading">Related Posts</h3>
+\t<ul class="related-post-grid">
+${relatedItems}
+\t</ul>
+</aside>`;
+}
+
+// Previous/next navigation
+let prevNextHtml = '';
+if (collections.posts) {
+  const previousPost = getPreviousCollectionItem(collections.posts, page);
+  const nextPost = getNextCollectionItem(collections.posts, page);
+  if (previousPost || nextPost) {
+    let navItems = '';
+    if (previousPost) {
+      navItems += `<li>Previous: <a href="${previousPost.url}">${esc(previousPost.data.title)}</a></li>`;
+    }
+    if (nextPost) {
+      navItems += `<li>Next: <a href="${nextPost.url}">${esc(nextPost.data.title)}</a></li>`;
+    }
+    prevNextHtml = `
+<nav aria-label="Post navigation">
+<ul class="links-nextprev">
+\t${navItems}
+</ul>
+</nav>`;
+  }
+}
+
+// Img-comparison-slider detection — output data attribute for conditional assets
+const hasSlider = postContent.includes('<img-comparison-slider');
+
+`<div class="h-entry"${hasSlider ? ' data-has-slider' : ''}>
+<h2 class="p-name">${esc(postTitle)}</h2>
+
+<ul class="post-metadata">
+\t<li><time class="dt-published" datetime="${htmlDateString(page.date)}">${readableDate(page.date)}</time></li>
+\t<li>${readingTime(postContent)}</li>
+\t${tagItems}
+</ul>
+<a class="u-url" href="${page.url}" aria-hidden="true" tabindex="-1"></a>
+<a class="p-author h-card" href="https://dwk.io">${esc(meta.author.name)}</a>
+${tocHtml}
+<article class="e-content">${heroHtml}
+  ${postContent}
+  <p class="signature">-dwk</p>
+</article>
+</div>
+${relatedHtml}
+${prevNextHtml}`;
+</script>
+<web-mentions :webmentions="$data.webmentions" :page-url="$data.page.url" :site-url="$data.metadata.url"></web-mentions>

@@ -1,0 +1,36 @@
+<script webc:type="js">
+const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
+const meta = this.metadata || $data.metadata;
+const showSocial = meta.showSocialLinks && !this.hideFooterSocial;
+
+let socialHtml = '';
+if (showSocial) {
+  const alternates = meta.author.alternates || {};
+  const items = Object.entries(alternates)
+    .filter(([service]) => service !== 'blog')
+    .map(([service, profileURL]) => {
+      const icon = socialIcon(service, 24);
+      return `<li><a href="${profileURL}" rel="me external" aria-label="${esc(service)}">${icon}</a></li>`;
+    }).join('\n    ');
+
+  const emailIcon = socialIcon('email', 24);
+
+  socialHtml = `<ul class="footer-social" role="list">
+    ${items}
+    <li><a href="mailto:${meta.author.email}" rel="me" aria-label="email">${emailIcon}</a></li>
+    </ul>`;
+}
+
+`<footer>
+  ${socialHtml}
+    <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/">
+    <a property="dct:title" rel="cc:attributionURL" href="${meta.url}">${esc(meta.title)}</a> by
+    <a rel="cc:attributionURL dct:creator author me" property="cc:attributionName" href="${meta.author.url}">${esc(meta.author.name)}</a> is licensed under<br>
+    <a href="https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">Creative Commons Attribution 4.0 International
+      <img height="22" width="22" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt="Creative Commons logo" eleventy:output="/img/">
+      <img height="22" width="22" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt="Attribution Required" eleventy:output="/img/">
+    </a>
+  </p>
+  <img id="greenweb-badge" width="200" height="95" src="https://app.greenweb.org/api/v3/greencheckimage/${meta.site}" alt="This website runs on green hosting - verified by thegreenwebfoundation.org" eleventy:ignore>
+</footer>`;
+</script>

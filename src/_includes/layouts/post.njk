@@ -70,7 +70,7 @@ layout: layouts/base.njk
 </aside>
 {% endif %}
 
-{% include "partials/webmentions.njk" %}
+{% renderTemplate "webc", {webmentions: webmentions, pageUrl: page.url, siteUrl: metadata.url} %}<web-mentions :webmentions="webmentions" :page-url="pageUrl" :site-url="siteUrl"></web-mentions>{% endrenderTemplate %}
 
 {% if collections.posts %}
   {% set previousPost = collections.posts | getPreviousCollectionItem %}

@@ -1,0 +1,73 @@
+<script webc:type="js">
+const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
+const meta = this.metadata || $data.metadata;
+const collections = this.collections || $data.collections || {};
+
+// Tags section
+const allTags = filterTagList(getAllTags(collections.all || [])).sort();
+let tagsHtml = '';
+if (allTags.length) {
+  const tagItems = allTags.map(tag => {
+    const tagUrl = `/tags/${slugify(tag)}/`;
+    const count = collections[tag] ? collections[tag].length : 0;
+    return `<li><a href="${tagUrl}">${esc(tag)}</a> <span class="sidebar-tag-count">(${count})</span></li>`;
+  }).join('\n    ');
+
+  tagsHtml = `
+  <section class="sidebar-section">
+    <h2 class="sidebar-heading">Topics</h2>
+    <ul class="sidebar-tags" role="list">
+    ${tagItems}
+    </ul>
+  </section>`;
+}
+
+// Social links section
+const alternates = meta.author.alternates || {};
+const socialItems = Object.entries(alternates)
+  .filter(([service]) => service !== 'blog')
+  .map(([service, profileURL]) => {
+    const icon = socialIcon(service, 20);
+    return `<li>
+        <a href="${profileURL}" rel="me external">
+          ${icon}
+          <span>${esc(service)}</span>
+        </a>
+      </li>`;
+  }).join('\n    ');
+
+const emailIcon = socialIcon('email', 20);
+
+`<aside class="sidebar" aria-label="About and navigation">
+  <hr class="sidebar-top-divider">
+
+  <section class="sidebar-section sidebar-quote-section" aria-label="Quote">
+    <p class="sidebar-quote">"You have to treat the chickens pretty well, 'cause they've got a very tough union."</p>
+    <p class="sidebar-quote-attribution">&mdash; <a href="https://muppet.fandom.com/wiki/Episode_207:_Edgar_Bergen/transcript#:~:text=You%20have%20to%20treat%20the%20chickens%20pretty%20well%2C%20'cause%20they've%20got%20a%20very%20tough%20union." rel="external">Kermit the Frog</a></p>
+  </section>
+
+  <section class="sidebar-section">
+    <h2 class="sidebar-heading">About</h2>
+    <div class="sidebar-about">
+      <div class="sidebar-identity">
+        <img class="sidebar-avatar" src="/img/avatar.png" alt="${esc(meta.author.name)}" width="80" height="80" eleventy:widths="80,160" eleventy:output="/img/">
+        <a class="sidebar-handle" href="https://dwk.io" rel="me">dwk</a>
+      </div>
+      <p>${esc(meta.author.bio)}</p>
+    </div>
+  </section>
+${tagsHtml}
+  <section class="sidebar-section">
+    <h2 class="sidebar-heading">Find me</h2>
+    <ul class="sidebar-social" role="list">
+    ${socialItems}
+      <li>
+        <a href="mailto:${meta.author.email}" rel="me">
+          ${emailIcon}
+          <span>email</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+</aside>`;
+</script>

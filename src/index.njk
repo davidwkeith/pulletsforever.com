@@ -3,6 +3,8 @@ layout: layouts/base.njk
 changeFreq: weekly
 hideFooterSocial: true
 numberOfLatestPostsToShow: 10
+eleventyImport:
+  collections: ["posts"]
 ---
 {% set postsCount = collections.posts | length %}
 
@@ -18,5 +20,5 @@ numberOfLatestPostsToShow: 10
     {% endif %}
   </div>
 
-  {% include "partials/sidebar.njk" %}
+  {% renderTemplate "webc", {metadata: metadata, collections: collections} %}<site-sidebar :metadata="metadata" :collections="collections"></site-sidebar>{% endrenderTemplate %}
 </div>

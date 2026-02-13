@@ -1,0 +1,133 @@
+<script webc:type="js">
+const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
+const trunc = (s, n) => s && s.length > n ? s.substring(0, n) + '...' : (s || '');
+const wm = this.webmentions || $data.webmentions;
+const pageUrl = this.pageUrl || '';
+const siteUrl = this.siteUrl || '';
+const mentions = getWebmentions(wm, pageUrl);
+const hasWebmentions = (mentions.likes && mentions.likes.length) ||
+  (mentions.reposts && mentions.reposts.length) ||
+  (mentions.replies && mentions.replies.length) ||
+  (mentions.mentions && mentions.mentions.length);
+
+let inner = '';
+if (hasWebmentions) {
+  inner += `<h3 id="webmentions-heading">Webmentions</h3>`;
+
+  // Likes facepile
+  if (mentions.likes && mentions.likes.length) {
+    const likeItems = mentions.likes.map(like => {
+      const photo = like.author.photo
+        ? `<img src="${esc(like.author.photo)}" alt="${esc(like.author.name)}" width="48" height="48" loading="lazy">`
+        : `<span class="wm-avatar-placeholder" aria-hidden="true"></span>`;
+      return `<li>
+        <a href="${esc(like.author.url)}" title="${esc(like.author.name)}" rel="nofollow ugc">${photo}</a>
+      </li>`;
+    }).join('\n      ');
+
+    inner += `
+  <div class="wm-likes">
+    <h4>${mentions.likes.length} Like${mentions.likes.length !== 1 ? 's' : ''}</h4>
+    <ul class="wm-facepile" aria-label="People who liked this">
+      ${likeItems}
+    </ul>
+  </div>`;
+  }
+
+  // Reposts facepile
+  if (mentions.reposts && mentions.reposts.length) {
+    const repostItems = mentions.reposts.map(repost => {
+      const photo = repost.author.photo
+        ? `<img src="${esc(repost.author.photo)}" alt="${esc(repost.author.name)}" width="48" height="48" loading="lazy">`
+        : `<span class="wm-avatar-placeholder" aria-hidden="true"></span>`;
+      return `<li>
+        <a href="${esc(repost.author.url)}" title="${esc(repost.author.name)}" rel="nofollow ugc">${photo}</a>
+      </li>`;
+    }).join('\n      ');
+
+    inner += `
+  <div class="wm-reposts">
+    <h4>${mentions.reposts.length} Repost${mentions.reposts.length !== 1 ? 's' : ''}</h4>
+    <ul class="wm-facepile" aria-label="People who reposted this">
+      ${repostItems}
+    </ul>
+  </div>`;
+  }
+
+  // Replies
+  if (mentions.replies && mentions.replies.length) {
+    const sortedReplies = sortWebmentions(mentions.replies);
+    const replyItems = sortedReplies.map(reply => {
+      const photo = reply.author.photo
+        ? `<img src="${esc(reply.author.photo)}" alt="" width="48" height="48" loading="lazy" class="u-photo">`
+        : `<span class="wm-avatar-placeholder" aria-hidden="true"></span>`;
+      const published = reply.published || reply['wm-received'];
+      const contentHtml = (reply.content && reply.content.text)
+        ? `\n        <blockquote class="wm-reply-content p-content">\n          ${esc(trunc(reply.content.text, 500))}\n        </blockquote>`
+        : '';
+      return `<li class="wm-reply h-cite">
+        <div class="wm-reply-author">
+          <a href="${esc(reply.author.url)}" class="p-author h-card" rel="nofollow ugc">
+            ${photo}
+            <span class="p-name">${esc(reply.author.name)}</span>
+          </a>
+          <time class="dt-published" datetime="${esc(published)}">
+            ${readableDate(published)}
+          </time>
+        </div>${contentHtml}
+        <a href="${esc(reply.url)}" class="u-url wm-reply-source" rel="nofollow ugc">View original</a>
+      </li>`;
+    }).join('\n      ');
+
+    inner += `
+  <div class="wm-replies">
+    <h4>${mentions.replies.length} Repl${mentions.replies.length === 1 ? 'y' : 'ies'}</h4>
+    <ol class="wm-reply-list">
+      ${replyItems}
+    </ol>
+  </div>`;
+  }
+
+  // Generic mentions
+  if (mentions.mentions && mentions.mentions.length) {
+    const sortedMentions = sortWebmentions(mentions.mentions);
+    const mentionItems = sortedMentions.map(mention => {
+      const mentionDate = mention.published || mention['wm-received'];
+      const mentionHost = urlHost(mention.url);
+      let metaHtml = '';
+      if (mentionDate || mentionHost) {
+        let metaParts = '';
+        if (mentionDate) {
+          metaParts += `<time datetime="${esc(mentionDate)}">${readableDate(mentionDate)}</time>`;
+        }
+        if (mentionDate && mentionHost) {
+          metaParts += `<span aria-hidden="true">&middot;</span>`;
+        }
+        if (mentionHost) {
+          metaParts += `<span>${esc(mentionHost)}</span>`;
+        }
+        metaHtml = `\n          <p class="wm-mention-meta">${metaParts}</p>`;
+      }
+      const contentHtml = (mention.content && mention.content.text)
+        ? `\n          <p class="p-content">${esc(trunc(mention.content.text, 200))}</p>`
+        : '';
+      return `<li class="wm-mention h-cite">
+        <a href="${esc(mention.url)}" class="u-url wm-mention-tile" rel="nofollow ugc">${metaHtml}${contentHtml}
+        </a>
+      </li>`;
+    }).join('\n      ');
+
+    inner += `
+  <div class="wm-mentions">
+    <h4>${mentions.mentions.length} Mention${mentions.mentions.length !== 1 ? 's' : ''}</h4>
+    <ul class="wm-mention-list">
+      ${mentionItems}
+    </ul>
+  </div>`;
+  }
+}
+
+`<section class="webmentions" aria-labelledby="webmentions-heading" data-page-url="${esc(siteUrl)}${esc(pageUrl)}">
+${inner}
+</section>`;
+</script>

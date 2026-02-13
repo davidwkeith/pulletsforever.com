@@ -4,7 +4,7 @@ export default {
   tags: [
     "posts"
   ],
-  layout: "layouts/post.njk",
+  layout: "layouts/post.webc",
   ogType: "article",
   permalink: "{{ page.fileSlug }}/",
   index: "/",
