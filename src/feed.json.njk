@@ -2,7 +2,6 @@
 eleventyExcludeFromCollections: true
 permalink: /feed.json
 ---
-{# TODO: add WebSub https://www.w3.org/TR/websub/ #}
 {% from "macros/article.njk" import article %}
 {
 	"version": "https://jsonfeed.org/version/1.1",
@@ -10,6 +9,12 @@ permalink: /feed.json
 	"language": "{{ metadata.language }}",
 	"home_page_url": "{{ metadata.url }}",
 	"feed_url": "{{ permalink | absoluteUrl(metadata.url) }}",
+	"hubs": [
+		{
+			"type": "WebSub",
+			"url": "{{ metadata.websub.hub }}"
+		}
+	],
 	"icon": "{{ metadata.logo.src | absoluteUrl(metadata.url) }}",
 	"favicon": "{{ metadata.favicon | absoluteUrl(metadata.url) }}",
 	"description": "{{ metadata.description }}",

@@ -16,7 +16,9 @@
     "new-post": "node scripts/new-post.js",
     "webmentions:send": "node scripts/send-webmentions.js",
     "webmentions:send:dry": "node scripts/send-webmentions.js --dry-run",
-    "deploy": "npm run build && wrangler deploy",
+    "websub:ping": "node scripts/ping-websub.js",
+    "websub:ping:dry": "node scripts/ping-websub.js --dry-run",
+    "deploy": "npm run build && wrangler deploy && npm run websub:ping",
     "deploy:preview": "npm run build && wrangler deploy --dry-run",
     "cf-typegen": "wrangler types"
   },

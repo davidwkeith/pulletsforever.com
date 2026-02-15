@@ -27,6 +27,11 @@ const micropub = {
   media_endpoint: `https://micropub.${site}/media`,
 };
 
+// WebSub configuration (W3C standard for real-time feed notifications)
+const websub = {
+  hub: "https://pubsubhubbub.superfeedr.com/",
+};
+
 export default {
   // Global metadata
   language: "en",
@@ -79,8 +84,11 @@ export default {
     { rel: "token_endpoint", href: indieauth.token_endpoint },
     // Micropub discovery links
     { rel: "micropub", href: micropub.endpoint },
+    // WebSub discovery link
+    { rel: "hub", href: websub.hub },
   ],
   indieauth,
   micropub,
+  websub,
   schema,
 };
