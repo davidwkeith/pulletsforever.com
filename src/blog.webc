@@ -1,0 +1,30 @@
+---
+layout: layouts/base.njk
+eleventyImport:
+  collections: ["posts"]
+---
+<script webc:type="js">
+const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
+const posts = ($data.collections.posts || []).slice().reverse();
+
+const tiles = posts.map(post => {
+  const postTitle = (post.data && post.data.title) || post.url;
+  const postImage = firstImage(post.templateContent || '');
+  const socialImg = socialImageUrl(postTitle, postImage, post.inputPath);
+  return `  <article class="archive-tile">
+    <a href="${post.url}" class="archive-tile-link">
+      <img class="archive-tile-image" src="${esc(socialImg)}" alt="" loading="lazy" eleventy:ignore>
+      <div class="archive-tile-content">
+        <h2 class="archive-tile-title">${esc(postTitle)}</h2>
+        <time class="archive-tile-date" datetime="${htmlDateString(post.date)}">${readableDate(post.date, "LLLL yyyy")}</time>
+      </div>
+    </a>
+  </article>`;
+}).join('\n');
+
+`<h1>Archive</h1>
+
+<div class="archive-grid">
+${tiles}
+</div>`;
+</script>

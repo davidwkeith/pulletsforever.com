@@ -1,0 +1,22 @@
+---
+layout: layouts/base.njk
+changeFreq: weekly
+hideFooterSocial: true
+numberOfLatestPostsToShow: 10
+eleventyImport:
+  collections: ["posts"]
+---
+<div class="home-layout">
+  <div class="home-feed">
+    <hr class="home-section-divider">
+    <post-feed :posts="$data.collections.posts.slice(-1 * $data.numberOfLatestPostsToShow)" :url="$data.page.url"></post-feed>
+    <script webc:type="js">
+    const posts = $data.collections.posts || [];
+    const morePosts = posts.length - $data.numberOfLatestPostsToShow;
+    morePosts > 0
+      ? `<p class="home-more-link"><a href="/blog/">View all posts &rarr;</a></p>`
+      : '';
+    </script>
+  </div>
+  <site-sidebar :metadata="$data.metadata" :collections="$data.collections"></site-sidebar>
+</div>

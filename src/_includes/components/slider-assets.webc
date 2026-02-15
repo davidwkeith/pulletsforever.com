@@ -1,0 +1,7 @@
+<script webc:type="js">
+const postContent = $data.content || '';
+postContent.includes('<img-comparison-slider')
+  ? `<link rel="stylesheet" href="/css/img-comparison-slider.css" webc:keep>
+<script defer src="/js/img-comparison-slider.js" webc:keep><\/script>`
+  : '';
+</script>

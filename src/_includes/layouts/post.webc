@@ -1,7 +1,9 @@
 ---
 layout: layouts/base.njk
 ---
-<prism-styles></prism-styles>
+<link rel="stylesheet" href="../../../node_modules/prismjs/themes/prism-okaidia.css">
+<link rel="stylesheet" href="../css/prism-diff.css">
+<slider-assets></slider-assets>
 <script webc:type="js">
 const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
 const meta = $data.metadata;
@@ -70,32 +72,7 @@ ${relatedItems}
 </aside>`;
 }
 
-// Previous/next navigation
-let prevNextHtml = '';
-if (collections.posts) {
-  const previousPost = getPreviousCollectionItem(collections.posts, page);
-  const nextPost = getNextCollectionItem(collections.posts, page);
-  if (previousPost || nextPost) {
-    let navItems = '';
-    if (previousPost) {
-      navItems += `<li>Previous: <a href="${previousPost.url}">${esc(previousPost.data.title)}</a></li>`;
-    }
-    if (nextPost) {
-      navItems += `<li>Next: <a href="${nextPost.url}">${esc(nextPost.data.title)}</a></li>`;
-    }
-    prevNextHtml = `
-<nav aria-label="Post navigation">
-<ul class="links-nextprev">
-\t${navItems}
-</ul>
-</nav>`;
-  }
-}
-
-// Img-comparison-slider detection — output data attribute for conditional assets
-const hasSlider = postContent.includes('<img-comparison-slider');
-
-`<div class="h-entry"${hasSlider ? ' data-has-slider' : ''}>
+`<div class="h-entry">
 <h2 class="p-name">${esc(postTitle)}</h2>
 
 <ul class="post-metadata">
@@ -111,7 +88,33 @@ ${tocHtml}
   <p class="signature">-dwk</p>
 </article>
 </div>
-${relatedHtml}
-${prevNextHtml}`;
+${relatedHtml}`;
 </script>
 <web-mentions :webmentions="$data.webmentions" :page-url="$data.page.url" :site-url="$data.metadata.url"></web-mentions>
+<script webc:type="js">
+const esc2 = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
+const collections2 = $data.collections || {};
+const page2 = $data.page;
+
+let prevNextHtml = '';
+if (collections2.posts) {
+  const previousPost = getPreviousCollectionItem(collections2.posts, page2);
+  const nextPost = getNextCollectionItem(collections2.posts, page2);
+  if (previousPost || nextPost) {
+    let navItems = '';
+    if (previousPost) {
+      navItems += `<li>Previous: <a href="${previousPost.url}">${esc2(previousPost.data.title)}</a></li>`;
+    }
+    if (nextPost) {
+      navItems += `<li>Next: <a href="${nextPost.url}">${esc2(nextPost.data.title)}</a></li>`;
+    }
+    prevNextHtml = `
+<nav aria-label="Post navigation">
+<ul class="links-nextprev">
+\t${navItems}
+</ul>
+</nav>`;
+  }
+}
+prevNextHtml;
+</script>
