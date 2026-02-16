@@ -1,4 +1,6 @@
 <script webc:type="js">
+export default function() {
+const { socialIcon, $data } = this;
 const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
 const meta = this.metadata || $data.metadata;
 const showSocial = meta.showSocialLinks && !this.hideFooterSocial;
@@ -33,4 +35,5 @@ if (showSocial) {
   </p>
   <img id="greenweb-badge" width="200" height="95" src="https://app.greenweb.org/api/v3/greencheckimage/${meta.site}" alt="This website runs on green hosting - verified by thegreenwebfoundation.org" eleventy:ignore>
 </footer>`;
+}
 </script>

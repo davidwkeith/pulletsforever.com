@@ -1,4 +1,6 @@
 <script webc:type="js">
+export default function() {
+const { filterTagList, getAllTags, slugify, socialIcon, $data } = this;
 const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
 const meta = this.metadata || $data.metadata;
 const collections = this.collections || $data.collections || {};
@@ -38,7 +40,7 @@ const socialItems = Object.entries(alternates)
 
 const emailIcon = socialIcon('email', 20);
 
-`<aside class="sidebar" aria-label="About and navigation">
+return `<aside class="sidebar" aria-label="About and navigation">
   <hr class="sidebar-top-divider">
 
   <section class="sidebar-section sidebar-quote-section" aria-label="Quote">
@@ -70,4 +72,5 @@ ${tagsHtml}
     </ul>
   </section>
 </aside>`;
+}
 </script>

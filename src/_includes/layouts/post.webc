@@ -5,6 +5,8 @@ layout: layouts/base.njk
 <link rel="stylesheet" href="../css/prism-diff.css">
 <slider-assets></slider-assets>
 <script webc:type="js">
+export default function() {
+const { $data, filterTagList, slugify, tableOfContents, relatedPosts, firstImage, socialImageUrl, htmlDateString, readableDate, readingTime } = this;
 const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
 const meta = $data.metadata;
 const page = $data.page;
@@ -89,9 +91,12 @@ ${tocHtml}
 </article>
 </div>
 ${relatedHtml}`;
+}
 </script>
 <web-mentions :webmentions="$data.webmentions" :page-url="$data.page.url" :site-url="$data.metadata.url"></web-mentions>
 <script webc:type="js">
+export default function() {
+const { $data, getPreviousCollectionItem, getNextCollectionItem } = this;
 const esc2 = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
 const collections2 = $data.collections || {};
 const page2 = $data.page;
@@ -116,5 +121,6 @@ if (collections2.posts) {
 </nav>`;
   }
 }
-prevNextHtml;
+return prevNextHtml;
+}
 </script>

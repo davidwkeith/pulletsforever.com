@@ -1,4 +1,6 @@
 <script webc:type="js">
+export default function() {
+const { htmlDateString, readableDate } = this;
 const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
 
 const posts = this.posts || [];
@@ -18,5 +20,6 @@ const items = [...posts].reverse().map(post => {
 	</li>`;
 }).join('\n');
 
-`<ul class="postlist">\n${items}\n</ul>`;
+return `<ul class="postlist">\n${items}\n</ul>`;
+}
 </script>

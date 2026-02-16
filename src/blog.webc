@@ -4,6 +4,8 @@ eleventyImport:
   collections: ["posts"]
 ---
 <script webc:type="js">
+export default function() {
+const { $data, firstImage, socialImageUrl, htmlDateString, readableDate } = this;
 const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
 const posts = ($data.collections.posts || []).slice().reverse();
 
@@ -22,9 +24,10 @@ const tiles = posts.map(post => {
   </article>`;
 }).join('\n');
 
-`<h1>Archive</h1>
+return `<h1>Archive</h1>
 
 <div class="archive-grid">
 ${tiles}
 </div>`;
+}
 </script>

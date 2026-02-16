@@ -27,11 +27,8 @@ Build output is functionally identical to the pre-conversion baseline (84 files)
 | `layouts/base.njk` | Root layout uses async `{% favicons %}` shortcode and `{% css %}{% include %}{% endcss %}` paired shortcodes — both unsupported in WebC |
 | `partials/meta-tags.njk` | Included by `base.njk`; `$data.schema` not available in WebC `renderTemplate` context |
 | `partials/link-tags.njk` | Included by `base.njk`; uses async `{% favicons %}` shortcode |
-| `macros/article.njk` | Used by feed templates (`feed.xml.njk`, `feed.json.njk`) |
 | `tags.njk` | Paginated with dynamic permalinks — [broken in WebC](https://github.com/11ty/eleventy-plugin-webc/issues/87) |
 | `tags-list.njk` | Requires explicit `permalink: /tags/` — same WebC permalink bug |
-| `feed.xml.njk` | RSS plugin registers filters as Nunjucks-only |
-| `feed.json.njk` | JSON Feed with Nunjucks filter chains |
 | `markdown-source.njk` | Build utility, no benefit to converting |
 | `_headers.njk`, `_redirects.njk` | Plain text config output |
 | `.well-known/*.njk` | Trivial files |
@@ -97,8 +94,8 @@ src/
 ├── blog.webc                           # Archive page (WebC)
 ├── tags-list.njk                       # Tags index (Nunjucks — permalink bug)
 ├── tags.njk                            # Tag pages (Nunjucks — pagination)
-├── feed.xml.njk                        # RSS feed (Nunjucks)
-├── feed.json.njk                       # JSON feed (Nunjucks)
+├── feed.xml.11ty.js                    # Atom feed (JS template)
+├── feed.json.11ty.js                   # JSON feed (JS template)
 ├── _includes/
 │   ├── layouts/
 │   │   ├── base.njk                    # Root layout (Nunjucks)
@@ -112,9 +109,7 @@ src/
 │   │   ├── social-icon.webc            # Social media SVG icons
 │   │   ├── slider-assets.webc          # Conditional slider CSS/JS
 │   │   └── web-mentions.webc           # Webmentions display
-│   ├── partials/
-│   │   ├── meta-tags.njk              # OG/meta tags (Nunjucks)
-│   │   └── link-tags.njk             # Link tags + favicons (Nunjucks)
-│   └── macros/
-│       └── article.njk                # Article macro for feeds (Nunjucks)
+│   └── partials/
+│       ├── meta-tags.njk              # OG/meta tags (Nunjucks)
+│       └── link-tags.njk             # Link tags + favicons (Nunjucks)
 ```

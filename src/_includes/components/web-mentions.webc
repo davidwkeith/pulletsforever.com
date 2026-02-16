@@ -1,4 +1,6 @@
 <script webc:type="js">
+export default function() {
+const { getWebmentions, sortWebmentions, readableDate, urlHost, $data } = this;
 const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
 const trunc = (s, n) => s && s.length > n ? s.substring(0, n) + '...' : (s || '');
 const wm = this.webmentions || $data.webmentions;
@@ -127,7 +129,8 @@ if (hasWebmentions) {
   }
 }
 
-`<section class="webmentions" aria-labelledby="webmentions-heading" data-page-url="${esc(siteUrl)}${esc(pageUrl)}">
+return `<section class="webmentions" aria-labelledby="webmentions-heading" data-page-url="${esc(siteUrl)}${esc(pageUrl)}">
 ${inner}
 </section>`;
+}
 </script>

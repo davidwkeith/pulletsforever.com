@@ -1,0 +1,24 @@
+---js
+{
+  layout: "layouts/base.njk",
+  permalink: () => "/tags/"
+}
+---
+<script webc:type="js">
+export default function() {
+const { $data, getAllTags, filterTagList, slugify } = this;
+const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
+
+const allTags = filterTagList(getAllTags($data.collections.all || []));
+const tagItems = allTags.map(tag => {
+  const tagUrl = `/tags/${slugify(tag)}/`;
+  return `\t<li><a href="${tagUrl}" class="post-tag">${esc(tag)}</a></li>`;
+}).join('\n');
+
+return `<h1>Tags</h1>
+
+<ul>
+${tagItems}
+</ul>`;
+}
+</script>

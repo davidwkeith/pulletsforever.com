@@ -1,0 +1,25 @@
+---js
+{
+  pagination: {
+    data: "collections",
+    size: 1,
+    alias: "tag",
+    filter: ["all", "post", "posts", "tagList"],
+    addAllPagesToCollections: true
+  },
+  layout: "layouts/base.njk",
+  eleventyComputed: {
+    title: (data) => `Tagged ${data.tag}`
+  },
+  permalink: function(data) { return `/tags/${this.slugify(data.tag)}/`; }
+}
+---
+<script webc:type="js">
+export default function() {
+const { $data } = this;
+const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
+return `<h1>Tagged "${esc($data.tag)}"</h1>`;
+}
+</script>
+<post-list :posts="$data.collections[$data.tag]" :url="$data.page.url"></post-list>
+<p>See <a href="/tags/">all tags</a>.</p>
