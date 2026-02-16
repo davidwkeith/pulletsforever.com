@@ -122,7 +122,7 @@ export default function (eleventyConfig) {
   })
 
   return {
-    templateFormats: ["html", "md", "njk", "webc"],
+    templateFormats: ["html", "md", "njk", "webc", "11ty.js"],
     markdownTemplateEngine: "njk",
     htmlTemplateEngine: "njk",
     dir: {
