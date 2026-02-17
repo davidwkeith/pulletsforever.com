@@ -39,7 +39,6 @@
     "@11ty/eleventy-plugin-rss": "^2.0.4",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.2",
     "@jackdbd/eleventy-plugin-content-security-policy": "^2.2.0",
-    "@manustays/eleventy-plugin-generate-social-images": "https://github.com/pulletsforever/eleventy-plugin-generate-social-images#62c0fb7",
     "@mdit/plugin-footnote": "^0.22.3",
     "@mdit/plugin-mark": "0.22.1",
     "@mdit/plugin-sup": "0.23.0",
@@ -55,7 +54,10 @@
   "dependencies": {
     "@11ty/eleventy-plugin-webc": "^0.12.0-beta.7",
     "@11ty/webc": "^0.12.0-beta.2",
-    "img-comparison-slider": "^8.0.7"
+    "@resvg/resvg-js": "^2.6.2",
+    "img-comparison-slider": "^8.0.7",
+    "satori": "^0.19.2",
+    "satori-html": "^0.3.2"
   },
   "overrides": {
     "sharp": "0.33.5"

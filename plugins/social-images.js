@@ -1,3 +1,6 @@
+import satori from "satori";
+import { html as satoriHtml } from "satori-html";
+import { Resvg } from "@resvg/resvg-js";
 import sharp from "sharp";
 import fs from "fs";
 import path from "path";
@@ -11,33 +14,45 @@ const IMAGE_HEIGHT = 470;
 const IMAGE_X = 650;
 const IMAGE_Y = 80;
 
-// Wrap title text to multiple lines
-function wrapText(text, maxCharsPerLine = 30) {
-  const words = text.split(" ");
-  const lines = [];
-  let currentLine = "";
+// Load fonts at module level (Inter 600 + 700 from src/fonts/)
+const FONT_DIR = path.join("src", "fonts");
+const fonts = [
+  {
+    name: "Inter",
+    data: fs.readFileSync(path.join(FONT_DIR, "inter-600.ttf")),
+    weight: 600,
+    style: "normal",
+  },
+  {
+    name: "Inter",
+    data: fs.readFileSync(path.join(FONT_DIR, "inter-700.ttf")),
+    weight: 700,
+    style: "normal",
+  },
+];
 
-  for (const word of words) {
-    if ((currentLine + " " + word).trim().length <= maxCharsPerLine) {
-      currentLine = (currentLine + " " + word).trim();
-    } else {
-      if (currentLine) lines.push(currentLine);
-      currentLine = word;
-    }
+// Pre-render the logo SVG to a base64 PNG data URI
+// (Satori doesn't support SVG <mask> elements, so we rasterize once at startup)
+let logoDataUri = "";
+async function initLogo() {
+  const logoPath = path.join("src", "img", "logo.svg");
+  if (fs.existsSync(logoPath)) {
+    const pngBuffer = await sharp(logoPath)
+      .resize(64, 64)
+      .png()
+      .toBuffer();
+    logoDataUri = `data:image/png;base64,${pngBuffer.toString("base64")}`;
   }
-  if (currentLine) lines.push(currentLine);
-
-  return lines.slice(0, 4); // Max 4 lines
 }
 
-// Escape XML special characters
-function escapeXml(text) {
+// Escape HTML special characters for text content
+// Only escape characters that affect HTML structure; quotes/apostrophes
+// are safe in text nodes and must remain literal for Satori rendering
+function escapeHtml(text) {
   return text
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+    .replace(/>/g, "&gt;");
 }
 
 // Generate slug from title
@@ -59,65 +74,40 @@ function makeCardId(title, pageInputPath) {
   return `${baseSlug}-${hash}`;
 }
 
-// Generate SVG template (hasImage adjusts layout for image placeholder)
-function generateSvg(title, siteName, hasImage = false) {
-  // Narrower text area when image is present
-  const maxChars = hasImage ? 22 : 32;
-  const lines = wrapText(title, maxChars);
-  const lineHeight = 58;
-  const startY = 200 + ((4 - lines.length) * lineHeight) / 2;
+// Generate the social card HTML template for Satori
+function generateCardHtml(title, siteName, hasImage = false) {
+  const titleMaxWidth = hasImage ? "540px" : "1040px";
 
-  const titleLines = lines
-    .map((line, i) => {
-      const y = startY + i * lineHeight;
-      return `<text x="80" y="${y}" fill="#1095C1" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="700">${escapeXml(line)}</text>`;
-    })
-    .join("\n    ");
-
-  // Image placeholder rect (will be composited over by Sharp)
-  // Uses same color as content card so transparent image areas blend properly
-  const imagePlaceholder = hasImage
-    ? `<rect x="${IMAGE_X}" y="${IMAGE_Y}" width="${IMAGE_WIDTH}" height="${IMAGE_HEIGHT}" rx="12" fill="#404040"/>`
+  const logoImg = logoDataUri
+    ? `<img src="${logoDataUri}" width="64" height="64" style="width: 64px; height: 64px; flex-shrink: 0;" />`
     : "";
 
-  return `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ABB8C0"/>
-      <stop offset="100%" stop-color="#A0ACB3"/>
-    </linearGradient>
-    <mask id="logo-eye">
-      <rect x="0" y="0" width="100%" height="100%" fill="white" />
-      <circle cx="280" cy="230" r="50" fill="black" />
-    </mask>
-  </defs>
+  return `<div style="display: flex; width: 1200px; height: 630px; background: linear-gradient(135deg, #ABB8C0, #A0ACB3); padding: 40px;">
+  <div style="display: flex; flex-direction: column; justify-content: space-between; width: 1120px; height: 550px; background: #404040; border-radius: 16px; padding: 40px;">
+    <div style="display: flex; flex-direction: row; align-items: center; flex: 1;">
+      <div style="display: flex; max-width: ${titleMaxWidth}; color: #1095C1; font-family: Inter; font-size: 48px; font-weight: 700; line-height: 1.2; overflow: hidden; word-wrap: break-word;">${escapeHtml(title)}</div>
+      ${hasImage ? `<div style="display: flex; width: ${IMAGE_WIDTH}px; height: ${IMAGE_HEIGHT}px; border-radius: 12px; background: #404040; margin-left: auto; flex-shrink: 0;"></div>` : ""}
+    </div>
+    <div style="display: flex; flex-direction: row; align-items: center;">
+      ${logoImg}
+      <span style="color: #ffffff; font-family: Inter; font-size: 32px; font-weight: 600; margin-left: 16px;">${escapeHtml(siteName)}</span>
+    </div>
+  </div>
+</div>`;
+}
 
-  <!-- Background -->
-  <rect width="1200" height="630" fill="url(#bg)"/>
-
-  <!-- Content card -->
-  <rect x="40" y="40" width="1120" height="550" rx="16" fill="#404040"/>
-
-  <!-- Image placeholder -->
-  ${imagePlaceholder}
-
-  <!-- Title -->
-  <g>
-    ${titleLines}
-  </g>
-
-  <!-- Logo (64x64, positioned bottom-left of card, bottom-aligned with site name) -->
-  <g transform="translate(80, 480) scale(0.125)">
-    <polygon fill="#1095c1" points="45,95 110,95 110,0" />
-    <polygon fill="#1095c1" points="120,95 185,95 185,0" />
-    <polygon fill="#1095c1" points="195,95 260,95 260,0" />
-    <polygon fill="#1095c1" points="375,300 375,400 500,350" />
-    <rect y="110" x="10" width="350" height="390" ry="10%" rx="10%" fill="#1095c1" mask="url(#logo-eye)" />
-  </g>
-
-  <!-- Site name -->
-  <text x="160" y="540" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="600">${escapeXml(siteName)}</text>
-</svg>`;
+// Render HTML to PNG using Satori + resvg-js
+async function renderHtmlToPng(htmlString) {
+  const vdom = satoriHtml(htmlString);
+  const svg = await satori(vdom, {
+    width: 1200,
+    height: 630,
+    fonts,
+  });
+  const resvg = new Resvg(svg, {
+    fitTo: { mode: "width", value: 1200 },
+  });
+  return resvg.render().asPng();
 }
 
 // Track pending social cards to generate (keyed by slug)
@@ -153,9 +143,12 @@ function resolveImagePath(imagePath, pageInputPath) {
 async function generateSocialCard(title, imagePath, outputPath) {
   const siteName = "Pullets Forever";
   const hasImage = imagePath && fs.existsSync(imagePath);
-  const svg = generateSvg(title, siteName, hasImage);
 
-  let pipeline = sharp(Buffer.from(svg));
+  // Render the card template to PNG via Satori
+  const htmlString = generateCardHtml(title, siteName, hasImage);
+  const cardPng = await renderHtmlToPng(htmlString);
+
+  let pipeline = sharp(cardPng);
 
   if (hasImage) {
     try {
@@ -186,8 +179,9 @@ async function generateSocialCard(title, imagePath, outputPath) {
 }
 
 export default function (eleventyConfig) {
-  // Ensure output directory exists at start
-  eleventyConfig.on("eleventy.before", () => {
+  // Initialize logo and ensure output directory exists at start
+  eleventyConfig.on("eleventy.before", async () => {
+    await initLogo();
     if (!fs.existsSync(OUTPUT_DIR)) {
       fs.mkdirSync(OUTPUT_DIR, { recursive: true });
     }
