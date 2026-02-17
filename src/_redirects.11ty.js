@@ -1,8 +1,10 @@
----
-eleventyExcludeFromCollections: true
-permalink: /_redirects
----
-# Keep robot files together (rfc9309#2.3.1.2)
+export const data = {
+  eleventyExcludeFromCollections: true,
+  permalink: "/_redirects",
+};
+
+export function render() {
+  return `# Keep robot files together (rfc9309#2.3.1.2)
 /robots.txt /.well-known/robots.txt 301
 /ads.txt /.well-known/ads.txt 301
 /app-ads.txt /.well-known/app-ads.txt 301
@@ -12,4 +14,5 @@ permalink: /_redirects
 # FIXME: can we change to PulletsForever@pulletsforever.com?
 # https://fed.brid.gy/web/pulletsforever.com
 /.well-known/host-meta* https://fed.brid.gy/.well-known/host-meta:splat 302
-/.well-known/webfinger* https://fed.brid.gy/.well-known/webfinger 302
+/.well-known/webfinger* https://fed.brid.gy/.well-known/webfinger 302`;
+}

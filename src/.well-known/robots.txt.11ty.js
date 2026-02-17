@@ -1,8 +1,10 @@
----
-permalink: /.well-known/robots.txt
-eleventyExcludeFromCollections: true
----
-# As a condition of accessing this website, you agree to abide by the
+export const data = {
+  permalink: "/.well-known/robots.txt",
+  eleventyExcludeFromCollections: true,
+};
+
+export function render(data) {
+  return `# As a condition of accessing this website, you agree to abide by the
 # following content signals:
 
 # (a)  If a content-signal = yes, you may collect content for the
@@ -31,4 +33,5 @@ User-agent: *
 Content-signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 
-Sitemap: {{metadata.url}}/.well-known/sitemap.xml
+Sitemap: ${data.metadata.url}/.well-known/sitemap.xml`;
+}
