@@ -6,3 +6,4 @@ upload_source_maps = true
 [assets]
 directory = "./_site"
 binding = "ASSETS"
+run_worker_first = true

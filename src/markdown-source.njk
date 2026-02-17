@@ -7,4 +7,20 @@ pagination:
 permalink: "{{ post.url }}index.md"
 permalinkBypassOutputDir: false
 ---
+---
+title: "{{ post.data.title | replace('"', '\\"') | safe }}"
+date: {{ post.data.date | htmlDateString }}
+author: {{ metadata.author.name }}
+url: {{ metadata.url }}{{ post.url }}
+{%- if post.data.description %}
+description: "{{ post.data.description | replace('"', '\\"') | safe }}"
+{%- endif %}
+{%- if post.data.tags | filterTagList | length > 0 %}
+tags:
+{%- for tag in post.data.tags | filterTagList %}
+  - {{ tag }}
+{%- endfor %}
+{%- endif %}
+---
+
 {{ post.rawInput | fixMarkdownImagePaths(post.inputPath, post.url) | safe }}
