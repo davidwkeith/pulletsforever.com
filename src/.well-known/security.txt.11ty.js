@@ -10,6 +10,5 @@ export function render() {
   return `Contact: mailto:security@pulletsforever.com
 Expires: ${expiry.toISOString()}
 Preferred-Languages: en
-Canonical: https://pulletsforever.com/.well-known/security.txt
-# TODO: Digitally Sign https://www.rfc-editor.org/rfc/rfc9116#section-2.3`;
+Canonical: https://pulletsforever.com/.well-known/security.txt`;
 }

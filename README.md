@@ -207,7 +207,9 @@ npm run deploy
 
 This will:
 1. Build the site with Eleventy (`npm run build`)
-2. Deploy a Worker (`workers/site/index.js`) with `_site/` as static assets
+2. Sign `security.txt` with GPG (if configured)
+3. Deploy a Worker (`workers/site/index.js`) with `_site/` as static assets
+4. Ping WebSub hub for feed subscribers
 
 ### Deploy via Git Integration (Recommended)
 
@@ -220,10 +222,38 @@ For automatic deployments on every push:
    - **Build command**: `npm run build`
    - **Deploy command**: `npx wrangler deploy`
    - **Root directory**: `/` (or leave empty)
-5. Add environment variables if needed (e.g., `WEBMENTION_IO_TOKEN`)
+5. Add environment variables (see [Environment Variables](#environment-variables) below)
 6. Click **Save and Deploy**
 
 After setup, every push to your main branch will automatically trigger a new deployment.
+
+### Environment Variables
+
+Configure these in the Cloudflare dashboard under **Workers & Pages** → your project → **Settings** → **Variables and Secrets**.
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `WEBMENTION_IO_TOKEN` | No | Token for fetching webmentions at build time |
+| `GPG_PRIVATE_KEY` | No | ASCII-armored GPG private key for signing `security.txt` |
+| `GPG_KEY_ID` | No | GPG key fingerprint or ID to use for signing |
+
+#### Configuring GPG Signing
+
+The deploy pipeline signs `security.txt` with a cleartext OpenPGP signature per [RFC 9116 §2.3](https://www.rfc-editor.org/rfc/rfc9116#section-2.3). Both `GPG_PRIVATE_KEY` and `GPG_KEY_ID` must be set; if either is missing, signing is skipped gracefully.
+
+1. **Export your private key**:
+   ```bash
+   gpg --armor --export-secret-keys YOUR_KEY_ID
+   ```
+
+2. **Add to Cloudflare**: In **Variables and Secrets**, add `GPG_PRIVATE_KEY` as an **encrypted** variable with the full ASCII-armored output (including the `-----BEGIN PGP PRIVATE KEY BLOCK-----` header/footer). Add `GPG_KEY_ID` with the key fingerprint.
+
+3. **Verify locally**:
+   ```bash
+   GPG_PRIVATE_KEY="$(gpg --armor --export-secret-keys YOUR_KEY_ID)" \
+   GPG_KEY_ID="YOUR_KEY_ID" \
+   npm run sign:security-txt:dry
+   ```
 
 ### Custom Domain
 

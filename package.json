@@ -18,8 +18,10 @@
     "webmentions:send:dry": "node scripts/send-webmentions.js --dry-run",
     "websub:ping": "node scripts/ping-websub.js",
     "websub:ping:dry": "node scripts/ping-websub.js --dry-run",
-    "deploy": "npm run build && wrangler deploy && npm run websub:ping",
-    "deploy:preview": "npm run build && wrangler deploy --dry-run",
+    "sign:security-txt": "node scripts/sign-security-txt.js",
+    "sign:security-txt:dry": "node scripts/sign-security-txt.js --dry-run",
+    "deploy": "npm run build && npm run sign:security-txt && wrangler deploy && npm run websub:ping",
+    "deploy:preview": "npm run build && npm run sign:security-txt:dry && wrangler deploy --dry-run",
     "cf-typegen": "wrangler types"
   },
   "author": {
