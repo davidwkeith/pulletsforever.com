@@ -14,5 +14,8 @@ export function render() {
 # FIXME: can we change to PulletsForever@pulletsforever.com?
 # https://fed.brid.gy/web/pulletsforever.com
 /.well-known/host-meta* https://fed.brid.gy/.well-known/host-meta:splat 302
-/.well-known/webfinger* https://fed.brid.gy/.well-known/webfinger 302`;
+/.well-known/webfinger* https://fed.brid.gy/.well-known/webfinger 302
+
+# Canonical avatar (draft spec by Terence Eden)
+/.well-known/avatar /img/avatar.png 302`;
 }

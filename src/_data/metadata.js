@@ -53,7 +53,7 @@ export default {
     ...author,
     email,
     bio: "Writing about technology, food, and creative projects. Based in Santa Clara, CA.",
-    avatar: "/img/avatar.jpg",
+    avatar: "/img/avatar.png",
   },
   cloudflare_insights: {
     token: "5049d90e34c84a5ba463d0541825cb30",
@@ -91,4 +91,10 @@ export default {
   micropub,
   websub,
   schema,
+
+  // AT Protocol / Bluesky configuration
+  // Set `did` to your Bluesky DID to enable /.well-known/atproto-did
+  atproto: {
+    did: "",
+  },
 };
