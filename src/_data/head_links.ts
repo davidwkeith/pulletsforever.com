@@ -8,7 +8,6 @@ interface HeadLink {
   title?: string;
 }
 
-// TODO: Import from Schema.org data
 const headLinks: HeadLink[] = [
   {
     rel: "code-repository",

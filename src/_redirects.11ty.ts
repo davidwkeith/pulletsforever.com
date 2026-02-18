@@ -10,8 +10,7 @@ export function render(): string {
 /app-ads.txt /.well-known/app-ads.txt 301
 /sitemap.xml /.well-known/sitemap.xml 301
 
-# Publish new posts to @pulletsforever.com@pulletsforever.com
-# FIXME: can we change to PulletsForever@pulletsforever.com?
+# Publish new posts to @pulletsforever.com@pulletsforever.com via Bridgy Fed
 # https://fed.brid.gy/web/pulletsforever.com
 /.well-known/host-meta* https://fed.brid.gy/.well-known/host-meta:splat 302
 /.well-known/webfinger* https://fed.brid.gy/.well-known/webfinger 302

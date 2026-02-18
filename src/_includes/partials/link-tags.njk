@@ -5,8 +5,6 @@
 <link rel="dns-prefetch" href="https://app.greenweb.org">
 <link rel="dns-prefetch" href="https://mirrors.creativecommons.org">
 
-{# TODO: output Dublin Core https://en.wikipedia.org/wiki/Dublin_Core #}
-{# TODO: output RDF JSON-LD https://www.w3.org/TR/rdf-syntax-grammar/ #}
 {% set faviconPath = inputDir + metadata.favicon %}
 {% favicons faviconPath, manifestData={ name: schema.name, description: schema.description } %}
 
@@ -53,7 +51,7 @@
 {% for link in metadata.head_links %}
   <link 
     rel="{{link.rel}}" 
-    href="{{link.href | replace('{{site}}', metadata.site)}}"
+    href="{{link.href}}"
     {% if link.type %}
       type="{{link.type}}"
     {% endif %}
