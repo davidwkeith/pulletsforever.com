@@ -1,0 +1,14 @@
+export const data = {
+  eleventyExcludeFromCollections: true,
+  permalink: "/.well-known/security.txt",
+};
+
+export function render(): string {
+  const expiry = new Date();
+  expiry.setFullYear(expiry.getFullYear() + 1);
+
+  return `Contact: mailto:security@pulletsforever.com
+Expires: ${expiry.toISOString()}
+Preferred-Languages: en
+Canonical: https://pulletsforever.com/.well-known/security.txt`;
+}
