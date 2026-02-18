@@ -22,7 +22,6 @@ const indieauth = {
 
 // Micropub configuration
 const micropub = {
-  // TODO: Update with actual Cloudflare Worker URL once deployed
   endpoint: `https://micropub.${site}/micropub`,
   media_endpoint: `https://micropub.${site}/media`,
 };

@@ -111,7 +111,8 @@ async function commitToGitLab({ filePath, content, message, env }) {
 
   if (!response.ok) {
     const errorText = await response.text();
-    return { error: `GitLab API error: ${response.status} - ${errorText}` };
+    console.error(`GitLab API error: ${response.status} - ${errorText}`);
+    return { error: `GitLab API error: ${response.status}` };
   }
 
   return { success: true };

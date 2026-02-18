@@ -136,7 +136,7 @@ export default {
       return new Response("Method Not Allowed", { status: 405 });
     } catch (err) {
       console.error(`[${requestId}] Micropub error:`, err);
-      return jsonResponse({ error: "server_error", error_description: err.message }, 500);
+      return jsonResponse({ error: "server_error", error_description: "Internal server error" }, 500);
     }
   },
 };
@@ -180,7 +180,7 @@ async function handleMediaRoute(request, env, requestId) {
     return result;
   } catch (err) {
     console.error(`[${requestId}] Media upload error:`, err);
-    return jsonResponse({ error: "server_error", error_description: err.message }, 500);
+    return jsonResponse({ error: "server_error", error_description: "Internal server error" }, 500);
   }
 }
 

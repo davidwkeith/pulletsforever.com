@@ -45,7 +45,7 @@ export default function (eleventyConfig: EleventyConfig): void {
   });
 
   eleventyConfig.addFilter("min", (...numbers: number[]) => {
-    return Math.min.apply(null, numbers);
+    return Math.min(...numbers);
   });
 
   eleventyConfig.addFilter(

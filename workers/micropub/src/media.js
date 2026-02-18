@@ -3,7 +3,7 @@
  * https://www.w3.org/TR/micropub/#media-endpoint
  */
 
-import { errorResponse } from "./utils.js";
+import { corsHeaders, errorResponse } from "./utils.js";
 
 // Allowed MIME types for upload
 // Note: SVG intentionally excluded due to XSS risk (can contain JavaScript)
@@ -104,7 +104,7 @@ export async function handleMediaUpload(request, env) {
     });
   } catch (err) {
     console.error("R2 upload error:", err);
-    return errorResponse("server_error", `Failed to store file: ${err.message}`, 500);
+    return errorResponse("server_error", "Failed to store file", 500);
   }
 
   // Return the URL of the uploaded file
@@ -113,7 +113,7 @@ export async function handleMediaUpload(request, env) {
   return new Response(null, {
     status: 201,
     headers: {
-      "Access-Control-Allow-Origin": "*",
+      ...corsHeaders(),
       Location: mediaUrl,
     },
   });

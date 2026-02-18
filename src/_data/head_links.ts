@@ -38,7 +38,7 @@ const headLinks: HeadLink[] = [
     href: "https://www.buymeacoffee.com/davidwkeith",
     type: "text/html",
   },
-  { rel: "root", href: "https://{{site}}", type: "text/html" },
+  { rel: "root", href: "https://pulletsforever.com", type: "text/html" },
 ];
 
 export default headLinks;
