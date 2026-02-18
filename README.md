@@ -235,26 +235,29 @@ Configure these in the Cloudflare dashboard under **Workers & Pages** → your p
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `WEBMENTION_IO_TOKEN` | No | Token for fetching webmentions at build time |
-| `GPG_PRIVATE_KEY` | No | ASCII-armored GPG private key for signing `security.txt` |
-| `GPG_KEY_ID` | No | GPG key fingerprint or ID to use for signing |
+| `GPG_PRIVATE_KEY` | No | ASCII-armored PGP private key for signing `security.txt` |
 
-#### Configuring GPG Signing
+#### Configuring OpenPGP Signing
 
-The deploy pipeline signs `security.txt` with a cleartext OpenPGP signature per [RFC 9116 §2.3](https://www.rfc-editor.org/rfc/rfc9116#section-2.3). Both `GPG_PRIVATE_KEY` and `GPG_KEY_ID` must be set; if either is missing, signing is skipped gracefully.
+The deploy pipeline signs `security.txt` with a cleartext OpenPGP signature per [RFC 9116 §2.3](https://www.rfc-editor.org/rfc/rfc9116#section-2.3) using [openpgp.js](https://openpgpjs.org/). If `GPG_PRIVATE_KEY` is not set, signing is skipped gracefully.
 
-1. **Export your private key**:
-   ```bash
-   gpg --armor --export-secret-keys YOUR_KEY_ID
-   ```
+An Ed25519 key is recommended (small enough for Cloudflare's 5KB secret limit):
 
-2. **Add to Cloudflare**: In **Variables and Secrets**, add `GPG_PRIVATE_KEY` as an **encrypted** variable with the full ASCII-armored output (including the `-----BEGIN PGP PRIVATE KEY BLOCK-----` header/footer). Add `GPG_KEY_ID` with the key fingerprint.
+```bash
+# Generate with gpg
+gpg --quick-generate-key "Your Name <security@example.com>" ed25519 sign 2y
+gpg --armor --export-secret-keys KEY_ID
 
-3. **Verify locally**:
-   ```bash
-   GPG_PRIVATE_KEY="$(gpg --armor --export-secret-keys YOUR_KEY_ID)" \
-   GPG_KEY_ID="YOUR_KEY_ID" \
-   npm run sign:security-txt:dry
-   ```
+# Or generate with openpgp.js (no gpg required)
+node -e "import('openpgp').then(async o=>{const k=await o.generateKey({type:'ecc',curve:'ed25519',userIDs:[{name:'Your Name',email:'security@example.com'}],format:'armored'});console.log(k.privateKey)})"
+```
+
+Add `GPG_PRIVATE_KEY` as an **encrypted** variable in **Variables and Secrets** with the full ASCII-armored output.
+
+Verify locally:
+```bash
+GPG_PRIVATE_KEY="$(cat key.asc)" npm run sign:security-txt:dry
+```
 
 ### Custom Domain
 

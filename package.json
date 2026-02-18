@@ -64,6 +64,7 @@
     "@11ty/webc": "^0.12.0-beta.2",
     "@resvg/resvg-js": "^2.6.2",
     "img-comparison-slider": "^8.0.7",
+    "openpgp": "^6.3.0",
     "satori": "^0.19.2",
     "satori-html": "^0.3.2"
   },
