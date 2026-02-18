@@ -270,12 +270,6 @@ To use your custom domain (`pulletsforever.com`):
 
 ---
 
-## TODO
-
-- [ ] Redesign social media cards
-
----
-
 ## License
 
 - **Code**: [ISC License](https://opensource.org/license/isc-license-txt)
