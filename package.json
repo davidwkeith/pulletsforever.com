@@ -7,6 +7,7 @@
   "scripts": {
     "build": "npx @11ty/eleventy --config=eleventy.config.ts",
     "start": "npx @11ty/eleventy --config=eleventy.config.ts --serve --quiet",
+    "test": "npm test --prefix workers/site && npm test --prefix workers/micropub",
     "typecheck": "tsc --noEmit",
     "new-post": "node --experimental-strip-types scripts/new-post.ts",
     "sign:security-txt": "node --experimental-strip-types scripts/sign-security-txt.ts",
