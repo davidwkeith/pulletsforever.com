@@ -41,7 +41,7 @@ This site supports [webmentions](https://indieweb.org/Webmention) via [webmentio
 
 ### Sending Webmentions
 
-After publishing new content with external links:
+Webmentions are sent automatically as part of `npm run deploy`. To send manually:
 
 ```bash
 # Preview what would be sent
@@ -208,8 +208,9 @@ npm run deploy
 This will:
 1. Build the site with Eleventy (`npm run build`)
 2. Sign `security.txt` with GPG (if configured)
-3. Deploy a Worker (`workers/site/index.js`) with `_site/` as static assets
+3. Deploy a Worker (`workers/site/`) with `_site/` as static assets
 4. Ping WebSub hub for feed subscribers
+5. Send webmentions for new outgoing links
 
 ### Deploy via Git Integration (Recommended)
 

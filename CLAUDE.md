@@ -1,6 +1,15 @@
 # Claude Code Instructions for Pullets Forever
 
-This is an Eleventy (11ty) static blog. Posts live in `src/posts/`.
+This is an Eleventy (11ty) static blog written in TypeScript. Posts live in `src/posts/`.
+
+## Architecture
+
+- **Templates**: WebC (`.webc`) for components and simple generated files, Nunjucks (`.njk`) for layouts, `.11ty.ts` for complex templates needing async/imports
+- **Data**: `src/_data/*.ts` — accessed in WebC as `$data.metadata`, `$data.author`, etc.
+- **Layouts**: `src/_includes/layouts/` (base.njk, post.webc)
+- **Components**: `src/_includes/components/*.webc`
+- **Workers**: `workers/site/` (content negotiation), `workers/micropub/` (Micropub endpoint)
+- **Node**: Requires Node 22+ (pinned via `.nvmrc`) for native TypeScript support
 
 ## Creating a New Post
 
@@ -47,6 +56,19 @@ description: ...        # Optional, used for meta tags
 npm start              # Dev server with live reload
 npm run build          # Production build
 ```
+
+## Template Patterns
+
+For simple generated files (text, JSON, XML without async logic), prefer WebC:
+```html
+---
+eleventyExcludeFromCollections: true
+permalink: /.well-known/example.txt
+---
+Static text with <template webc:nokeep @text="$data.metadata.title"></template> interpolation.
+```
+
+Use `.11ty.ts` only when the template needs imports, async operations, or collection iteration that can't be expressed with `webc:for`.
 
 ## Testing Changes
 After editing, run `npm run build` to verify no errors before committing.
