@@ -40,7 +40,7 @@ const socialItems = Object.entries(alternates)
 
 const emailIcon = socialIcon('email', 20);
 
-return `<aside class="sidebar" aria-label="About and navigation">
+return `<aside class="sidebar h-card" aria-label="About and navigation">
   <hr class="sidebar-top-divider">
 
   <section class="sidebar-section sidebar-quote-section" aria-label="Quote">
@@ -52,10 +52,11 @@ return `<aside class="sidebar" aria-label="About and navigation">
     <h2 class="sidebar-heading">About</h2>
     <div class="sidebar-about">
       <div class="sidebar-identity">
-        <img class="sidebar-avatar" src="/img/avatar.png" alt="${esc(meta.author.name)}" width="80" height="80" eleventy:widths="80,160" eleventy:output="/img/">
-        <a class="sidebar-handle" href="https://dwk.io" rel="me">dwk</a>
+        <img class="sidebar-avatar u-photo" src="/img/avatar.png" alt="${esc(meta.author.name)}" width="80" height="80" eleventy:widths="80,160" eleventy:output="/img/">
+        <a class="sidebar-handle u-url" href="https://dwk.io" rel="me">dwk</a>
       </div>
-      <p>${esc(meta.author.bio)}</p>
+      <data class="p-name" value="${esc(meta.author.name)}" hidden></data>
+      <p class="p-note">${esc(meta.author.bio)}</p>
     </div>
   </section>
 ${tagsHtml}

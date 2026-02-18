@@ -13,21 +13,23 @@ const tiles = posts.map(post => {
   const postTitle = (post.data && post.data.title) || post.url;
   const postImage = firstImage(post.templateContent || '');
   const socialImg = socialImageUrl(postTitle, postImage, post.inputPath);
-  return `  <article class="archive-tile">
-    <a href="${post.url}" class="archive-tile-link">
+  return `  <article class="archive-tile h-entry">
+    <a href="${post.url}" class="archive-tile-link u-url">
       <img class="archive-tile-image" src="${esc(socialImg)}" alt="" loading="lazy" eleventy:ignore>
       <div class="archive-tile-content">
-        <h2 class="archive-tile-title">${esc(postTitle)}</h2>
-        <time class="archive-tile-date" datetime="${htmlDateString(post.date)}">${readableDate(post.date, "LLLL yyyy")}</time>
+        <h2 class="archive-tile-title p-name">${esc(postTitle)}</h2>
+        <time class="archive-tile-date dt-published" datetime="${htmlDateString(post.date)}">${readableDate(post.date, "LLLL yyyy")}</time>
       </div>
     </a>
   </article>`;
 }).join('\n');
 
-return `<h1>Archive</h1>
+return `<div class="h-feed">
+<h1 class="p-name">Archive</h1>
 
 <div class="archive-grid">
 ${tiles}
+</div>
 </div>`;
 }
 </script>

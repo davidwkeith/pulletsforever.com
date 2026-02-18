@@ -21,7 +21,7 @@
     "sign:security-txt": "node --experimental-strip-types scripts/sign-security-txt.ts",
     "sign:security-txt:dry": "node --experimental-strip-types scripts/sign-security-txt.ts --dry-run",
     "check-types": "tsc --noEmit",
-    "deploy": "npm run build && npm run sign:security-txt && wrangler deploy && npm run websub:ping",
+    "deploy": "npm run build && npm run sign:security-txt && wrangler deploy && npm run websub:ping && npm run webmentions:send",
     "deploy:preview": "npm run build && npm run sign:security-txt:dry && wrangler deploy --dry-run",
     "cf-typegen": "wrangler types"
   },
