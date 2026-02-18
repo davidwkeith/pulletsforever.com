@@ -1,0 +1,12 @@
+---
+eleventyExcludeFromCollections: true
+permalink: /humans.txt
+---
+/* TEAM */
+	David W. Keith @dwk.io
+
+/* THANKS */
+
+/* SITE */
+
+Build Date: <template webc:nokeep @text="new Date().toISOString()"></template>

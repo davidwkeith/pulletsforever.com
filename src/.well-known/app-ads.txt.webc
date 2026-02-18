@@ -1,0 +1,5 @@
+---
+eleventyExcludeFromCollections: true
+permalink: /.well-known/app-ads.txt
+---
+# No Ads Here

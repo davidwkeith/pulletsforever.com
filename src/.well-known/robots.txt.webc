@@ -1,10 +1,8 @@
-export const data = {
-  permalink: "/.well-known/robots.txt",
-  eleventyExcludeFromCollections: true,
-};
-
-export function render(data: EleventyData): string {
-  return `# As a condition of accessing this website, you agree to abide by the
+---
+eleventyExcludeFromCollections: true
+permalink: /.well-known/robots.txt
+---
+# As a condition of accessing this website, you agree to abide by the
 # following content signals:
 
 # (a)  If a content-signal = yes, you may collect content for the
@@ -33,5 +31,4 @@ User-agent: *
 Content-signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 
-Sitemap: ${data.metadata.url}/.well-known/sitemap.xml`;
-}
+Sitemap: <template webc:nokeep @raw="$data.metadata.url + '/.well-known/sitemap.xml'"></template>
