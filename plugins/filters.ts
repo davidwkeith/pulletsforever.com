@@ -86,28 +86,6 @@ export default function (eleventyConfig: EleventyConfig): void {
     return JSON.stringify(value);
   });
 
-  eleventyConfig.addFilter("excerpt", (content: string) => {
-    if (!content) return "";
-    const text = content
-      .replace(/<[^>]+>/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
-    if (text.length <= 155) return text;
-    const truncated = text.slice(0, 155);
-    const lastSpace = truncated.lastIndexOf(" ");
-    return (lastSpace > 80 ? truncated.slice(0, lastSpace) : truncated) + "…";
-  });
-
-  eleventyConfig.addFilter("readingTime", (content: string) => {
-    if (!content) return "1 min read";
-    const textOnly = content.replace(/<[^>]+>/g, "");
-    const wordCount = textOnly
-      .split(/\s+/)
-      .filter((word) => word.length > 0).length;
-    const minutes = Math.ceil(wordCount / 200);
-    return `${minutes} min read`;
-  });
-
   eleventyConfig.addFilter(
     "postImageUrl",
     (imagePath: string, inputPath: string) => {

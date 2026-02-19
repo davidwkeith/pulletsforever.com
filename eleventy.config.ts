@@ -70,6 +70,8 @@ export default function (eleventyConfig: EleventyConfig) {
     disableConfig: {
       dateFilters: true,
       bundles: true,
+      images: true,
+      markdown: true,
     },
   });
 
