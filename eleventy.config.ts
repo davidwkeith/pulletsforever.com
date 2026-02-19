@@ -18,7 +18,6 @@ import { contentSecurityPolicyPlugin } from "@jackdbd/eleventy-plugin-content-se
 // Local Plugins
 import pluginImages from "./plugins/11ty.images.ts";
 import pluginFilters from "./plugins/filters.ts";
-import pluginSchema from "./plugins/schema.ts";
 import pluginMarkdown from "./plugins/markdown-it.ts";
 
 import csp from "./src/_data/csp.ts";
@@ -104,7 +103,6 @@ export default function (eleventyConfig: EleventyConfig) {
   eleventyConfig.addPlugin(pluginImages);
   eleventyConfig.addPlugin(pluginNavigation);
   eleventyConfig.addPlugin(pluginRss);
-  eleventyConfig.addPlugin(pluginSchema);
   eleventyConfig.addPlugin(pluginSyntaxHighlight, {
     preAttributes: {
       "data-language": function ({
