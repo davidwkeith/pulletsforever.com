@@ -1,6 +1,6 @@
 name = "pulletsforever-com"
 compatibility_date = "2026-02-18"
-main = "workers/site/index.js"
+main = "workers/site/index.ts"
 upload_source_maps = true
 
 [assets]

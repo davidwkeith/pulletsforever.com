@@ -1,18 +1,12 @@
 # pulletsforever.com
 
-A personal blog about backyard chickens, technology, and other interests. Built with [Eleventy](https://www.11ty.dev/).
+A personal blog about backyard chickens, technology, and other interests.
 
 ## Development
 
 ```bash
-# Install dependencies
-npm install
-
-# Run development server
-npm start
-
-# Build for production
-npm run build
+npm start            # Dev server with live reload
+npm run build        # Production build
 ```
 
 ## Blog Post Frontmatter
@@ -98,7 +92,7 @@ This site supports [Micropub](https://indieweb.org/Micropub), enabling posting f
 | `in-reply-to` | `in-reply-to` | URL being replied to |
 | `mp-slug` | Filename/URL slug | Auto-generated if absent |
 
-### Deployment
+### Micropub Deployment
 
 The Micropub endpoint runs as a Cloudflare Worker. See `workers/micropub/` for source code.
 
@@ -111,7 +105,6 @@ The Micropub endpoint runs as a Cloudflare Worker. See `workers/micropub/` for s
 #### 1. Create R2 Bucket
 
 ```bash
-# Create the media storage bucket
 wrangler r2 bucket create pulletsforever-media
 ```
 
@@ -159,8 +152,6 @@ Configured in `wrangler.toml`:
 
 #### Required Scopes
 
-When authenticating with a Micropub client, request these scopes:
-
 | Scope | Required For |
 |-------|--------------|
 | `create` | Creating new posts, uploading media |
@@ -168,17 +159,13 @@ When authenticating with a Micropub client, request these scopes:
 | `delete` | Removing posts |
 | `media` | Uploading files (optional, `create` also works) |
 
-### Development
+### Micropub Development
 
 ```bash
 cd workers/micropub
 npm install
-
-# Run tests
-npm test
-
-# Start local dev server
-wrangler dev
+npm test             # Run tests
+wrangler dev         # Local dev server
 ```
 
 ### Security Notes
@@ -193,15 +180,7 @@ wrangler dev
 
 The main site is deployed as a [Cloudflare Worker](https://developers.cloudflare.com/workers/) with statically built assets from Eleventy.
 
-### Prerequisites
-
-- [Cloudflare account](https://dash.cloudflare.com/sign-up)
-- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/) (already installed as a dev dependency)
-
-### Deploy via Wrangler CLI
-
 ```bash
-# Build and deploy the Worker + static assets
 npm run deploy
 ```
 
@@ -223,50 +202,17 @@ For automatic deployments on every push:
    - **Build command**: `npm run build`
    - **Deploy command**: `npx wrangler deploy`
    - **Root directory**: `/` (or leave empty)
-5. Add environment variables (see [Environment Variables](#environment-variables) below)
+5. Add environment variables (see below)
 6. Click **Save and Deploy**
-
-After setup, every push to your main branch will automatically trigger a new deployment.
 
 ### Environment Variables
 
-Configure these in the Cloudflare dashboard under **Workers & Pages** → your project → **Settings** → **Variables and Secrets**.
+Configure in **Workers & Pages** → your project → **Settings** → **Variables and Secrets**.
 
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `WEBMENTION_IO_TOKEN` | No | Token for fetching webmentions at build time |
 | `GPG_PRIVATE_KEY` | No | ASCII-armored PGP private key for signing `security.txt` |
-
-#### Configuring OpenPGP Signing
-
-The deploy pipeline signs `security.txt` with a cleartext OpenPGP signature per [RFC 9116 §2.3](https://www.rfc-editor.org/rfc/rfc9116#section-2.3) using [openpgp.js](https://openpgpjs.org/). If `GPG_PRIVATE_KEY` is not set, signing is skipped gracefully.
-
-An Ed25519 key is recommended (small enough for Cloudflare's 5KB secret limit):
-
-```bash
-# Generate with gpg
-gpg --quick-generate-key "Your Name <security@example.com>" ed25519 sign 2y
-gpg --armor --export-secret-keys KEY_ID
-
-# Or generate with openpgp.js (no gpg required)
-node -e "import('openpgp').then(async o=>{const k=await o.generateKey({type:'ecc',curve:'ed25519',userIDs:[{name:'Your Name',email:'security@example.com'}],format:'armored'});console.log(k.privateKey)})"
-```
-
-Add `GPG_PRIVATE_KEY` as an **encrypted** variable in **Variables and Secrets** with the full ASCII-armored output.
-
-Verify locally:
-```bash
-GPG_PRIVATE_KEY="$(cat key.asc)" npm run sign:security-txt:dry
-```
-
-### Custom Domain
-
-To use your custom domain (`pulletsforever.com`):
-
-1. In Cloudflare Dashboard → **Workers & Pages** → **pulletsforever**
-2. Go to **Custom domains**
-3. Click **Set up a custom domain**
-4. Enter `pulletsforever.com` and follow the DNS configuration instructions
 
 ---
 

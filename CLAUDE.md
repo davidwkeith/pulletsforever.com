@@ -1,6 +1,11 @@
-# Claude Code Instructions for Pullets Forever
+# pulletsforever.com
 
-This is an Eleventy (11ty) static blog written in TypeScript. Posts live in `src/posts/`.
+Personal blog. Posts live in `src/posts/`.
+
+## Commands
+
+- `npm start` — Dev server with live reload
+- `npm run build` — Production build
 
 ## Architecture
 
@@ -9,13 +14,13 @@ This is an Eleventy (11ty) static blog written in TypeScript. Posts live in `src
 - **Layouts**: `src/_includes/layouts/` (base.njk, post.webc)
 - **Components**: `src/_includes/components/*.webc`
 - **Workers**: `workers/site/` (content negotiation), `workers/micropub/` (Micropub endpoint)
-- **Node**: Requires Node 22+ (pinned via `.nvmrc`) for native TypeScript support
+- Uses `@dwk/eleventy-shared` plugin for shared templates and config (date filters and bundles disabled — uses Luxon-based filters and `@11ty/eleventy-plugin-bundle`)
 
 ## Creating a New Post
 
-### Quick method (npm script)
+### Quick method
 ```bash
-npm run new-post "My Post Title"           # Simple post
+npm run new-post "My Post Title"               # Simple post
 npm run new-post "My Post Title" --with-assets  # Post with images
 ```
 
@@ -37,11 +42,13 @@ For a post with images:
 3. Reference images with relative paths: `![alt text](image.jpg)`
 
 ## Post Structure Rules
+
 - **Text-only posts**: `src/posts/slug.md`
 - **Posts with assets**: `src/posts/slug/index.md` + images in same folder
 - **Downloadable files**: Name them `*-prompt.md` to exclude from template processing
 
 ## Required Frontmatter
+
 ```yaml
 ---
 title: Post Title        # Required
@@ -49,12 +56,6 @@ date: YYYY-MM-DD        # Required
 tags: [tag1, tag2]      # Optional
 description: ...        # Optional, used for meta tags
 ---
-```
-
-## Development
-```bash
-npm start              # Dev server with live reload
-npm run build          # Production build
 ```
 
 ## Template Patterns
@@ -71,4 +72,5 @@ Static text with <template webc:nokeep @text="$data.metadata.title"></template> 
 Use `.11ty.ts` only when the template needs imports, async operations, or collection iteration that can't be expressed with `webc:for`.
 
 ## Testing Changes
+
 After editing, run `npm run build` to verify no errors before committing.

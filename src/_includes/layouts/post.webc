@@ -1,7 +1,7 @@
 ---
 layout: layouts/base.njk
 ---
-<link rel="stylesheet" href="../../../node_modules/prismjs/themes/prism-okaidia.css">
+<link rel="stylesheet" href="/css/prism-okaidia.css" webc:keep>
 <link rel="stylesheet" href="../css/prism-diff.css">
 <slider-assets></slider-assets>
 <script webc:type="js">
