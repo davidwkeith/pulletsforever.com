@@ -34,6 +34,29 @@
       {% include "js/index.js" %}
     {% endjs %}
     <script>{% getBundle "js" %}</script>
+    <script type="speculationrules">
+    {
+      "prefetch": [{
+        "source": "document",
+        "where": { "and": [
+          { "href_matches": "/*" },
+          { "not": { "href_matches": "/.well-known/*" } },
+          { "not": { "href_matches": "/feed.*" } },
+          { "not": { "selector_matches": "[download]" } }
+        ]},
+        "eagerness": "moderate"
+      }],
+      "prerender": [{
+        "source": "document",
+        "where": { "and": [
+          { "href_matches": "/*" },
+          { "not": { "href_matches": "/.well-known/*" } },
+          { "not": { "href_matches": "/feed.*" } }
+        ]},
+        "eagerness": "conservative"
+      }]
+    }
+    </script>
     {% if env.isProduction %}
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon="{{ metadata.cloudflare_insights | json }}" crossorigin="anonymous"></script>
     {% endif %}

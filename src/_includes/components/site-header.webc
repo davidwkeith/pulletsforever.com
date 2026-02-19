@@ -22,7 +22,7 @@ if (meta.useNavigation) {
 }
 
 return `<header>
-  <a href="/" class="header-logo"><img eleventy:widths="64,128" width="64" height="64" src="${meta.logo.src}" alt="${esc(meta.logo.alt)}" eleventy:output="/img/"></a>
+  <a href="/" class="header-logo"><img fetchpriority="high" eleventy:widths="64,128" width="64" height="64" src="${meta.logo.src}" alt="${esc(meta.logo.alt)}" eleventy:output="/img/"></a>
   <div class="header-title">
     <h1>${esc(meta.title)}</h1>${navHtml}
   </div>

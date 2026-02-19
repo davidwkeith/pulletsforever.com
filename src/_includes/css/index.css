@@ -1,3 +1,6 @@
+/* Cross-document view transitions (progressive enhancement) */
+@view-transition { navigation: auto; }
+
 /* Defaults */
 :root {
     --font-family: -apple-system, system-ui, sans-serif;
