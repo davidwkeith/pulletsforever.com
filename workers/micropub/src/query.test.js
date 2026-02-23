@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { handleQuery } from "./query.js";
+import { handleQuery } from "./query.ts";
 
 const baseUrl = "https://micropub.pulletsforever.com/micropub";
 

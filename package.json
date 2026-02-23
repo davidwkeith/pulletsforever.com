@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/dwk-io/pulletsforever.com.git"
+    "url": "https://github.com/davidwkeith/pulletsforever.com.git"
   },
   "devDependencies": {
     "@dwk/eleventy-shared": "*",

@@ -100,7 +100,7 @@ The Micropub endpoint runs as a Cloudflare Worker. See `workers/micropub/` for s
 
 - [Cloudflare account](https://dash.cloudflare.com/sign-up)
 - [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/)
-- GitLab personal access token with `api` scope
+- GitHub fine-grained personal access token with Contents read/write permission
 
 #### 1. Create R2 Bucket
 
@@ -124,9 +124,9 @@ For media serving, create a public R2 bucket custom domain:
 ```bash
 cd workers/micropub
 
-# GitLab token for committing posts
-wrangler secret put GITLAB_TOKEN
-# Paste your GitLab personal access token (api scope)
+# GitHub token for committing posts
+wrangler secret put GITHUB_TOKEN
+# Paste your GitHub fine-grained personal access token (Contents read/write)
 ```
 
 #### 4. Deploy
@@ -144,8 +144,8 @@ Configured in `wrangler.toml`:
 | Variable | Description |
 |----------|-------------|
 | `SITE_URL` | Your site URL (e.g., `https://pulletsforever.com`) |
-| `GITLAB_PROJECT_ID` | GitLab project path (e.g., `username/repo`) |
-| `GITLAB_BRANCH` | Branch for commits (default: `main`) |
+| `GITHUB_REPO` | GitHub repository (e.g., `owner/repo`) |
+| `GITHUB_BRANCH` | Branch for commits (default: `main`) |
 | `BLOG_PATH` | Path to blog posts (default: `src/posts`) |
 | `MEDIA_URL` | Public URL for uploaded media |
 | `MAX_FILE_SIZE` | Maximum upload size in bytes (default: 10MB) |
@@ -197,7 +197,7 @@ For automatic deployments on every push:
 
 1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/) → **Workers & Pages**
 2. Click **Create application** → **Workers** → **Import a repository**
-3. Select your GitLab repository
+3. Select your GitHub repository
 4. Configure build settings:
    - **Build command**: `npm run build`
    - **Deploy command**: `npx wrangler deploy`

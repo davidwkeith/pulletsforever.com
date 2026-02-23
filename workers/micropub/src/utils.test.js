@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { corsHeaders, jsonResponse, errorResponse } from "./utils.js";
+import { corsHeaders, jsonResponse, errorResponse } from "./utils.ts";
 
 describe("corsHeaders", () => {
   it("returns expected CORS headers", () => {

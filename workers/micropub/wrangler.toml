@@ -6,8 +6,8 @@ upload_source_maps = true
 
 [vars]
 SITE_URL = "https://pulletsforever.com"
-GITLAB_PROJECT_ID = "dwk-io/pulletsforever.com"
-GITLAB_BRANCH = "main"
+GITHUB_REPO = "davidwkeith/pulletsforever.com"
+GITHUB_BRANCH = "main"
 BLOG_PATH = "src/posts"
 MEDIA_URL = "https://media.pulletsforever.com"
 MAX_FILE_SIZE = 10485760  # 10 MB in bytes
@@ -18,7 +18,7 @@ binding = "MEDIA_BUCKET"
 bucket_name = "pulletsforever-media"
 
 # Secrets (set via `wrangler secret put`):
-# - GITLAB_TOKEN: GitLab personal access token with api scope
+# - GITHUB_TOKEN: GitHub fine-grained personal access token with Contents read/write
 
 [observability]
 enabled = true

@@ -15,10 +15,11 @@ interface FindResult {
 
 interface FetchResult {
   content?: string;
+  sha?: string;
   error?: string;
 }
 
-interface GitLabResult {
+interface GitHubResult {
   success?: boolean;
   error?: string;
 }
@@ -28,6 +29,12 @@ interface Operations {
   add?: Record<string, unknown>;
   delete?: string[] | Record<string, unknown>;
 }
+
+const GITHUB_API_HEADERS = {
+  Accept: "application/vnd.github+json",
+  "User-Agent": "pulletsforever-micropub",
+  "X-GitHub-Api-Version": "2022-11-28",
+} as const;
 
 /**
  * Extract slug from a post URL
@@ -49,7 +56,7 @@ export function extractSlugFromUrl(url: string, siteUrl: string): string | null 
 }
 
 /**
- * Find a post file in GitLab by its URL slug
+ * Find a post file in GitHub by its URL slug
  */
 export async function findPostByUrl(url: string, env: Env): Promise<FindResult> {
   const slug = extractSlugFromUrl(url, env.SITE_URL);
@@ -57,25 +64,24 @@ export async function findPostByUrl(url: string, env: Env): Promise<FindResult> 
     return { error: "Invalid post URL" };
   }
 
-  const projectId = encodeURIComponent(env.GITLAB_PROJECT_ID);
   const blogPath = env.BLOG_PATH || "src/posts";
-
-  const treeUrl = `https://gitlab.com/api/v4/projects/${projectId}/repository/tree?path=${encodeURIComponent(blogPath)}&recursive=true&per_page=100`;
+  const treeUrl = `https://api.github.com/repos/${env.GITHUB_REPO}/git/trees/${env.GITHUB_BRANCH}?recursive=1`;
 
   try {
     const response = await fetch(treeUrl, {
       headers: {
-        "PRIVATE-TOKEN": env.GITLAB_TOKEN,
+        Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+        ...GITHUB_API_HEADERS,
       },
     });
 
     if (!response.ok) {
-      return { error: `GitLab API error: ${response.status}` };
+      return { error: `GitHub API error: ${response.status}` };
     }
 
-    const files: { type: string; path: string }[] = await response.json();
+    const data: { tree: { type: string; path: string }[] } = await response.json();
 
-    for (const file of files) {
+    for (const file of data.tree) {
       if (file.type !== "blob") continue;
 
       const directMatch = new RegExp(`^${blogPath}/${slug}\\.md$`);
@@ -93,19 +99,17 @@ export async function findPostByUrl(url: string, env: Env): Promise<FindResult> 
 }
 
 /**
- * Fetch file content from GitLab
+ * Fetch file content from GitHub
  */
-export async function fetchFileFromGitLab(filePath: string, env: Env): Promise<FetchResult> {
-  const projectId = encodeURIComponent(env.GITLAB_PROJECT_ID);
-  const encodedPath = encodeURIComponent(filePath);
-  const branch = env.GITLAB_BRANCH || "main";
-
-  const url = `https://gitlab.com/api/v4/projects/${projectId}/repository/files/${encodedPath}?ref=${branch}`;
+export async function fetchFileFromGitHub(filePath: string, env: Env): Promise<FetchResult> {
+  const branch = env.GITHUB_BRANCH || "main";
+  const url = `https://api.github.com/repos/${env.GITHUB_REPO}/contents/${filePath}?ref=${branch}`;
 
   try {
     const response = await fetch(url, {
       headers: {
-        "PRIVATE-TOKEN": env.GITLAB_TOKEN,
+        Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+        ...GITHUB_API_HEADERS,
       },
     });
 
@@ -113,12 +117,12 @@ export async function fetchFileFromGitLab(filePath: string, env: Env): Promise<F
       if (response.status === 404) {
         return { error: "File not found" };
       }
-      return { error: `GitLab API error: ${response.status}` };
+      return { error: `GitHub API error: ${response.status}` };
     }
 
-    const data: { content: string } = await response.json();
-    const content = atob(data.content);
-    return { content };
+    const data: { content: string; sha: string } = await response.json();
+    const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ""))));
+    return { content, sha: data.sha };
   } catch (err) {
     return { error: `Failed to fetch file: ${(err as Error).message}` };
   }
@@ -305,62 +309,59 @@ export function applyOperations(
 }
 
 /**
- * Update file in GitLab repository
+ * Update file in GitHub repository
  */
-async function updateFileInGitLab({ filePath, content, message, env }: { filePath: string; content: string; message: string; env: Env }): Promise<GitLabResult> {
-  const projectId = encodeURIComponent(env.GITLAB_PROJECT_ID);
-  const encodedPath = encodeURIComponent(filePath);
-  const branch = env.GITLAB_BRANCH || "main";
-
-  const url = `https://gitlab.com/api/v4/projects/${projectId}/repository/files/${encodedPath}`;
+async function updateFileInGitHub({ filePath, content, message, sha, env }: { filePath: string; content: string; message: string; sha: string; env: Env }): Promise<GitHubResult> {
+  const branch = env.GITHUB_BRANCH || "main";
+  const url = `https://api.github.com/repos/${env.GITHUB_REPO}/contents/${filePath}`;
 
   const response = await fetch(url, {
     method: "PUT",
     headers: {
-      "PRIVATE-TOKEN": env.GITLAB_TOKEN,
+      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
       "Content-Type": "application/json",
+      ...GITHUB_API_HEADERS,
     },
     body: JSON.stringify({
+      message,
+      content: btoa(unescape(encodeURIComponent(content))),
+      sha,
       branch,
-      content,
-      commit_message: message,
-      encoding: "text",
     }),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    return { error: `GitLab API error: ${response.status} - ${errorText}` };
+    return { error: `GitHub API error: ${response.status} - ${errorText}` };
   }
 
   return { success: true };
 }
 
 /**
- * Delete file from GitLab repository
+ * Delete file from GitHub repository
  */
-async function deleteFileFromGitLab({ filePath, message, env }: { filePath: string; message: string; env: Env }): Promise<GitLabResult> {
-  const projectId = encodeURIComponent(env.GITLAB_PROJECT_ID);
-  const encodedPath = encodeURIComponent(filePath);
-  const branch = env.GITLAB_BRANCH || "main";
-
-  const url = `https://gitlab.com/api/v4/projects/${projectId}/repository/files/${encodedPath}`;
+async function deleteFileFromGitHub({ filePath, message, sha, env }: { filePath: string; message: string; sha: string; env: Env }): Promise<GitHubResult> {
+  const branch = env.GITHUB_BRANCH || "main";
+  const url = `https://api.github.com/repos/${env.GITHUB_REPO}/contents/${filePath}`;
 
   const response = await fetch(url, {
     method: "DELETE",
     headers: {
-      "PRIVATE-TOKEN": env.GITLAB_TOKEN,
+      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
       "Content-Type": "application/json",
+      ...GITHUB_API_HEADERS,
     },
     body: JSON.stringify({
+      message,
+      sha,
       branch,
-      commit_message: message,
     }),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    return { error: `GitLab API error: ${response.status} - ${errorText}` };
+    return { error: `GitHub API error: ${response.status} - ${errorText}` };
   }
 
   return { success: true };
@@ -369,7 +370,7 @@ async function deleteFileFromGitLab({ filePath, message, env }: { filePath: stri
 /**
  * Update a post via Micropub
  */
-export async function updatePost(data: MicropubData, env: Env): Promise<GitLabResult> {
+export async function updatePost(data: MicropubData, env: Env): Promise<GitHubResult> {
   const url = data.url;
   if (!url) {
     return { error: "Missing url parameter" };
@@ -384,7 +385,7 @@ export async function updatePost(data: MicropubData, env: Env): Promise<GitLabRe
     return { error: findResult.error };
   }
 
-  const fetchResult = await fetchFileFromGitLab(findResult.filePath!, env);
+  const fetchResult = await fetchFileFromGitHub(findResult.filePath!, env);
   if (fetchResult.error) {
     return { error: fetchResult.error };
   }
@@ -399,10 +400,11 @@ export async function updatePost(data: MicropubData, env: Env): Promise<GitLabRe
 
   const newContent = buildMarkdownPost(updated.frontmatter, updated.body);
 
-  const updateResult = await updateFileInGitLab({
+  const updateResult = await updateFileInGitHub({
     filePath: findResult.filePath!,
     content: newContent,
     message: `Update post: ${updated.frontmatter.title || url}`,
+    sha: fetchResult.sha!,
     env,
   });
 
@@ -416,7 +418,7 @@ export async function updatePost(data: MicropubData, env: Env): Promise<GitLabRe
 /**
  * Delete a post via Micropub
  */
-export async function deletePost(data: MicropubData, env: Env): Promise<GitLabResult> {
+export async function deletePost(data: MicropubData, env: Env): Promise<GitHubResult> {
   const url = data.url;
   if (!url) {
     return { error: "Missing url parameter" };
@@ -427,9 +429,16 @@ export async function deletePost(data: MicropubData, env: Env): Promise<GitLabRe
     return { error: findResult.error };
   }
 
-  const deleteResult = await deleteFileFromGitLab({
+  // Fetch file to get its sha (required by GitHub API for deletion)
+  const fetchResult = await fetchFileFromGitHub(findResult.filePath!, env);
+  if (fetchResult.error) {
+    return { error: fetchResult.error };
+  }
+
+  const deleteResult = await deleteFileFromGitHub({
     filePath: findResult.filePath!,
     message: `Delete post: ${url}`,
+    sha: fetchResult.sha!,
     env,
   });
 

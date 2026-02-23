@@ -11,15 +11,15 @@ interface HeadLink {
 const headLinks: HeadLink[] = [
   {
     rel: "code-repository",
-    href: "https://gitlab.com/dwk-io/pulletsforever.com.git",
+    href: "https://github.com/davidwkeith/pulletsforever.com.git",
   },
   {
     rel: "content-repository",
-    href: "https://gitlab.com/dwk-io/pulletsforever.com.git",
+    href: "https://github.com/davidwkeith/pulletsforever.com.git",
   },
   {
     rel: "issues",
-    href: "https://gitlab.com/dwk-io/pulletsforever.com/-/issues",
+    href: "https://github.com/davidwkeith/pulletsforever.com/issues",
     type: "text/html",
   },
   {

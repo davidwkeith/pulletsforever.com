@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { verifyToken } from "./auth.js";
+import { verifyToken } from "./auth.ts";
 
 const SITE_URL = "https://pulletsforever.com";
 

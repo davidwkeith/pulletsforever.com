@@ -16,7 +16,6 @@ const schema = {
       "https://keybase.io/dwkeith",
       "https://www.facebook.com/davidwkeith",
       "https://www.reddit.com/user/dwkeith",
-      "https://gitlab.com/davidwkeith",
       "https://github.com/davidwkeith",
       "https://www.linkedin.com/in/davidwkeith",
       "https://pulletsforever.com",

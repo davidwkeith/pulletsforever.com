@@ -1,5 +1,5 @@
 /**
- * Post creation via GitLab API
+ * Post creation via GitHub API
  */
 
 import type { Env } from "./env.ts";
@@ -99,7 +99,7 @@ export async function createPost(data: MicropubData, env: Env): Promise<PostResu
   const filePath = `${env.BLOG_PATH}/${year}/${slug}.md`;
 
   try {
-    const commitResult = await commitToGitLab({
+    const commitResult = await commitToGitHub({
       filePath,
       content: markdown,
       message: `Add post: ${frontmatter.title}`,
@@ -118,30 +118,31 @@ export async function createPost(data: MicropubData, env: Env): Promise<PostResu
 }
 
 /**
- * Commit a file to GitLab repository
+ * Commit a file to GitHub repository
  */
-async function commitToGitLab({ filePath, content, message, env }: { filePath: string; content: string; message: string; env: Env }): Promise<CommitResult> {
-  const projectId = encodeURIComponent(env.GITLAB_PROJECT_ID);
-  const apiUrl = `https://gitlab.com/api/v4/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}`;
+async function commitToGitHub({ filePath, content, message, env }: { filePath: string; content: string; message: string; env: Env }): Promise<CommitResult> {
+  const apiUrl = `https://api.github.com/repos/${env.GITHUB_REPO}/contents/${filePath}`;
 
   const response = await fetch(apiUrl, {
-    method: "POST",
+    method: "PUT",
     headers: {
-      "PRIVATE-TOKEN": env.GITLAB_TOKEN,
+      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
       "Content-Type": "application/json",
+      Accept: "application/vnd.github+json",
+      "User-Agent": "pulletsforever-micropub",
+      "X-GitHub-Api-Version": "2022-11-28",
     },
     body: JSON.stringify({
-      branch: env.GITLAB_BRANCH,
-      content: content,
-      commit_message: message,
-      encoding: "text",
+      message,
+      content: btoa(unescape(encodeURIComponent(content))),
+      branch: env.GITHUB_BRANCH,
     }),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error(`GitLab API error: ${response.status} - ${errorText}`);
-    return { error: `GitLab API error: ${response.status}` };
+    console.error(`GitHub API error: ${response.status} - ${errorText}`);
+    return { error: `GitHub API error: ${response.status}` };
   }
 
   return { success: true };

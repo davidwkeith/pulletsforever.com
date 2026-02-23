@@ -16,7 +16,6 @@ const author: Author = {
     keybase: "https://keybase.io/dwkeith",
     facebook: "https://www.facebook.com/davidwkeith",
     reddit: "https://www.reddit.com/user/dwkeith",
-    gitlab: "https://gitlab.com/davidwkeith",
     github: "https://github.com/davidwkeith",
     linkedin: "https://www.linkedin.com/in/davidwkeith",
     blog: "https://pulletsforever.com",

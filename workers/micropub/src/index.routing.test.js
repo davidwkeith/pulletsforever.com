@@ -1,22 +1,22 @@
 import { env, createExecutionContext, waitOnExecutionContext } from "cloudflare:test";
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import worker from "./index.js";
+import worker from "./index.ts";
 
 // Mock auth and downstream handlers to isolate routing logic
-vi.mock("./auth.js", () => ({
+vi.mock("./auth.ts", () => ({
   verifyToken: vi.fn(),
 }));
-vi.mock("./post.js", () => ({
+vi.mock("./post.ts", () => ({
   createPost: vi.fn(),
 }));
-vi.mock("./update.js", () => ({
+vi.mock("./update.ts", () => ({
   updatePost: vi.fn(),
   deletePost: vi.fn(),
 }));
 
-import { verifyToken } from "./auth.js";
-import { createPost } from "./post.js";
-import { updatePost, deletePost } from "./update.js";
+import { verifyToken } from "./auth.ts";
+import { createPost } from "./post.ts";
+import { updatePost, deletePost } from "./update.ts";
 
 const baseUrl = "https://micropub.pulletsforever.com";
 
@@ -226,7 +226,7 @@ describe("Micropub routing", () => {
 
     it("returns 500 when create fails", async () => {
       verifyToken.mockResolvedValue({ valid: true, scope: ["create"], me: "https://pulletsforever.com" });
-      createPost.mockResolvedValue({ error: "GitLab API failed" });
+      createPost.mockResolvedValue({ error: "GitHub API failed" });
 
       const request = new Request(`${baseUrl}/micropub`, {
         method: "POST",
