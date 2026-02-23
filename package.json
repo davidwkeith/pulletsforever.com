@@ -30,7 +30,7 @@
     "url": "https://github.com/davidwkeith/pulletsforever.com.git"
   },
   "devDependencies": {
-    "@dwk/eleventy-shared": "*",
+    "@dwk/eleventy-shared": "^0.1.0",
     "@11ty/eleventy": "^3.1.2",
     "@11ty/eleventy-img": "^6.0.4",
     "@11ty/eleventy-navigation": "^1.0.5",

@@ -14,7 +14,7 @@ Personal blog. Posts live in `src/posts/`.
 - **Layouts**: `src/_includes/layouts/` (base.njk, post.webc)
 - **Components**: `src/_includes/components/*.webc`
 - **Workers**: `workers/site/` (content negotiation), `workers/micropub/` (Micropub endpoint)
-- Uses `@dwk/eleventy-shared` plugin for shared templates and config (date filters and bundles disabled — uses Luxon-based filters and `@11ty/eleventy-plugin-bundle`)
+- Uses [`@dwk/eleventy-shared`](https://www.npmjs.com/package/@dwk/eleventy-shared) plugin (from npm) for shared templates and config (date filters and bundles disabled — uses Luxon-based filters and `@11ty/eleventy-plugin-bundle`)
 
 ## Creating a New Post
 
