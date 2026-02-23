@@ -1,13 +1,14 @@
 import { env, createExecutionContext, waitOnExecutionContext } from "cloudflare:test";
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import worker from "./index.js";
+import worker from "./index.ts";
 
-// Mock the token verification
-vi.mock("./auth.js", () => ({
+vi.mock("./auth.ts", () => ({
   verifyToken: vi.fn(),
 }));
 
-import { verifyToken } from "./auth.js";
+import { verifyToken } from "./auth.ts";
+
+const mockVerifyToken = vi.mocked(verifyToken);
 
 describe("Media Endpoint", () => {
   const baseUrl = "https://micropub.pulletsforever.com";
@@ -18,7 +19,7 @@ describe("Media Endpoint", () => {
 
   describe("POST /media", () => {
     it("returns 401 when no authorization header is provided", async () => {
-      verifyToken.mockResolvedValue({
+      mockVerifyToken.mockResolvedValue({
         valid: false,
         error: "Missing Authorization header",
       });
@@ -38,7 +39,7 @@ describe("Media Endpoint", () => {
     });
 
     it("returns 403 when token lacks media or create scope", async () => {
-      verifyToken.mockResolvedValue({
+      mockVerifyToken.mockResolvedValue({
         valid: true,
         scope: ["read"],
         me: "https://pulletsforever.com",
@@ -62,14 +63,13 @@ describe("Media Endpoint", () => {
     });
 
     it("returns 400 when file field is missing", async () => {
-      verifyToken.mockResolvedValue({
+      mockVerifyToken.mockResolvedValue({
         valid: true,
         scope: ["media"],
         me: "https://pulletsforever.com",
       });
 
       const formData = new FormData();
-      // No file field added
 
       const request = new Request(`${baseUrl}/media`, {
         method: "POST",
@@ -90,7 +90,7 @@ describe("Media Endpoint", () => {
     });
 
     it("returns 400 for unsupported file types", async () => {
-      verifyToken.mockResolvedValue({
+      mockVerifyToken.mockResolvedValue({
         valid: true,
         scope: ["media"],
         me: "https://pulletsforever.com",
@@ -121,7 +121,7 @@ describe("Media Endpoint", () => {
     });
 
     it("rejects SVG uploads due to XSS risk", async () => {
-      verifyToken.mockResolvedValue({
+      mockVerifyToken.mockResolvedValue({
         valid: true,
         scope: ["media"],
         me: "https://pulletsforever.com",
@@ -153,14 +153,14 @@ describe("Media Endpoint", () => {
     });
 
     it("returns 201 with Location header for valid image upload", async () => {
-      verifyToken.mockResolvedValue({
+      mockVerifyToken.mockResolvedValue({
         valid: true,
         scope: ["media"],
         me: "https://pulletsforever.com",
       });
 
       const formData = new FormData();
-      const imageData = new Uint8Array([0xff, 0xd8, 0xff, 0xe0]); // JPEG magic bytes
+      const imageData = new Uint8Array([0xff, 0xd8, 0xff, 0xe0]);
       const file = new File([imageData], "photo.jpg", {
         type: "image/jpeg",
       });
@@ -184,7 +184,7 @@ describe("Media Endpoint", () => {
     });
 
     it("accepts create scope as alternative to media scope", async () => {
-      verifyToken.mockResolvedValue({
+      mockVerifyToken.mockResolvedValue({
         valid: true,
         scope: ["create"],
         me: "https://pulletsforever.com",

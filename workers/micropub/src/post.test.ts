@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateSlug, parsePhotoValue, toYaml } from "./post.js";
+import { generateSlug, parsePhotoValue, toYaml } from "./post.ts";
 
 describe("generateSlug", () => {
   it("generates slug from title", () => {

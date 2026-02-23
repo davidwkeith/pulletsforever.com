@@ -4,25 +4,43 @@
  * https://www.w3.org/TR/micropub/#delete
  */
 
-import { toYaml } from "./post.js";
+import type { Env } from "./env.ts";
+import type { MicropubData } from "./post.ts";
+import { toYaml } from "./post.ts";
+
+interface FindResult {
+  filePath?: string;
+  error?: string;
+}
+
+interface FetchResult {
+  content?: string;
+  error?: string;
+}
+
+interface GitLabResult {
+  success?: boolean;
+  error?: string;
+}
+
+interface Operations {
+  replace?: Record<string, unknown>;
+  add?: Record<string, unknown>;
+  delete?: string[] | Record<string, unknown>;
+}
 
 /**
  * Extract slug from a post URL
- * @param {string} url - Full post URL (e.g., "https://pulletsforever.com/my-post/")
- * @param {string} siteUrl - Site base URL (e.g., "https://pulletsforever.com")
- * @returns {string|null} The slug or null if URL doesn't match site
  */
-export function extractSlugFromUrl(url, siteUrl) {
+export function extractSlugFromUrl(url: string, siteUrl: string): string | null {
   try {
     const postUrl = new URL(url);
     const baseUrl = new URL(siteUrl);
 
-    // Verify the URL belongs to this site
     if (postUrl.host !== baseUrl.host) {
       return null;
     }
 
-    // Extract slug from path (e.g., "/my-post/" -> "my-post")
     const path = postUrl.pathname.replace(/^\/|\/$/g, "");
     return path || null;
   } catch {
@@ -32,11 +50,8 @@ export function extractSlugFromUrl(url, siteUrl) {
 
 /**
  * Find a post file in GitLab by its URL slug
- * @param {string} url - Post URL
- * @param {object} env - Worker environment
- * @returns {Promise<{filePath?: string, sha?: string, error?: string}>}
  */
-export async function findPostByUrl(url, env) {
+export async function findPostByUrl(url: string, env: Env): Promise<FindResult> {
   const slug = extractSlugFromUrl(url, env.SITE_URL);
   if (!slug) {
     return { error: "Invalid post URL" };
@@ -45,8 +60,6 @@ export async function findPostByUrl(url, env) {
   const projectId = encodeURIComponent(env.GITLAB_PROJECT_ID);
   const blogPath = env.BLOG_PATH || "src/posts";
 
-  // Search for files matching the slug in the posts directory
-  // Files can be either {slug}.md or {slug}/index.md
   const treeUrl = `https://gitlab.com/api/v4/projects/${projectId}/repository/tree?path=${encodeURIComponent(blogPath)}&recursive=true&per_page=100`;
 
   try {
@@ -60,15 +73,12 @@ export async function findPostByUrl(url, env) {
       return { error: `GitLab API error: ${response.status}` };
     }
 
-    const files = await response.json();
+    const files: { type: string; path: string }[] = await response.json();
 
-    // Look for matching files
     for (const file of files) {
       if (file.type !== "blob") continue;
 
-      // Match {slug}.md
       const directMatch = new RegExp(`^${blogPath}/${slug}\\.md$`);
-      // Match {slug}/index.md
       const indexMatch = new RegExp(`^${blogPath}/${slug}/index\\.md$`);
 
       if (directMatch.test(file.path) || indexMatch.test(file.path)) {
@@ -78,17 +88,14 @@ export async function findPostByUrl(url, env) {
 
     return { error: "Post not found" };
   } catch (err) {
-    return { error: `Failed to search repository: ${err.message}` };
+    return { error: `Failed to search repository: ${(err as Error).message}` };
   }
 }
 
 /**
  * Fetch file content from GitLab
- * @param {string} filePath - Path to file in repository
- * @param {object} env - Worker environment
- * @returns {Promise<{content?: string, error?: string}>}
  */
-export async function fetchFileFromGitLab(filePath, env) {
+export async function fetchFileFromGitLab(filePath: string, env: Env): Promise<FetchResult> {
   const projectId = encodeURIComponent(env.GITLAB_PROJECT_ID);
   const encodedPath = encodeURIComponent(filePath);
   const branch = env.GITLAB_BRANCH || "main";
@@ -109,21 +116,18 @@ export async function fetchFileFromGitLab(filePath, env) {
       return { error: `GitLab API error: ${response.status}` };
     }
 
-    const data = await response.json();
-    // GitLab returns content as base64
+    const data: { content: string } = await response.json();
     const content = atob(data.content);
     return { content };
   } catch (err) {
-    return { error: `Failed to fetch file: ${err.message}` };
+    return { error: `Failed to fetch file: ${(err as Error).message}` };
   }
 }
 
 /**
  * Parse a markdown file with YAML frontmatter
- * @param {string} content - Raw markdown content
- * @returns {{frontmatter: object, body: string}}
  */
-export function parseMarkdownPost(content) {
+export function parseMarkdownPost(content: string): { frontmatter: Record<string, unknown>; body: string } {
   const frontmatterRegex = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/;
   const match = content.match(frontmatterRegex);
 
@@ -134,7 +138,6 @@ export function parseMarkdownPost(content) {
   const yamlContent = match[1];
   const body = match[2].trim();
 
-  // Parse YAML manually (simple key-value and arrays)
   const frontmatter = parseSimpleYaml(yamlContent);
 
   return { frontmatter, body };
@@ -142,45 +145,37 @@ export function parseMarkdownPost(content) {
 
 /**
  * Parse simple YAML (supports strings, arrays, nested isn't needed for frontmatter)
- * @param {string} yaml - YAML content
- * @returns {object}
  */
-function parseSimpleYaml(yaml) {
-  const result = {};
+function parseSimpleYaml(yaml: string): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
   const lines = yaml.split("\n");
-  let currentKey = null;
+  let currentKey: string | null = null;
   let inArray = false;
 
   for (const line of lines) {
-    // Skip empty lines
     if (!line.trim()) continue;
 
-    // Array item
     if (line.match(/^\s+-\s+/)) {
       if (currentKey && inArray) {
         let value = line.replace(/^\s+-\s+/, "").trim();
-        // Remove quotes if present
         if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
           value = value.slice(1, -1);
         }
-        result[currentKey].push(value);
+        (result[currentKey] as string[]).push(value);
       }
       continue;
     }
 
-    // Key-value pair
     const kvMatch = line.match(/^([a-zA-Z_-]+):\s*(.*)/);
     if (kvMatch) {
       const key = kvMatch[1];
       let value = kvMatch[2].trim();
 
       if (value === "" || value === "[]") {
-        // Empty value or empty array - start of array
         result[key] = [];
         currentKey = key;
         inArray = true;
       } else if (value.startsWith("[") && value.endsWith("]")) {
-        // Inline array: [item1, item2]
         const items = value.slice(1, -1).split(",").map((s) => {
           let item = s.trim();
           if ((item.startsWith('"') && item.endsWith('"')) || (item.startsWith("'") && item.endsWith("'"))) {
@@ -192,8 +187,6 @@ function parseSimpleYaml(yaml) {
         currentKey = null;
         inArray = false;
       } else {
-        // Regular value
-        // Remove quotes if present
         if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
           value = value.slice(1, -1);
         }
@@ -209,11 +202,8 @@ function parseSimpleYaml(yaml) {
 
 /**
  * Build a markdown file from frontmatter and body
- * @param {object} frontmatter - Frontmatter object
- * @param {string} body - Post body content
- * @returns {string}
  */
-export function buildMarkdownPost(frontmatter, body) {
+export function buildMarkdownPost(frontmatter: Record<string, unknown>, body: string): string {
   let markdown = "---\n";
   markdown += toYaml(frontmatter);
   markdown += "---\n";
@@ -225,17 +215,16 @@ export function buildMarkdownPost(frontmatter, body) {
 
 /**
  * Apply Micropub operations to frontmatter and body
- * @param {object} frontmatter - Current frontmatter
- * @param {string} body - Current body content
- * @param {object} operations - Operations to apply { replace, add, delete }
- * @returns {{frontmatter: object, body: string}}
  */
-export function applyOperations(frontmatter, body, operations) {
-  const newFrontmatter = { ...frontmatter };
+export function applyOperations(
+  frontmatter: Record<string, unknown>,
+  body: string,
+  operations: Operations,
+): { frontmatter: Record<string, unknown>; body: string } {
+  const newFrontmatter: Record<string, unknown> = { ...frontmatter };
   let newBody = body;
 
-  // Property name mapping from Micropub to frontmatter
-  const propMap = {
+  const propMap: Record<string, string> = {
     name: "title",
     category: "tags",
     summary: "description",
@@ -243,15 +232,13 @@ export function applyOperations(frontmatter, body, operations) {
     "in-reply-to": "in-reply-to",
   };
 
-  const mapProp = (prop) => propMap[prop] || prop;
+  const mapProp = (prop: string): string => propMap[prop] || prop;
 
-  // Handle replace operations
   if (operations.replace) {
     for (const [prop, values] of Object.entries(operations.replace)) {
       if (prop === "content") {
-        // Content is special - it's the body
         const value = Array.isArray(values) ? values[0] : values;
-        newBody = typeof value === "object" ? value.html || value.value || "" : value || "";
+        newBody = typeof value === "object" ? (value as { html?: string; value?: string }).html || (value as { html?: string; value?: string }).value || "" : (value as string) || "";
       } else {
         const key = mapProp(prop);
         const value = Array.isArray(values) ? (values.length === 1 ? values[0] : values) : values;
@@ -260,13 +247,11 @@ export function applyOperations(frontmatter, body, operations) {
     }
   }
 
-  // Handle add operations
   if (operations.add) {
     for (const [prop, values] of Object.entries(operations.add)) {
       if (prop === "content") {
-        // Append to body
         const value = Array.isArray(values) ? values[0] : values;
-        const textToAdd = typeof value === "object" ? value.html || value.value || "" : value || "";
+        const textToAdd = typeof value === "object" ? (value as { html?: string; value?: string }).html || (value as { html?: string; value?: string }).value || "" : (value as string) || "";
         newBody = newBody ? newBody + "\n\n" + textToAdd : textToAdd;
       } else {
         const key = mapProp(prop);
@@ -284,10 +269,8 @@ export function applyOperations(frontmatter, body, operations) {
     }
   }
 
-  // Handle delete operations
   if (operations.delete) {
     if (Array.isArray(operations.delete)) {
-      // Delete entire properties
       for (const prop of operations.delete) {
         if (prop === "content") {
           newBody = "";
@@ -297,7 +280,6 @@ export function applyOperations(frontmatter, body, operations) {
         }
       }
     } else {
-      // Delete specific values from properties
       for (const [prop, values] of Object.entries(operations.delete)) {
         if (prop === "content") {
           newBody = "";
@@ -308,7 +290,7 @@ export function applyOperations(frontmatter, body, operations) {
 
           if (Array.isArray(existing)) {
             newFrontmatter[key] = existing.filter((v) => !toRemove.includes(v));
-            if (newFrontmatter[key].length === 0) {
+            if ((newFrontmatter[key] as unknown[]).length === 0) {
               delete newFrontmatter[key];
             }
           } else if (toRemove.includes(existing)) {
@@ -324,10 +306,8 @@ export function applyOperations(frontmatter, body, operations) {
 
 /**
  * Update file in GitLab repository
- * @param {object} params - Update parameters
- * @returns {Promise<{success?: boolean, error?: string}>}
  */
-async function updateFileInGitLab({ filePath, content, message, env }) {
+async function updateFileInGitLab({ filePath, content, message, env }: { filePath: string; content: string; message: string; env: Env }): Promise<GitLabResult> {
   const projectId = encodeURIComponent(env.GITLAB_PROJECT_ID);
   const encodedPath = encodeURIComponent(filePath);
   const branch = env.GITLAB_BRANCH || "main";
@@ -358,10 +338,8 @@ async function updateFileInGitLab({ filePath, content, message, env }) {
 
 /**
  * Delete file from GitLab repository
- * @param {object} params - Delete parameters
- * @returns {Promise<{success?: boolean, error?: string}>}
  */
-async function deleteFileFromGitLab({ filePath, message, env }) {
+async function deleteFileFromGitLab({ filePath, message, env }: { filePath: string; message: string; env: Env }): Promise<GitLabResult> {
   const projectId = encodeURIComponent(env.GITLAB_PROJECT_ID);
   const encodedPath = encodeURIComponent(filePath);
   const branch = env.GITLAB_BRANCH || "main";
@@ -390,49 +368,39 @@ async function deleteFileFromGitLab({ filePath, message, env }) {
 
 /**
  * Update a post via Micropub
- * @param {object} data - Micropub update data
- * @param {object} env - Worker environment
- * @returns {Promise<{success?: boolean, error?: string}>}
  */
-export async function updatePost(data, env) {
+export async function updatePost(data: MicropubData, env: Env): Promise<GitLabResult> {
   const url = data.url;
   if (!url) {
     return { error: "Missing url parameter" };
   }
 
-  // Validate at least one operation is provided
   if (!data.replace && !data.add && !data.delete) {
     return { error: "Update requires at least one of: replace, add, delete" };
   }
 
-  // Find the post file
   const findResult = await findPostByUrl(url, env);
   if (findResult.error) {
     return { error: findResult.error };
   }
 
-  // Fetch current content
-  const fetchResult = await fetchFileFromGitLab(findResult.filePath, env);
+  const fetchResult = await fetchFileFromGitLab(findResult.filePath!, env);
   if (fetchResult.error) {
     return { error: fetchResult.error };
   }
 
-  // Parse the markdown
-  const { frontmatter, body } = parseMarkdownPost(fetchResult.content);
+  const { frontmatter, body } = parseMarkdownPost(fetchResult.content!);
 
-  // Apply operations
   const updated = applyOperations(frontmatter, body, {
     replace: data.replace,
     add: data.add,
     delete: data.delete,
   });
 
-  // Build new markdown
   const newContent = buildMarkdownPost(updated.frontmatter, updated.body);
 
-  // Commit to GitLab
   const updateResult = await updateFileInGitLab({
-    filePath: findResult.filePath,
+    filePath: findResult.filePath!,
     content: newContent,
     message: `Update post: ${updated.frontmatter.title || url}`,
     env,
@@ -447,25 +415,20 @@ export async function updatePost(data, env) {
 
 /**
  * Delete a post via Micropub
- * @param {object} data - Micropub delete data
- * @param {object} env - Worker environment
- * @returns {Promise<{success?: boolean, error?: string}>}
  */
-export async function deletePost(data, env) {
+export async function deletePost(data: MicropubData, env: Env): Promise<GitLabResult> {
   const url = data.url;
   if (!url) {
     return { error: "Missing url parameter" };
   }
 
-  // Find the post file
   const findResult = await findPostByUrl(url, env);
   if (findResult.error) {
     return { error: findResult.error };
   }
 
-  // Delete from GitLab
   const deleteResult = await deleteFileFromGitLab({
-    filePath: findResult.filePath,
+    filePath: findResult.filePath!,
     message: `Delete post: ${url}`,
     env,
   });

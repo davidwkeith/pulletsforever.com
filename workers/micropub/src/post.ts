@@ -2,16 +2,57 @@
  * Post creation via GitLab API
  */
 
+import type { Env } from "./env.ts";
+
+interface PhotoValue {
+  value?: string;
+  url?: string;
+  alt?: string;
+}
+
+interface ContentValue {
+  html?: string;
+  value?: string;
+}
+
+interface MicropubProperties {
+  name?: string[];
+  content?: (string | ContentValue)[];
+  published?: string[];
+  category?: string[];
+  summary?: string[];
+  "in-reply-to"?: string[];
+  photo?: (string | PhotoValue)[];
+  "mp-slug"?: string[];
+  [key: string]: unknown;
+}
+
+export interface MicropubData {
+  type?: string[];
+  properties?: MicropubProperties;
+  action?: string;
+  url?: string;
+  replace?: Record<string, unknown>;
+  add?: Record<string, unknown>;
+  delete?: string[] | Record<string, unknown>;
+}
+
+interface PostResult {
+  url?: string;
+  error?: string;
+}
+
+interface CommitResult {
+  success?: boolean;
+  error?: string;
+}
+
 /**
  * Create a new post from Micropub data
- * @param {object} data - Micropub data (JSON format)
- * @param {object} env - Worker environment
- * @returns {Promise<{url?: string, error?: string}>}
  */
-export async function createPost(data, env) {
+export async function createPost(data: MicropubData, env: Env): Promise<PostResult> {
   const props = data.properties || {};
 
-  // Extract properties (Micropub values are always arrays)
   const name = getFirst(props.name);
   const content = getFirst(props.content);
   const published = getFirst(props.published) || new Date().toISOString();
@@ -19,21 +60,15 @@ export async function createPost(data, env) {
   const summary = getFirst(props.summary);
   const inReplyTo = getFirst(props["in-reply-to"]);
   const photos = props.photo || [];
-  const slug = getFirst(props["mp-slug"]) || generateSlug(name, published);
+  const slug = getFirst(props["mp-slug"]) || generateSlug(name as string, published as string);
 
-  // Validate: require at least content, name, or photo
   if (!name && !content && photos.length === 0) {
     return { error: "Post must have at least a title, content, or photo" };
   }
 
-  // Determine post type
-  const isNote = !name;
-  const isReply = !!inReplyTo;
-
-  // Build frontmatter
-  const frontmatter = {
-    title: name || `Note: ${formatDate(published)}`,
-    date: published.split("T")[0], // YYYY-MM-DD
+  const frontmatter: Record<string, unknown> = {
+    title: name || `Note: ${formatDate(published as string)}`,
+    date: (published as string).split("T")[0],
   };
 
   if (summary) {
@@ -48,26 +83,21 @@ export async function createPost(data, env) {
     frontmatter["in-reply-to"] = inReplyTo;
   }
 
-  // Build markdown content
   let markdown = "---\n";
   markdown += toYaml(frontmatter);
   markdown += "---\n\n";
 
-  // Add photos at the beginning (before text content)
   for (const photo of photos) {
     const { url, alt } = parsePhotoValue(photo);
     markdown += `![${alt}](${url})\n\n`;
   }
 
-  // Handle content (could be string or object with html/value)
-  const bodyContent = typeof content === "object" ? content.html || content.value || "" : content || "";
+  const bodyContent = typeof content === "object" ? (content as ContentValue).html || (content as ContentValue).value || "" : (content as string) || "";
   markdown += bodyContent;
 
-  // Determine file path
-  const year = new Date(published).getFullYear();
+  const year = new Date(published as string).getFullYear();
   const filePath = `${env.BLOG_PATH}/${year}/${slug}.md`;
 
-  // Commit to GitLab
   try {
     const commitResult = await commitToGitLab({
       filePath,
@@ -80,18 +110,17 @@ export async function createPost(data, env) {
       return { error: commitResult.error };
     }
 
-    // Return the URL of the new post
     const postUrl = `${env.SITE_URL}/${slug}/`;
     return { url: postUrl };
   } catch (err) {
-    return { error: err.message };
+    return { error: (err as Error).message };
   }
 }
 
 /**
  * Commit a file to GitLab repository
  */
-async function commitToGitLab({ filePath, content, message, env }) {
+async function commitToGitLab({ filePath, content, message, env }: { filePath: string; content: string; message: string; env: Env }): Promise<CommitResult> {
   const projectId = encodeURIComponent(env.GITLAB_PROJECT_ID);
   const apiUrl = `https://gitlab.com/api/v4/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}`;
 
@@ -120,11 +149,8 @@ async function commitToGitLab({ filePath, content, message, env }) {
 
 /**
  * Generate a URL slug from title or timestamp
- * @param {string} title - Post title (optional)
- * @param {string} published - ISO 8601 date string
- * @returns {string} URL-safe slug
  */
-export function generateSlug(title, published) {
+export function generateSlug(title: string | null | undefined, published: string): string {
   if (title) {
     return title
       .toLowerCase()
@@ -133,15 +159,11 @@ export function generateSlug(title, published) {
       .slice(0, 50);
   }
 
-  // For notes without titles, use timestamp
   const date = new Date(published);
   return `note-${date.getTime()}`;
 }
 
-/**
- * Format date for display
- */
-function formatDate(isoString) {
+function formatDate(isoString: string): string {
   const date = new Date(isoString);
   return date.toLocaleDateString("en-US", {
     year: "numeric",
@@ -150,10 +172,7 @@ function formatDate(isoString) {
   });
 }
 
-/**
- * Get first element of array or return value if not array
- */
-function getFirst(value) {
+function getFirst<T>(value: T[] | T | undefined): T | undefined {
   if (Array.isArray(value)) {
     return value[0];
   }
@@ -162,14 +181,11 @@ function getFirst(value) {
 
 /**
  * Parse a photo value which can be a string URL or an object with value/alt
- * @param {string|object} photo - Photo URL or object with value and alt
- * @returns {{url: string, alt: string}}
  */
-export function parsePhotoValue(photo) {
+export function parsePhotoValue(photo: string | PhotoValue): { url: string; alt: string } {
   if (typeof photo === "string") {
     return { url: photo, alt: "" };
   }
-  // Object format: { value: "url", alt: "description" }
   return {
     url: photo.value || photo.url || "",
     alt: photo.alt || "",
@@ -178,11 +194,8 @@ export function parsePhotoValue(photo) {
 
 /**
  * Convert object to YAML frontmatter
- * @param {object} obj - Object to convert
- * @param {number} indent - Indentation level
- * @returns {string} YAML string
  */
-export function toYaml(obj, indent = 0) {
+export function toYaml(obj: Record<string, unknown>, indent = 0): string {
   let yaml = "";
   const prefix = "  ".repeat(indent);
 
@@ -194,9 +207,8 @@ export function toYaml(obj, indent = 0) {
       }
     } else if (typeof value === "object" && value !== null) {
       yaml += `${prefix}${key}:\n`;
-      yaml += toYaml(value, indent + 1);
+      yaml += toYaml(value as Record<string, unknown>, indent + 1);
     } else {
-      // Quote strings that might need it
       const needsQuotes = typeof value === "string" && (value.includes(":") || value.includes("#") || value.includes("'") || value.includes('"'));
       yaml += `${prefix}${key}: ${needsQuotes ? JSON.stringify(value) : value}\n`;
     }

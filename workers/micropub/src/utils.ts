@@ -5,7 +5,7 @@
 /**
  * Standard CORS headers for Micropub responses
  */
-export function corsHeaders() {
+export function corsHeaders(): Record<string, string> {
   return {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -15,11 +15,8 @@ export function corsHeaders() {
 
 /**
  * Create a JSON response with CORS headers
- * @param {object} data - Response data
- * @param {number} status - HTTP status code
- * @returns {Response}
  */
-export function jsonResponse(data, status = 200) {
+export function jsonResponse(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
@@ -31,11 +28,7 @@ export function jsonResponse(data, status = 200) {
 
 /**
  * Create an error response in Micropub format
- * @param {string} error - Error code (e.g., "invalid_request", "unauthorized")
- * @param {string} description - Human-readable error description
- * @param {number} status - HTTP status code
- * @returns {Response}
  */
-export function errorResponse(error, description, status) {
+export function errorResponse(error: string, description: string, status: number): Response {
   return jsonResponse({ error, error_description: description }, status);
 }

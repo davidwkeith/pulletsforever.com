@@ -3,16 +3,22 @@
  * https://indieauth.spec.indieweb.org/#token-verification
  */
 
+import type { Env } from "./env.ts";
+
 const TOKEN_ENDPOINT = "https://indieauth.com/token";
+
+interface TokenResult {
+  valid: boolean;
+  scope?: string[];
+  me?: string;
+  client_id?: string;
+  error?: string;
+}
 
 /**
  * Verify the IndieAuth bearer token
- * @param {Request} request
- * @param {object} env
- * @returns {Promise<{valid: boolean, scope?: string, me?: string, error?: string}>}
  */
-export async function verifyToken(request, env) {
-  // Extract bearer token from Authorization header
+export async function verifyToken(request: Request, env: Env): Promise<TokenResult> {
   const authHeader = request.headers.get("Authorization");
   if (!authHeader) {
     return { valid: false, error: "Missing Authorization header" };
@@ -25,7 +31,6 @@ export async function verifyToken(request, env) {
 
   const token = match[1];
 
-  // Verify token with indieauth.com
   try {
     const response = await fetch(TOKEN_ENDPOINT, {
       method: "GET",
@@ -39,9 +44,8 @@ export async function verifyToken(request, env) {
       return { valid: false, error: `Token verification failed: ${response.status}` };
     }
 
-    const data = await response.json();
+    const data: { me?: string; scope?: string; client_id?: string } = await response.json();
 
-    // Verify the "me" URL matches our site
     if (!data.me) {
       return { valid: false, error: "Token response missing 'me' field" };
     }
@@ -53,7 +57,6 @@ export async function verifyToken(request, env) {
       return { valid: false, error: `Token 'me' (${data.me}) does not match site URL (${env.SITE_URL})` };
     }
 
-    // Parse scope
     const scope = data.scope ? data.scope.split(" ") : [];
 
     return {
@@ -63,14 +66,14 @@ export async function verifyToken(request, env) {
       client_id: data.client_id,
     };
   } catch (err) {
-    return { valid: false, error: `Token verification error: ${err.message}` };
+    return { valid: false, error: `Token verification error: ${(err as Error).message}` };
   }
 }
 
 /**
  * Normalize URL for comparison (remove trailing slash, lowercase host)
  */
-function normalizeUrl(url) {
+function normalizeUrl(url: string): string {
   try {
     const parsed = new URL(url);
     return `${parsed.protocol}//${parsed.host.toLowerCase()}${parsed.pathname.replace(/\/$/, "")}`;

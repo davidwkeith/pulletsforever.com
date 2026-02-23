@@ -3,29 +3,28 @@
  * https://www.w3.org/TR/micropub/
  */
 
-import { verifyToken } from "./auth.js";
-import { handleMediaUpload } from "./media.js";
-import { createPost } from "./post.js";
-import { handleQuery } from "./query.js";
-import { updatePost, deletePost } from "./update.js";
-import { corsHeaders, jsonResponse } from "./utils.js";
+import type { Env } from "./env.ts";
+import type { MicropubData } from "./post.ts";
+import { verifyToken } from "./auth.ts";
+import { handleMediaUpload } from "./media.ts";
+import { createPost } from "./post.ts";
+import { handleQuery } from "./query.ts";
+import { updatePost, deletePost } from "./update.ts";
+import { corsHeaders, jsonResponse } from "./utils.ts";
 
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const requestId = crypto.randomUUID().slice(0, 8);
 
-    // Log incoming request
     console.log(`[${requestId}] ${request.method} ${url.pathname}`);
 
-    // Handle CORS preflight
     if (request.method === "OPTIONS") {
       return new Response(null, {
         headers: corsHeaders(),
       });
     }
 
-    // Route requests
     if (url.pathname === "/media") {
       return handleMediaRoute(request, env, requestId);
     }
@@ -35,22 +34,18 @@ export default {
     }
 
     try {
-      // GET requests are queries (q=config, q=syndicate-to, etc.)
       if (request.method === "GET") {
         return handleQuery(url, env);
       }
 
-      // POST requests require authentication
       if (request.method === "POST") {
-        // Verify IndieAuth token
         const authResult = await verifyToken(request, env);
         if (!authResult.valid) {
           return jsonResponse({ error: "unauthorized", error_description: authResult.error }, 401);
         }
 
-        // Parse the request body
         const contentType = request.headers.get("content-type") || "";
-        let data;
+        let data: MicropubData;
 
         if (contentType.includes("application/json")) {
           data = await request.json();
@@ -64,12 +59,10 @@ export default {
           return jsonResponse({ error: "invalid_request", error_description: "Unsupported content type" }, 400);
         }
 
-        // Handle different actions
         const action = data.action || "create";
 
         if (action === "create") {
-          // Check scope
-          if (!authResult.scope.includes("create")) {
+          if (!authResult.scope!.includes("create")) {
             return jsonResponse({ error: "insufficient_scope", error_description: "Token lacks create scope" }, 403);
           }
 
@@ -84,21 +77,19 @@ export default {
             status: 201,
             headers: {
               ...corsHeaders(),
-              Location: result.url,
+              Location: result.url!,
             },
           });
         }
 
         if (action === "update") {
-          // Check scope
-          if (!authResult.scope.includes("update")) {
+          if (!authResult.scope!.includes("update")) {
             return jsonResponse({ error: "insufficient_scope", error_description: "Token lacks update scope" }, 403);
           }
 
           const result = await updatePost(data, env);
           if (result.error) {
             console.error(`[${requestId}] Post update failed: ${result.error}`);
-            // Return 404 for "Post not found", 400 for validation errors, 500 for server errors
             const status = result.error === "Post not found" ? 404 : result.error.includes("Missing") ? 400 : 500;
             return jsonResponse({ error: status === 404 ? "not_found" : "server_error", error_description: result.error }, status);
           }
@@ -111,8 +102,7 @@ export default {
         }
 
         if (action === "delete") {
-          // Check scope
-          if (!authResult.scope.includes("delete")) {
+          if (!authResult.scope!.includes("delete")) {
             return jsonResponse({ error: "insufficient_scope", error_description: "Token lacks delete scope" }, 403);
           }
 
@@ -141,11 +131,7 @@ export default {
   },
 };
 
-/**
- * Handle media endpoint requests
- */
-async function handleMediaRoute(request, env, requestId) {
-  // Only POST is allowed for media uploads
+async function handleMediaRoute(request: Request, env: Env, requestId: string): Promise<Response> {
   if (request.method !== "POST") {
     return new Response("Method Not Allowed", {
       status: 405,
@@ -157,19 +143,17 @@ async function handleMediaRoute(request, env, requestId) {
   }
 
   try {
-    // Verify IndieAuth token
     const authResult = await verifyToken(request, env);
     if (!authResult.valid) {
       console.log(`[${requestId}] Media auth failed: ${authResult.error}`);
       return jsonResponse({ error: "unauthorized", error_description: authResult.error }, 401);
     }
 
-    // Check for media or create scope (media scope preferred, create scope also accepted)
-    if (!authResult.scope.includes("media") && !authResult.scope.includes("create")) {
+    if (!authResult.scope!.includes("media") && !authResult.scope!.includes("create")) {
       console.log(`[${requestId}] Media insufficient scope`);
       return jsonResponse(
         { error: "insufficient_scope", error_description: "Token lacks media or create scope" },
-        403
+        403,
       );
     }
 
@@ -184,38 +168,32 @@ async function handleMediaRoute(request, env, requestId) {
   }
 }
 
-/**
- * Convert FormData to Micropub JSON format
- */
-function formDataToMicropub(formData) {
-  const data = {
+function formDataToMicropub(formData: FormData): MicropubData {
+  const data: MicropubData = {
     type: ["h-entry"],
     properties: {},
   };
 
   for (const [key, value] of formData.entries()) {
-    // Handle special keys
     if (key === "h") {
       data.type = [`h-${value}`];
       continue;
     }
     if (key === "action") {
-      data.action = value;
+      data.action = value as string;
       continue;
     }
     if (key === "url") {
-      data.url = value;
+      data.url = value as string;
       continue;
     }
 
-    // Handle array notation (e.g., category[])
     const arrayKey = key.replace(/\[\]$/, "");
 
-    // Add to properties
-    if (!data.properties[arrayKey]) {
-      data.properties[arrayKey] = [];
+    if (!data.properties![arrayKey]) {
+      data.properties![arrayKey] = [];
     }
-    data.properties[arrayKey].push(value);
+    (data.properties![arrayKey] as unknown[]).push(value);
   }
 
   return data;

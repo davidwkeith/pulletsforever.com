@@ -1,13 +1,18 @@
 import { describe, it, expect, vi } from "vitest";
 import worker from "./index.ts";
 
+interface MockAsset {
+  body: string | Uint8Array;
+  headers?: Record<string, string>;
+}
+
 /**
  * Create a mock env.ASSETS that returns predefined responses by pathname.
  */
-function mockEnv(assetMap = {}) {
+function mockEnv(assetMap: Record<string, MockAsset> = {}) {
   return {
     ASSETS: {
-      fetch: vi.fn(async (input) => {
+      fetch: vi.fn(async (input: string | Request) => {
         const url = typeof input === "string" ? new URL(input) : new URL(input.url);
         const asset = assetMap[url.pathname];
         if (asset) {
@@ -75,11 +80,8 @@ describe("Site Worker — Markdown content negotiation", () => {
   });
 
   it("falls through to HTML when markdown file does not exist", async () => {
-    const env = mockEnv({
-      // No .md file — ASSETS will 404 for the md path
-    });
-    // Make ASSETS return HTML for the original request
-    env.ASSETS.fetch.mockImplementation(async (input) => {
+    const env = mockEnv({});
+    env.ASSETS.fetch.mockImplementation(async (input: string | Request) => {
       const url = typeof input === "string" ? new URL(input) : new URL(input.url);
       if (url.pathname.endsWith(".md")) {
         return new Response("Not Found", { status: 404 });
@@ -108,7 +110,7 @@ describe("Site Worker — HTML passthrough", () => {
       new Response("<html></html>", {
         status: 200,
         headers: { "content-type": "text/html; charset=utf-8" },
-      })
+      }),
     );
 
     const request = new Request("https://pulletsforever.com/blog/");
@@ -125,7 +127,7 @@ describe("Site Worker — HTML passthrough", () => {
       new Response("body{}", {
         status: 200,
         headers: { "content-type": "text/css" },
-      })
+      }),
     );
 
     const request = new Request("https://pulletsforever.com/style.css");
@@ -143,7 +145,7 @@ describe("Site Worker — HTML passthrough", () => {
       new Response(imgBytes, {
         status: 200,
         headers: { "content-type": "image/png" },
-      })
+      }),
     );
 
     const request = new Request("https://pulletsforever.com/img/photo.png");

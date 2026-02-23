@@ -4,7 +4,7 @@ import {
   parseMarkdownPost,
   buildMarkdownPost,
   applyOperations,
-} from "./update.js";
+} from "./update.ts";
 
 describe("extractSlugFromUrl", () => {
   const siteUrl = "https://pulletsforever.com";

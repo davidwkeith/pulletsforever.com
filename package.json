@@ -32,7 +32,7 @@
   "devDependencies": {
     "@dwk/eleventy-shared": "*",
     "@11ty/eleventy": "^3.1.2",
-    "@11ty/eleventy-img": "6.0.4",
+    "@11ty/eleventy-img": "^6.0.4",
     "@11ty/eleventy-navigation": "^1.0.5",
     "@11ty/eleventy-plugin-bundle": "3.0.7",
     "@11ty/eleventy-plugin-rss": "^2.0.4",
@@ -62,8 +62,5 @@
     "sharp": "0.34.5",
     "typescript": "^5.9.3",
     "wrangler": "^4.66.0"
-  },
-  "overrides": {
-    "sharp": "0.34.5"
   }
 }
