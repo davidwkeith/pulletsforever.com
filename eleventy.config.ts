@@ -82,12 +82,27 @@ export default function (eleventyConfig: EleventyConfig) {
     `${input}/**/*.{svg,webp,png,jpg,jpeg,gif,zip}`,
   );
 
-  // Downloadable prompt files (copied as-is, not processed as templates)
-  eleventyConfig.addPassthroughCopy({
-    [`${input}/posts/personal-shopper/personal-shopper-prompt.md`]:
-      "/personal-shopper/personal-shopper-prompt.md",
+  // Raw prompt files (*.prompt) — served as static downloads.
+  // Registered as a custom template extension so Eleventy processes them
+  // with the correct permalink (matching their sibling post's URL prefix).
+  eleventyConfig.addExtension("prompt", {
+    read: true,
+    getData: () => ({
+      eleventyExcludeFromCollections: true,
+      layout: false,
+      tags: [],
+      // Override the posts directory data permalink — use the parent
+      // directory slug (the post slug) + the filename
+      permalink: (data: EleventyData) => {
+        const parts = data.page.inputPath.split("/");
+        const dirSlug = parts[parts.length - 2];
+        return `${dirSlug}/${data.page.fileSlug}.prompt`;
+      },
+    }),
+    compile(_content: string) {
+      return (data: EleventyData) => data.page.rawInput;
+    },
   });
-  eleventyConfig.ignores.add("src/posts/**/*-prompt.md");
   eleventyConfig.addPassthroughCopy(`${input}/fonts`);
   eleventyConfig.addPassthroughCopy({
     [`${input}/.well-known/keybase.txt`]: "/.well-known/keybase.txt",
@@ -192,7 +207,7 @@ export default function (eleventyConfig: EleventyConfig) {
   );
 
   return {
-    templateFormats: ["html", "md", "njk", "webc", "11ty.js", "11ty.ts"],
+    templateFormats: ["html", "md", "njk", "webc", "11ty.js", "11ty.ts", "prompt"],
     markdownTemplateEngine: "njk",
     htmlTemplateEngine: "njk",
     dir: {

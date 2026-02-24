@@ -38,6 +38,21 @@ export default function (eleventyConfig: EleventyConfig): void {
     mdLib.renderer.rules.footnote_block_open = () =>
       '<section class="footnotes">\n<ol class="footnotes-list">\n';
 
+    // Warn when links are missing title attributes
+    const defaultLinkOpen =
+      mdLib.renderer.rules.link_open ||
+      ((tokens, idx, options, _env, self) => self.renderToken(tokens, idx, options));
+    mdLib.renderer.rules.link_open = (tokens, idx, options, env, self) => {
+      const token = tokens[idx];
+      const href = token.attrGet("href") || "";
+      // Skip anchor links (#...), mailto, and footnote refs
+      if (!href.startsWith("#") && !href.startsWith("mailto:") && !token.attrGet("title")) {
+        const file = env?.page?.inputPath || "unknown file";
+        console.warn(`⚠ Link missing title: [${href}] in ${file}`);
+      }
+      return defaultLinkOpen(tokens, idx, options, env, self);
+    };
+
     mdLib.use(markdownItAnchor, {
       permalink: markdownItAnchor.permalink.linkInsideHeader({
         placement: "after",
