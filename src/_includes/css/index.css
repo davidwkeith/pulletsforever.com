@@ -10,7 +10,7 @@
 /* Theme colors */
 :root {
     --color-gray-20: #e0e0e0;
-    --color-gray-50: #606a75;
+    --color-gray-50: #536a80;
     --color-gray-90: #333;
     --color-heading-gray: var(--color-gray-50);
 
@@ -29,7 +29,7 @@
 @media (prefers-color-scheme: dark) {
     :root {
         --color-gray-20: #e0e0e0;
-        --color-gray-50: #C0C0C0;
+        --color-gray-50: #b0c0d0;
         --color-gray-90: #dad8d8;
         --color-heading-gray: var(--color-gray-50);
 
@@ -492,36 +492,205 @@ header {
     margin-right: 1em;
 }
 
-/* Table of Contents */
-.toc {
-    background: var(--color-gray-20);
-    border-radius: 4px;
-    padding: 1em 1.5em;
-    margin: 1.5em 0;
+.footnote-ref a,
+.footnote-backref {
+    text-decoration: none;
+}
+
+/* Footnote popups (MediaWiki-style) */
+.footnote-popup {
+    position: absolute;
+    z-index: 100;
+    background: #536a80;
+    color: #dad8d8;
+    border-radius: 8px;
+    padding: 0.75em 1em;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    max-width: 360px;
+    width: max-content;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    pointer-events: auto;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.footnote-popup.visible {
+    opacity: 1;
+}
+
+.footnote-popup::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: var(--arrow-left, 1.5em);
+    border: 6px solid transparent;
+    border-bottom-color: #536a80;
+}
+
+.footnote-popup p {
+    margin: 0 0 0.4em;
+}
+
+.footnote-popup p:last-child {
+    margin-bottom: 0;
+}
+
+.footnote-popup ul {
+    margin: 0.3em 0 0;
+    padding-left: 1.2em;
+}
+
+.footnote-popup li {
+    margin-bottom: 0.2em;
+}
+
+.footnote-popup a[href] {
+    color: #1493fb;
+}
+
+.footnote-popup a[href]:visited {
+    color: #a6a6f8;
+}
+
+.footnote-popup .footnote-backref,
+.footnote-popup .footnote-symbol {
+    display: none;
 }
 
 @media (prefers-color-scheme: dark) {
-    .toc {
-        background: #1e2d3d;
+    .footnote-popup {
+        box-shadow: 0 4px 32px rgba(255, 255, 255, 0.15);
     }
 }
 
-.toc h3 {
-    margin-top: 0;
-    font-size: 1em;
+.footnotes-sep {
+    border: none;
+    border-top: 1px dashed var(--color-gray-50);
+    margin: 4em 0 1em;
 }
 
-.toc ol {
-    margin: 0;
+.footnotes {
+    margin-top: 0;
+}
+
+.footnotes-list {
+    list-style: none;
     padding-left: 1.5em;
 }
 
-.toc li {
-    line-height: 1.8;
+.footnote-item {
+    position: relative;
+    font-size: 0.85em;
 }
 
-.toc .toc-level-3 {
-    margin-left: 1em;
+.footnote-symbol {
+    position: absolute;
+    right: 100%;
+    margin-right: 0.4em;
+    font-size: 1.18rem;
+    font-weight: bold;
+    color: var(--text-color-link);
+}
+
+/* Blockquote / Pullquote */
+blockquote {
+    width: 45%;
+    margin: 0.2em 0 0.8em 1.5em;
+    padding: 1.2em 1.5em;
+    background: var(--color-heading-gray);
+    color: #dad8d8;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 0 12px rgba(16, 149, 193, 0.25);
+    position: relative;
+    font-size: 1.1em;
+    line-height: 1.5;
+}
+
+blockquote::before {
+    content: "\201C\200A";
+    font-size: 3em;
+    line-height: 0;
+    vertical-align: -0.35em;
+    color: #1095c1;
+    font-family: Georgia, serif;
+}
+
+blockquote p:last-of-type::after {
+    content: "\201D";
+    font-size: 3em;
+    line-height: 0;
+    color: #1095c1;
+    font-family: Georgia, serif;
+    vertical-align: -0.35em;
+    margin-left: 0.05em;
+}
+
+blockquote p {
+    margin: 0;
+    display: inline;
+}
+
+blockquote footer {
+    display: block;
+    margin-top: 0.6em;
+    font-size: 0.85em;
+    color: #8aa8c0;
+}
+
+blockquote footer::before {
+    content: "\2015\2009";
+}
+
+blockquote a[href] {
+    color: #1493fb;
+}
+
+blockquote a[href]:visited {
+    color: #a6a6f8;
+}
+
+blockquote a[href]:hover,
+blockquote a[href]:active {
+    color: #7b7bff;
+}
+
+blockquote:nth-of-type(odd) {
+    float: right;
+}
+
+blockquote:nth-of-type(odd) footer {
+    text-align: right;
+}
+
+blockquote:nth-of-type(even) {
+    float: left;
+    margin: 0.2em 1.5em 0.8em 0;
+}
+
+blockquote:nth-of-type(even) footer {
+    text-align: left;
+}
+
+@media (prefers-color-scheme: dark) {
+    blockquote {
+        background: #536a80;
+        box-shadow: 0 0 12px rgba(16, 149, 193, 0.1);
+    }
+
+    blockquote::before,
+    blockquote p:last-of-type::after {
+        color: #1095c1;
+    }
+}
+
+@media (max-width: 768px) {
+    blockquote {
+        float: none;
+        width: 100%;
+        margin: 1em 0;
+    }
 }
 
 /* h-entry microformat */

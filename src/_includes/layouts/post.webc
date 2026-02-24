@@ -6,11 +6,22 @@ layout: layouts/base.njk
 <slider-assets></slider-assets>
 <script webc:type="js">
 export default function() {
-const { $data, filterTagList, slugify, tableOfContents, relatedPosts, firstImage, socialImageUrl, htmlDateString, readableDate, readingTime } = this;
+const { $data, filterTagList, slugify, relatedPosts, firstImage, socialImageUrl, htmlDateString, readableDate, readingTime } = this;
 const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
 const meta = $data.metadata;
 const page = $data.page;
-const postContent = $data.content || '';
+const rawContent = $data.content || '';
+const footnoteMarker = '<section class="footnotes">';
+const fnIndex = rawContent.indexOf(footnoteMarker);
+let postBody, postFootnotes;
+if (fnIndex > -1) {
+  postBody = rawContent.slice(0, fnIndex);
+  postFootnotes = rawContent.slice(fnIndex);
+} else {
+  postBody = rawContent;
+  postFootnotes = '';
+}
+const postContent = rawContent;
 const postTitle = $data.title || '';
 const postTags = filterTagList($data.tags || []);
 const postHero = $data.hero;
@@ -22,22 +33,6 @@ const tagItems = postTags.map((tag, i) => {
   const comma = i < postTags.length - 1 ? ', ' : '';
   return `<li><a href="${tagUrl}" class="post-tag p-category" aria-label="Posts tagged ${esc(tag)}">${esc(tag)}</a>${comma}</li>`;
 }).join('\n\t');
-
-// Table of contents
-const toc = tableOfContents(postContent);
-let tocHtml = '';
-if (toc.length >= 3) {
-  const tocItems = toc.map(item =>
-    `\t\t<li class="toc-level-${item.level}"><a href="#${item.id}">${esc(item.text)}</a></li>`
-  ).join('\n');
-  tocHtml = `
-<nav class="toc" aria-labelledby="toc-heading">
-\t<h3 id="toc-heading">Table of Contents</h3>
-\t<ol>
-${tocItems}
-\t</ol>
-</nav>`;
-}
 
 // Hero image
 let heroHtml = '';
@@ -84,10 +79,10 @@ return `<div class="h-entry">
 </ul>
 <a class="u-url" href="${page.url}" aria-hidden="true" tabindex="-1"></a>
 <a class="p-author h-card" href="https://dwk.io">${esc(meta.author.name)}</a>
-${tocHtml}
 <article class="e-content">${heroHtml}
-  ${postContent}
+  ${postBody}
   <p class="signature">-dwk</p>
+  ${postFootnotes ? '<hr class="footnotes-sep">' + postFootnotes : ''}
 </article>
 </div>
 ${relatedHtml}`;
@@ -123,4 +118,65 @@ if (collections2.posts) {
 }
 return prevNextHtml;
 }
+</script>
+<script webc:keep>
+// Footnote popups — shows footnote content on hover (MediaWiki-style)
+(function () {
+  const refs = document.querySelectorAll(".footnote-ref a[href^='#footnote']");
+  if (!refs.length) return;
+
+  let popup = null;
+  let hideTimer = null;
+
+  function createPopup() {
+    popup = document.createElement("div");
+    popup.className = "footnote-popup";
+    popup.setAttribute("role", "tooltip");
+    document.body.appendChild(popup);
+    popup.addEventListener("mouseenter", () => clearTimeout(hideTimer));
+    popup.addEventListener("mouseleave", scheduleHide);
+  }
+
+  function scheduleHide() {
+    hideTimer = setTimeout(() => {
+      if (popup) popup.classList.remove("visible");
+    }, 200);
+  }
+
+  function show(ref) {
+    clearTimeout(hideTimer);
+    const id = ref.getAttribute("href").slice(1);
+    const note = document.getElementById(id);
+    if (!note) return;
+    if (!popup) createPopup();
+    popup.innerHTML = note.innerHTML;
+    popup.classList.add("visible");
+
+    const rect = ref.getBoundingClientRect();
+    const popupWidth = Math.min(360, window.innerWidth - 20);
+    popup.style.width = popupWidth + "px";
+
+    // Position popup below the ref, arrow pointing at ref center
+    const refCenter = rect.left + window.scrollX + rect.width / 2;
+    let left = refCenter - 20;
+    if (left + popupWidth > window.innerWidth - 10) {
+      left = window.innerWidth - popupWidth - 10;
+    }
+    if (left < 10) left = 10;
+
+    popup.style.left = left + "px";
+    popup.style.top = (rect.bottom + window.scrollY + 5) + "px";
+
+    // Arrow is 12px wide (6px border), offset by 6 to center on refCenter
+    const arrowLeft = Math.max(6, Math.min(refCenter - left - 6, popupWidth - 18));
+    popup.style.setProperty("--arrow-left", arrowLeft + "px");
+  }
+
+  refs.forEach((ref) => {
+    ref.addEventListener("mouseenter", () => show(ref));
+    ref.addEventListener("mouseleave", scheduleHide);
+    ref.addEventListener("focus", () => show(ref));
+    ref.addEventListener("blur", scheduleHide);
+  });
+})();
 </script>

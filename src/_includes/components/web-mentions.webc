@@ -129,6 +129,7 @@ if (hasWebmentions) {
   }
 }
 
+if (!hasWebmentions) return '';
 return `<section class="webmentions" aria-labelledby="webmentions-heading" data-page-url="${esc(siteUrl)}${esc(pageUrl)}">
 ${inner}
 </section>`;

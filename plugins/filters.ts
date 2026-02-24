@@ -113,29 +113,6 @@ export default function (eleventyConfig: EleventyConfig): void {
     },
   );
 
-  eleventyConfig.addFilter("tableOfContents", (content: string) => {
-    if (!content) return [];
-    const headingRegex =
-      /<h([23])[^>]*id="([^"]+)"[^>]*>([^<]*)<a[^>]*class="header-anchor"[^>]*>.*?<\/a><\/h[23]>/gi;
-    const toc: { level: number; id: string; text: string }[] = [];
-    let match;
-    const decodeHtmlEntities = (str: string) =>
-      str
-        .replace(/&amp;/g, "&")
-        .replace(/&lt;/g, "<")
-        .replace(/&gt;/g, ">")
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'");
-    while ((match = headingRegex.exec(content)) !== null) {
-      toc.push({
-        level: parseInt(match[1]),
-        id: match[2],
-        text: decodeHtmlEntities(match[3].trim()),
-      });
-    }
-    return toc;
-  });
-
   eleventyConfig.addFilter(
     "relatedPosts",
     (
