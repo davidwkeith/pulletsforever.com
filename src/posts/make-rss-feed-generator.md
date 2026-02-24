@@ -6,16 +6,16 @@ tags: [web, php]
 
 I created a simple tool that will auto generate a URL to the RSS feed of your subscription to MAKE. To learn how I did it, read on.
 
-Recently, the RSS feed [I created](/read-make-on-your-ipad-f20993f4d5a8#.35fqzuqe3) started returning 404 errors. This was completely expected as Sean Michael Ragan pointed out that CoverLeaf was working around the clock on a fix. Fearing the worst, I logged into [make-digital.com](http://make-digital.com) and found the PDF download link was still there.
+Recently, the RSS feed [I created](/read-make-on-your-ipad-f20993f4d5a8#.35fqzuqe3 "Read MAKE on Your iPad — Pullets Forever") started returning 404 errors. This was completely expected as Sean Michael Ragan pointed out that CoverLeaf was working around the clock on a fix. Fearing the worst, I logged into [make-digital.com](http://make-digital.com "Make Digital") and found the PDF download link was still there.
 
 Unfortunately CoverLeaf still does not have an RSS feed that you can subscribe to with iTunes for easy syncing to your iPad. Curiosity got the best of me. I wanted to figure out how they had secured the download. I clicked on the link and my copy of MAKE was downloaded from a URL similar to:
 
 ```
 http://www.make-digital.com/51d3e7af247686fe5b2c99d6e0a430ea/4c6a3968/make/vol23/data/makevol23-dl.pdf?lm=1280161230000
 ```
-That is some security! The first hexadecimal number I have yet to figure out; it seems to be some randomly generated ID. The second one is a [UNIX timestamp](http://en.wikipedia.org/wiki/Unix_time) that is likely used to identify when the link should expire. The URL continues with magazine name, issue identifier, and payload. Finally there is an lm variable on the end. Again this is a mystery, but the number is the same on most links in the magazine, so I assume it is for tracking purposes. A [Google search](http://www.google.com/search?q=1280161230000&hl=en&rls=en&filter=0) for the number results in hits on [make-digital.com](http://make-digital.com) only and it seems to be optional.
+That is some security! The first hexadecimal number I have yet to figure out; it seems to be some randomly generated ID. The second one is a [UNIX timestamp](http://en.wikipedia.org/wiki/Unix_time "Unix Time — Wikipedia") that is likely used to identify when the link should expire. The URL continues with magazine name, issue identifier, and payload. Finally there is an lm variable on the end. Again this is a mystery, but the number is the same on most links in the magazine, so I assume it is for tracking purposes. A [Google search](http://www.google.com/search?q=1280161230000&hl=en&rls=en&filter=0 "Google Search for 1280161230000") for the number results in hits on [make-digital.com](http://make-digital.com "Make Digital") only and it seems to be optional.
 
-But where was this URL coming from? I opened up Safari’s trusty [Web Inspector](http://developer.apple.com/safari/library/documentation/AppleApplications/Conceptual/Safari_Developer_Guide/DebuggingYourWebsite/DebuggingYourWebsite.html#//apple_ref/doc/uid/TP40007874-CH8-SW1) and started poking around under the hood of the web app and quickly found the following code:
+But where was this URL coming from? I opened up Safari’s trusty [Web Inspector](http://developer.apple.com/safari/library/documentation/AppleApplications/Conceptual/Safari_Developer_Guide/DebuggingYourWebsite/DebuggingYourWebsite.html#//apple_ref/doc/uid/TP40007874-CH8-SW1 "Debugging Your Website — Safari Developer Guide") and started poking around under the hood of the web app and quickly found the following code:
 
 ```html
 <!-- navbar/download/inputCustomHeader.ftl -->

@@ -6,7 +6,7 @@ tags: [food, reviews]
 ---
 ![Copper Charlie installed in my kitchen](hero.jpeg)
 
-Yesterday, a team came to the house and swapped our old gas-powered range for [Copper’s Charlie](https://copperhome.com/products/charlie), a battery-powered induction range. Before placing the pre-order, I had a lot of questions that I couldn’t find answers to. The [product page](https://copperhome.com/products/charlie) on their website only lists basic specs but does not dive into how the stove works at all. This is in stark contrast to the product introductions we made at Nest, which went into extreme detail about what it is like to have a Nest Learning Thermostat on your wall. You can see a snapshot of the original website on the [Internet Archive’s Wayback Machine](https://web.archive.org/web/20120120031959/http://www.nest.com/living-with-nest/); the site still looks good today.
+Yesterday, a team came to the house and swapped our old gas-powered range for [Copper’s Charlie](https://copperhome.com/products/charlie "Charlie Battery Induction Range — Copper"), a battery-powered induction range. Before placing the pre-order, I had a lot of questions that I couldn’t find answers to. The [product page](https://copperhome.com/products/charlie "Charlie Battery Induction Range — Copper") on their website only lists basic specs but does not dive into how the stove works at all. This is in stark contrast to the product introductions we made at Nest, which went into extreme detail about what it is like to have a Nest Learning Thermostat on your wall. You can see a snapshot of the original website on the [Internet Archive’s Wayback Machine](https://web.archive.org/web/20120120031959/http://www.nest.com/living-with-nest/ "Living with Nest — Internet Archive Wayback Machine"); the site still looks good today.
 
 This is a write-up about the experience of ownership of Charlie on day one so others considering the range have more information to go on. I will likely have way more thoughts after a few weeks of use as I am still getting a feel for induction after coming from a lifetime of cooking with gas.
 Delivery & Installation
@@ -111,4 +111,4 @@ Ideally, everything that I can do in the app should be available on the touchscr
 - weight: 59.5.kg
 - size: 586×550×132mm
 - model: ZE23182
-- certifications: [UL1973](https://www.tuvsud.com/en-us/services/testing/energy-storage/ul-1973), [UN38.3](https://unece.org/fileadmin/DAM/trans/danger/publi/manual/Manual%20Rev5%20Section%2038-3.pdf), [UL9540A](https://www.ul.com/services/ul-9540a-test-method)
+- certifications: [UL1973](https://www.tuvsud.com/en-us/services/testing/energy-storage/ul-1973 "UL 1973 Energy Storage Testing — TUV SUD"), [UN38.3](https://unece.org/fileadmin/DAM/trans/danger/publi/manual/Manual%20Rev5%20Section%2038-3.pdf "UN 38.3 Lithium Battery Transport Testing — UNECE"), [UL9540A](https://www.ul.com/services/ul-9540a-test-method "UL 9540A Test Method — UL")

@@ -5,11 +5,11 @@ tags: [hacks, ios, web]
 ---
 ![iBank on iPhone](ibank-iphone.png)
 
-**UPDATE:** IGG Software has released iBank Mobile for the iPhone. It can be purchased through [iTunes](https://itunes.apple.com/us/app/banktivity-for-iphone-formerly/id919518925?mt=8).
+**UPDATE:** IGG Software has released iBank Mobile for the iPhone. It can be purchased through [iTunes](https://itunes.apple.com/us/app/banktivity-for-iphone-formerly/id919518925?mt=8 "Banktivity for iPhone — App Store").
 
-All data stored securely on your [MobileMe iDisk](http://me.com/) for syncing with iBank from your computer.
+All data stored securely on your [MobileMe iDisk](http://me.com/ "MobileMe — Apple") for syncing with iBank from your computer.
 
-* iPhone-like user interface using [iUI](http://code.google.com/p/iui/).
+* iPhone-like user interface using [iUI](http://code.google.com/p/iui/ "iUI — Google Code").
 
 * Add, edit, and delete transactions on the go.
 

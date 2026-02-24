@@ -93,7 +93,7 @@ Unicode and traditional built up fractions are supported.
 | Package  | [Swift Package Index][package] |
 | Source   | [GitLab][source]               |
 
-[source]: https://gitlab.com/davidwkeith/fractionformatter
-[package]: https://swiftpackageindex.com/davidwkeith/FractionFormatter
-[number-forms]: https://en.wikipedia.org/wiki/Number_Forms
-[case-fractions]: http://zuga.net/articles/typography-what-is-a-case-fraction/
+[source]: https://gitlab.com/davidwkeith/fractionformatter "FractionFormatter Source — GitLab"
+[package]: https://swiftpackageindex.com/davidwkeith/FractionFormatter "FractionFormatter — Swift Package Index"
+[number-forms]: https://en.wikipedia.org/wiki/Number_Forms "Number Forms — Wikipedia"
+[case-fractions]: http://zuga.net/articles/typography-what-is-a-case-fraction/ "What Is a Case Fraction — Zuga.net"

@@ -11,9 +11,9 @@ Standing in the dairy aisle, staring at fourteen brands of sour cream, I used to
 
 ## The Company That Never Was
 
-A few years ago, I founded a company called Beyond Certified. The goal was to aggregate data from [data.gov](https://data.gov), [PLU codes](https://www.ifpsglobal.com/plu-codes), and [UPC standards](https://www.gs1.org/standards/barcodes/ean-upc) to document everything we could about consumer products. We planned to start with groceries, where government oversight means vast databases of USDA-approved food products already exist—including delightfully specific entries like "[Potted Meat](https://fdc.nal.usda.gov/food-details/2699999/nutrients)."
+A few years ago, I founded a company called Beyond Certified. The goal was to aggregate data from [data.gov](https://data.gov "Data.gov — U.S. Government Open Data"), [PLU codes](https://www.ifpsglobal.com/plu-codes "PLU Codes — IFPS Global"), and [UPC standards](https://www.gs1.org/standards/barcodes/ean-upc "EAN/UPC Barcodes — GS1") to document everything we could about consumer products. We planned to start with groceries, where government oversight means vast databases of USDA-approved food products already exist—including delightfully specific entries like "[Potted Meat](https://fdc.nal.usda.gov/food-details/2699999/nutrients "Potted Meat Nutrients — USDA FoodData Central")."
 
-Working with a family friend, [Alexis Purslane](https://www.linkedin.com/in/alexis-purslane-49874624a/), we built a prototype app that could scan any UPC in the grocery store and surface basic product information. It wasn't great, but we had useful data. The vision was clear: expand our data sources, run well-defined logic, and report just the facts. Consumers could finally correct the information asymmetry inherent in the marketplace and truly vote with their dollars. Maybe we'd use some basic AI to generate summary articles so it wasn't all graphs and charts. A winning product people would pay a few dollars a year for—more than enough to cover staff continuously generating and validating incoming data.
+Working with a family friend, [Alexis Purslane](https://www.linkedin.com/in/alexis-purslane-49874624a/ "Alexis Purslane — LinkedIn"), we built a prototype app that could scan any UPC in the grocery store and surface basic product information. It wasn't great, but we had useful data. The vision was clear: expand our data sources, run well-defined logic, and report just the facts. Consumers could finally correct the information asymmetry inherent in the marketplace and truly vote with their dollars. Maybe we'd use some basic AI to generate summary articles so it wasn't all graphs and charts. A winning product people would pay a few dollars a year for—more than enough to cover staff continuously generating and validating incoming data.
 
 Then along came OpenAI and ChatGPT.
 
@@ -25,7 +25,7 @@ What took a team and a business plan now fits in a Markdown file. After a few mo
 
 ### Installation
 
-To install, [download the prompt file](personal-shopper-prompt.md) or copy from below. Read and edit it to suit your needs—it's written in plain English, and Claude can help you customize it. Then create a new project in Claude and add the Markdown as project instructions.
+To install, [download the prompt file](personal-shopper-prompt.prompt "Download Personal Shopper Prompt") or copy from below. Read and edit it to suit your needs—it's written in plain English, and Claude can help you customize it. Then create a new project in Claude and add the Markdown as project instructions.
 
 <details>
 <summary>View the Personal Shopper prompt</summary>

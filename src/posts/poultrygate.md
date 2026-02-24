@@ -24,7 +24,7 @@ Go hat in hand to the City Council and ask for a waiver and work the following i
 
 * In its broadest interpretation the ordinance can be used to prevent school children from husbandry science fair projects.
 
-* Pet stores sell chickens (baby as pets) how are pullets interpreted by the ordinance in [this](http://www.birdhobbyist.com/articles/BirdHobbyist/Species/PetChickens.html) case?
+* Pet stores sell chickens (baby as pets) how are pullets interpreted by the ordinance in [this](http://www.birdhobbyist.com/articles/BirdHobbyist/Species/PetChickens.html "Pet Chickens — Bird Hobbyist") case?
 
 Option B:
 
@@ -34,7 +34,7 @@ Option B:
 
 Of note:
 
-* Pet stores do not sell chickens in the area (I got mine at Running’s Fleet & Farm in town) but they are widely regarded as [pets](http://www.birdhobbyist.com/articles/BirdHobbyist/Species/PetChickens.html) when not eaten.
+* Pet stores do not sell chickens in the area (I got mine at Running’s Fleet & Farm in town) but they are widely regarded as [pets](http://www.birdhobbyist.com/articles/BirdHobbyist/Species/PetChickens.html "Pet Chickens — Bird Hobbyist") when not eaten.
 
 * Conflict of interest laws tend to be in the realm of monetary or personal gain. While I could argue it would be a personal gain for her son not to loose his dog, there are in fact chicken farms just outside of town that are closer to her house than my chickens. Also, under Minnesota law if I feel that I or my personal property are threatened by the loose dog I can shoot it. Thus all they were admitting to is that the chickens were my property damaged by their dog. This would be the same as a auto accident where I was not at fault but had not insurance. I would be fined for not having insurance, but the other person would still be required to have their insurance company pay for damages. (Though without and an insurance company I would probably need a lawyer to see any money…)
 

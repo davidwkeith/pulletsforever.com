@@ -11,4 +11,4 @@ I created a theme file for my Sony Ericsson phone to give it the Mac OS X look a
 |----------|------------------------|
 | Download | [iPhone.zip][download] |
 
-[download]: /blog/_archive/iphone-theme/iPhone.zip
+[download]: /blog/_archive/iphone-theme/iPhone.zip "Download iPhone Theme"

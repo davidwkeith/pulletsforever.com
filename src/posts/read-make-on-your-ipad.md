@@ -8,7 +8,7 @@ I really wanted to read MAKE on my iPad, and while I can read it through CoverLe
 
 As an individual user, the PDF link is all I needed, but I wanted to share my findings with others, so I compiled all the PDF downloads for MAKE into one RSS feed, which is now available at feed://pulletsforever.com/feeds/make.rss To read the magazine just subscribe to the feed in iTunes and sync the downloads to iBooks (or your preferred reader) on your iPad.
 
-Unfortunately CoverLeaf does not provide any authentication for their download links so anyone can read the magazine without a subscription. Given that MAKE encourages hacking I feel OK in publishing the feed and letting everyone know they can subscribe to the Digital Only version of MAKE for [$9.99 per year](http://makezine.com/subscribe/). If CoverLeaf or Make starts to host the RSS feed of the PDF’s I will redirect my feed to theirs so you won’t miss it.
+Unfortunately CoverLeaf does not provide any authentication for their download links so anyone can read the magazine without a subscription. Given that MAKE encourages hacking I feel OK in publishing the feed and letting everyone know they can subscribe to the Digital Only version of MAKE for [$9.99 per year](http://makezine.com/subscribe/ "Subscribe to MAKE — Make Magazine"). If CoverLeaf or Make starts to host the RSS feed of the PDF’s I will redirect my feed to theirs so you won’t miss it.
 
 **UPDATE:** I also subscribe to ReadyMade, which is also hosted on CoverLeaf but does not have a PDF download option. Given what I learned from Make I tried to construct a URL for a PDF of ReadyMade and found out that there is one on the server. It looks like for any given magazine on CoverLeaf you can get the download of the PDF by constructing the URL as follows:
 

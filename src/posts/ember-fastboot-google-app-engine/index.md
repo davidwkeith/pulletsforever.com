@@ -5,7 +5,7 @@ tags: [javascript, web]
 ---
 ![Ember FastBoot + Google App Engine](fastboot-app-engine.png "With our powers combined!")
 
-Last year, Google Cloud [announced](https://cloudplatform.googleblog.com/2016/03/Node.js-on-Google-App-Engine-goes-beta.html) the Node.js runtime for App Engine. Recently I decided to try to get EmberJS FastBoot to run on App Engine. It turns out a basic implementation is pretty simple.
+Last year, Google Cloud [announced](https://cloudplatform.googleblog.com/2016/03/Node.js-on-Google-App-Engine-goes-beta.html "Node.js on Google App Engine Goes Beta — Google Cloud Blog") the Node.js runtime for App Engine. Recently I decided to try to get EmberJS FastBoot to run on App Engine. It turns out a basic implementation is pretty simple.
 
 First, if you don’t already have an engines directive in your package.json, you should add one now. Then then if you project is already compatible, add FastBoot as a dependency:
 
@@ -13,7 +13,7 @@ First, if you don’t already have an engines directive in your package.json, yo
 ember install ember-cli-fastboot
 ```
 
-If your project is not compatible, or you would rather use a clean app to test with, follow Tom Dale's [FastBoot Quickstart](http://ember-fastboot.com/quickstart) and use the resulting project for the rest of this post.
+If your project is not compatible, or you would rather use a clean app to test with, follow Tom Dale's [FastBoot Quickstart](http://ember-fastboot.com/quickstart "FastBoot Quickstart — Ember FastBoot") and use the resulting project for the rest of this post.
 
 Now that you have FastBoot working, simply add the fastboot-app-server module as a deployment dependency to the project.
 
@@ -63,11 +63,11 @@ handlers:
     static_dir: dist/assets
 ```
 
-Now install [Google Cloud SDK](https://cloud.google.com/sdk/downloads), and follow the directions from the [Quick Start guide](https://cloud.google.com/nodejs/getting-started/hello-world#deploy_and_run_hello_world_on_app_engine) to setup an App Engine project:
+Now install [Google Cloud SDK](https://cloud.google.com/sdk/downloads "Google Cloud SDK Downloads"), and follow the directions from the [Quick Start guide](https://cloud.google.com/nodejs/getting-started/hello-world#deploy_and_run_hello_world_on_app_engine "Node.js Quick Start — Google Cloud") to setup an App Engine project:
 
-1. In the Cloud Platform Console, go to the [Projects page](https://console.cloud.google.com/project) and select or create a new project.
+1. In the Cloud Platform Console, go to the [Projects page](https://console.cloud.google.com/project "Google Cloud Console — Projects") and select or create a new project.
 
-1. [Enable billing](https://support.google.com/cloud/answer/6293499#enable-billing) for your project. (The [Free Tier](https://cloud.google.com/free/) includes a $300 credit, so no worries to try this out for the first time.)
+1. [Enable billing](https://support.google.com/cloud/answer/6293499#enable-billing "Enable Billing — Google Cloud Support") for your project. (The [Free Tier](https://cloud.google.com/free/ "Google Cloud Free Tier") includes a $300 credit, so no worries to try this out for the first time.)
 
 1. Note the Project ID, since it is used for deployment.
 
@@ -88,4 +88,4 @@ To view your deployed app in the browser run gcloud app browse.
 
 Despite a lack of documentation on getting them to work together, it is almost as if FastBoot and App Engine were built with each other in mind. The actual unique configuration between the two tools boils down to seven lines of config in app.yaml.
 
-*The full source code for the [FastBoot Quickstart](http://ember-fastboot.com/quickstart) project that I converted to App Engine is in my [fastboot-app-engine-example](https://gitlab.com/davidwkeith/fastboot-app-engine-example) aGitLab repo. Feel free to submit PRs for improvements.*
+*The full source code for the [FastBoot Quickstart](http://ember-fastboot.com/quickstart "FastBoot Quickstart — Ember FastBoot") project that I converted to App Engine is in my [fastboot-app-engine-example](https://gitlab.com/davidwkeith/fastboot-app-engine-example "FastBoot App Engine Example — GitLab") aGitLab repo. Feel free to submit PRs for improvements.*

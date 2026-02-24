@@ -8,7 +8,7 @@ I have created a small launcher script for JavaScript Core (Safari’s Nitro Jav
 
 It gives Mac users the ability to run JSLint from the command line without installing anything extra, thus making more likely that we will incorporate JSLint into our custom build scripts. (Should also run on Windows, but I don’t have a box to validate that with at the moment.)
 
-Just add the code below to the latest copy of [JSLint](http://www.JSLint.com/fulljslint.js) to be able to use it with jsc.
+Just add the code below to the latest copy of [JSLint](http://www.JSLint.com/fulljslint.js "JSLint Full Source — JSLint.com") to be able to use it with jsc.
 
 ```javascript
 // jsc.js
