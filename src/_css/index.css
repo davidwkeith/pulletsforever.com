@@ -10,7 +10,8 @@
 	Initial cap on first text paragraph of blog posts.
 	First selector: no hero image, first <p> has text.
 	Second selector: hero image in first <p>, drop cap on following <p>.
-*/
+	TODO: narrow letters like "I" don't look great as drop caps.
+
 .e-content > p:first-of-type:not(:has(img))::first-letter,
 .e-content > p:first-of-type:has(img) + p::first-letter {
 	float: left;
@@ -21,6 +22,7 @@
 	padding-right: 0.08em;
 	font-weight: bold;
 }
+*/
 
 /*
 	The 🔗 emoji is used for header anchors links
