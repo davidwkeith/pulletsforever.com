@@ -1,6 +1,7 @@
 ---
 title: 20 Years of Banning Phones. We Don’t Have That Long for AI.
 date: 2026-02-23
+tags: [ai, education]
 ---
 
 I was on Apple’s campus watching a live stream of Steve Jobs presenting his now iconic [iPhone Introduction](https://www.apple.com/newsroom/2007/01/09Apple-Reinvents-the-Phone-with-iPhone/ "Apple Reinvents the Phone with iPhone — Apple Newsroom") at [Macworld 2007](https://en.wikipedia.org/wiki/Macworld/iWorld#2007 "Macworld 2007 — Wikipedia").

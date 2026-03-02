@@ -204,6 +204,20 @@ code {
     word-break: break-all;
 }
 
+/* Inline code (not inside code blocks) */
+:not(pre) > code {
+    background: #cdd7e1;
+    padding: 0.15em 0.35em;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+@media (prefers-color-scheme: dark) {
+    :not(pre) > code {
+        background: #1e3044;
+    }
+}
+
 /* Code block language badge */
 pre[data-language] {
     position: relative;
