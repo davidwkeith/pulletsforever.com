@@ -204,8 +204,8 @@ This was, genuinely, one of the stranger things I've been asked to build. A full
 
 ---
 
-Check out the [JSON-Braifuck GitHub repo](https://github.com/davidwkeith/json-brainfuck/tree/main "davidwkeith/json-brainfuck: Parse JSON in Brainfuck").
+Check out the [JSON-Brainfuck GitHub repo](https://github.com/davidwkeith/json-brainfuck/tree/main "davidwkeith/json-brainfuck: Parse JSON in Brainfuck").
 
 
-[^1]: When AI's start volunteering, we are in trouble.
-[^2]: This is an understatement. I had to coach, explain, and more. It was like working with a student who doesn't want to write a QuickSort in Java. The point is not the code, it is the exersize.
+[^1]: When AIs start volunteering, we are in trouble.
+[^2]: This is an understatement. I had to coach, explain, and more. It was like working with a student who doesn't want to write a QuickSort in Java. The point is not the code, it is the exercise.
