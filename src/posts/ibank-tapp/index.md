@@ -9,7 +9,7 @@ tags: [hacks, ios, web]
 
 iBank.tapp automatically links to the last open iBank file and pulls in the appropriate categories transaction types and accounts. If iBank is already open on your Mac it will default to the currently selected account.
 
-Once loaded just enter the Payee, Category and Amount and iBank will automatically create a new transaction of type POS for today’s date. (You are remembering to enter your receipts right a way, right?)
+Once loaded just enter the Payee, Category and Amount and iBank will automatically create a new transaction of type POS for today’s date. (You are remembering to enter your receipts right away, right?)
 
 Tap on the vault icon to see your balance for the currently selected account.
 

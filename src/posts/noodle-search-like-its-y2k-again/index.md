@@ -8,7 +8,7 @@ I built a search engine that shows *results*. Not to compete with Google—I def
 
 Modern search is optimized for ad revenue, not answers. Every query returns a wall of SEO spam, affiliate links, and AI-generated slop that somehow ranks above the actual thing you're looking for. I wanted something that just returned results ranked by how well they answer the question. No ads. No sponsored content. Just results.
 
-So I vibe coded [Noodle](https://gitlab.com/dwk-io/noodle "Noodle Source — GitLab") with Claude. Its a self-hosted search engine that uses the `claude` command line tool to search the web and rank results. It looks like Google back when PageRank actually meant something—sparse, familiar, ten blue links—because that's what worked.
+So I vibe coded [Noodle](https://gitlab.com/dwk-io/noodle "Noodle Source — GitLab") with Claude. It's a self-hosted search engine that uses the `claude` command line tool to search the web and rank results. It looks like Google back when PageRank actually meant something—sparse, familiar, ten blue links—because that's what worked.
 
 ![Noodle homepage](homepage.png)
 

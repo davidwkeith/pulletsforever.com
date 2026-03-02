@@ -85,7 +85,7 @@ In the future, I hope they add support for Matter cooktop status. Just let me kn
 
 Next, for existing ranges, like mine, that won’t support touchscreen controls, give me the options for drying pans and rice cooking. But ideally, these should be one-touch options on the control screen. Maybe there is a way to add a simple gesture to the knobs to indicate drying. Rice is less common and can stay in the app.
 
-If we can calebrate pans, there are plenty of other temperature based features that could be added, including:
+If we can calibrate pans, there are plenty of other temperature based features that could be added, including:
 - Drinks (tea, coffee, cocoa)
 - Candy
 - Yogurt
@@ -104,11 +104,11 @@ Ideally, everything that I can do in the app should be available on the touchscr
 
 - operating temp: 5C to 50C
 - storage temp: 5C to 50C
-- battery: Rechargable Lithium Ion Phosphate
+- battery: Rechargeable Lithium Ion Phosphate
   - rating: 208VDC, 28.8Ah (5366.4Wh)
   - internal cells: LIfePO4, 26700 size
   - cell configuration: 65S6p
-- weight: 59.5.kg
+- weight: 59.5 kg
 - size: 586×550×132mm
 - model: ZE23182
 - certifications: [UL1973](https://www.tuvsud.com/en-us/services/testing/energy-storage/ul-1973 "UL 1973 Energy Storage Testing — TUV SUD"), [UN38.3](https://unece.org/fileadmin/DAM/trans/danger/publi/manual/Manual%20Rev5%20Section%2038-3.pdf "UN 38.3 Lithium Battery Transport Testing — UNECE"), [UL9540A](https://www.ul.com/services/ul-9540a-test-method "UL 9540A Test Method — UL")

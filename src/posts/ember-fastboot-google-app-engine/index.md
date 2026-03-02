@@ -7,7 +7,7 @@ tags: [javascript, web]
 
 Last year, Google Cloud [announced](https://cloudplatform.googleblog.com/2016/03/Node.js-on-Google-App-Engine-goes-beta.html "Node.js on Google App Engine Goes Beta — Google Cloud Blog") the Node.js runtime for App Engine. Recently I decided to try to get EmberJS FastBoot to run on App Engine. It turns out a basic implementation is pretty simple.
 
-First, if you don’t already have an engines directive in your package.json, you should add one now. Then then if you project is already compatible, add FastBoot as a dependency:
+First, if you don’t already have an engines directive in your package.json, you should add one now. Then if your project is already compatible, add FastBoot as a dependency:
 
 ```bash
 ember install ember-cli-fastboot
@@ -81,11 +81,11 @@ Then, to build and deploy, simply run
 
 ```bash
 ember build --environment production
-gcloud app deploy --version 1 --project PROJCET_ID
+gcloud app deploy --version 1 --project PROJECT_ID
 ```
 
 To view your deployed app in the browser run gcloud app browse.
 
 Despite a lack of documentation on getting them to work together, it is almost as if FastBoot and App Engine were built with each other in mind. The actual unique configuration between the two tools boils down to seven lines of config in app.yaml.
 
-*The full source code for the [FastBoot Quickstart](http://ember-fastboot.com/quickstart "FastBoot Quickstart — Ember FastBoot") project that I converted to App Engine is in my [fastboot-app-engine-example](https://gitlab.com/davidwkeith/fastboot-app-engine-example "FastBoot App Engine Example — GitLab") aGitLab repo. Feel free to submit PRs for improvements.*
+*The full source code for the [FastBoot Quickstart](http://ember-fastboot.com/quickstart "FastBoot Quickstart — Ember FastBoot") project that I converted to App Engine is in my [fastboot-app-engine-example](https://gitlab.com/davidwkeith/fastboot-app-engine-example "FastBoot App Engine Example — GitLab") a GitLab repo. Feel free to submit PRs for improvements.*
