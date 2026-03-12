@@ -135,7 +135,7 @@ And Gemini gave the following feedback:
 > Review the "Polymorphism" section of **Unit 6 — Inheritance & Polymorphism**.
 
 
-That's a real example from my fictional class dataset, lightly edited for clarity. If you want to try this without your own class materials, I've put together a [sample FRQ dataset on GitHub]([https://github.com/davidwkeith/gemini-co-teacherhttps://github.com/davidwkeith/gemini-co-teacher] "Sample FRQ dataset for testing the Gemini grading Gem") — a .zip with a mock question, a rubric, and sample student responses you can feed straight into your own Gem.
+That's a real example from my fictional class dataset, lightly edited for clarity. If you want to try this without your own class materials, I've put together a [sample FRQ dataset on GitHub](https://github.com/davidwkeith/gemini-co-teacher "Sample FRQ dataset for testing the Gemini grading Gem") — a .zip with a mock question, a rubric, and sample student responses you can feed straight into your own Gem.
 
 ## A Note on Cost and Compliance
 
