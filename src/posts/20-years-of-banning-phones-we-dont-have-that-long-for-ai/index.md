@@ -6,6 +6,7 @@ tags: [ai, education]
 
 I was on Apple’s campus watching a live stream of Steve Jobs presenting his now iconic [iPhone Introduction](https://www.apple.com/newsroom/2007/01/09Apple-Reinvents-the-Phone-with-iPhone/ "Apple Reinvents the Phone with iPhone — Apple Newsroom") at [Macworld 2007](https://en.wikipedia.org/wiki/Macworld/iWorld#2007 "Macworld 2007 — Wikipedia").
 
+> [!aside]
 > …a widescreen iPod with touch controls; a revolutionary mobile phone; and a breakthrough Internet communications device. An iPod, a phone, and an Internet communicator. An iPod, a phone… are you getting it?
 >
 > --[Steve Jobs](https://www.youtube.com/watch?v=MnrJzXM7a6os "Steve Jobs iPhone Keynote 2007 — YouTube")
@@ -24,6 +25,7 @@ I co-teach AP Computer Science A, the high school equivalent of CS 101. As such,
 
 [Early research](https://www.nature.com/articles/s41598-025-97652-6 "AI tutoring vs active learning study — Nature") shows students learned almost twice as much with AI tutoring compared to in-class active learning. The key to that success? Context. The AI knew what topics students had covered, where they struggled, and what came next. Without that context, AI is just a chatty search engine. With it, you have a tutor. As one researcher put it:
 
+> [!aside]
 > We know what topics they’re covering in the next 20 weeks — we know the curriculum. We know the other students in the classroom. We know whether they’re putting effort into their questions. We know whether they’re watching videos or not — we know so much about the student without passing any personally identifiable information to the AI.
 >
 > -- [the74million.org](https://www.the74million.org/article/ai-tutors-with-a-little-human-help-offer-reliable-instruction-study-finds/ "AI Tutors With a Little Human Help Offer Reliable Instruction — The 74")

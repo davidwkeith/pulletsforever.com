@@ -106,7 +106,8 @@ export default function (eleventyConfig: EleventyConfig) {
   eleventyConfig.addPassthroughCopy(`${input}/fonts`);
   eleventyConfig.addPassthroughCopy({
     [`${input}/.well-known/keybase.txt`]: "/.well-known/keybase.txt",
-    [createRequire(import.meta.url).resolve("prismjs/themes/prism-okaidia.css")]: "/css/prism-okaidia.css",
+    [createRequire(import.meta.url).resolve("prismjs/themes/prism.css")]: "/css/prism-light.css",
+    [createRequire(import.meta.url).resolve("prismjs/themes/prism-dark.css")]: "/css/prism-dark.css",
     [createRequire(import.meta.url).resolve("img-comparison-slider/dist/styles.css")]:
       "/css/img-comparison-slider.css",
     [createRequire(import.meta.url).resolve("img-comparison-slider/dist/index.js")]:

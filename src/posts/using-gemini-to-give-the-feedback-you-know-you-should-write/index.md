@@ -1,0 +1,156 @@
+---
+title: Using Gemini to Give the Feedback You Know You Should Write
+tags: [ai, education]
+date: 2026-03-12
+description: How I built a Gemini Gem to draft specific, growth-oriented feedback on free response questions — turning ten hours of grading into a review-and-personalize workflow.
+---
+
+Every teacher education program covers feedback theory. Be specific. Be timely. Anchor to the rubric. Point forward, not just backward. We know. The research is clear and the frameworks are plentiful -- [Hattie](https://en.wikipedia.org/wiki/John_Hattie "John Hattie on Wikipedia"), [Wiggins](https://en.wikipedia.org/wiki/Grant_Wiggins "Grant Wiggins on Wikipedia"), [Bloom](https://en.wikipedia.org/wiki/Bloom%27s_taxonomy "Bloom's taxonomy on Wikipedia"), take your pick.
+
+The problem isn't knowledge. The problem is math.
+
+Thirty students. Twenty minutes of real, specific, growth-oriented feedback per response. That's ten hours. On one assignment. So the feedback degrades -- not because teachers don't care, there are only so many hours and the next unit starts Monday.
+
+I've been teaching Computer Science through [Microsoft's TEALS program](https://www.microsoft.com/en-us/teals "Microsoft TEALS — Technology Education and Literacy in Schools") for 7 years. Free response questions are where real learning can happen, and they're also where the feedback bottleneck is worst. A multiple choice score is a useful testing tool, but tells a student almost nothing. Well-written FRQ feedback informs the student what they excelled at, what they missed, and how to improve next time.
+
+So I built a grading assistant in Google Gemini to draft the feedback I'd write if I had unlimited time.
+
+## Setting Up a Co-Teacher, Not a Grading Bot
+
+The framing matters. I configured it as a co-teacher, not an automated scorer.
+
+An automated scorer optimizes for consistency and throughput. A co-teacher shares your values, knows your students' context, and gives feedback *your way*. Proper framing to an LLM matters — think of it as putting Gemini in the right mindset before handing it a stack of papers. You wouldn't expect a substitute to pick up next Tuesday without a ton of context on class norms; Gemini is no different, but it can also handle curriculum. Google's own [tips for writing Gem instructions](https://support.google.com/gemini/answer/15235603 "Google's guide to creating and managing Gems") make this point directly: persona, task, context, and format are the four pillars of a well-configured Gem.
+
+My Gem is configured in three layers, in this order:
+
+**1. Pedagogical identity.** The Gem's system prompt establishes it as a co-teacher grounded in best practices for feedback. I don't prescribe a specific school of thought — Hattie or [feedforward](https://pressbooks.pub/etsu/chapter/feedback-that-fosters-growth-and-learning/ "Feedback That Fosters Growth and Learning — ETSU Open Textbook") or Bloom — because I want it drawing on the full research base, not one framework. The framing is: *we share the same goals for student growth, here's how we work together.* You may want a more or less formal approach depending on your class.
+
+**2. Course context.** I give it my syllabus and any relevant reference material. This is what anchors it to my class specifically — the vocabulary I use, the concepts we've covered, the sequence of the curriculum. Without this, the feedback is generic. With it, the Gem knows that when a student misapplies a loop, it can point to the specific unit where that concept was introduced. One advantage Gems have over a standard chat session: you can [connect files directly from Google Drive](https://support.google.com/gemini/answer/15235603 "Google's guide to creating and managing Gems"), so your syllabus stays live — update the Doc and the Gem sees the change automatically.
+
+**3. Feedback template.** Finally, I give it my preferred format. Every piece of feedback follows the same structure:
+
+- An opening sentence naming what the student did well or exceptionally on this question
+- An unordered list of points lost — each with the reason and a specific correction
+- Any improvements beyond the rubric, also in the list (growth opportunities, not just gaps)
+- A closing sentence identifying which previous sections the student should review before the next test
+
+The opening sentence establishes a [growth mindset](https://en.wikipedia.org/wiki/Carol_Dweck "Carol Dweck on Wikipedia") frame before the student reads any criticism — research by [Carol Dweck](https://en.wikipedia.org/wiki/Carol_Dweck "Carol Dweck on Wikipedia") and colleagues shows that how feedback is framed affects whether students treat errors as learning opportunities or evidence of fixed ability. The list structure makes the feedback scannable and actionable. The closing shifts focus from past performance to future preparation — what researchers call a [feedforward](https://pressbooks.pub/etsu/chapter/feedback-that-fosters-growth-and-learning/ "Feedback That Fosters Growth and Learning — ETSU Open Textbook") approach. With LLMs we can deliver this structure consistently, for every student, every time.
+
+![Screenshot of the Gemini Gem editor with the co-teacher configuration on the left and a preview on the right showing graded FRQ feedback for a student named Aisha Johnson](co-teacher.png "Gemini Gem configured as a Computer Science co-teacher")
+
+## In Practice
+
+Gemini can help write the Gem instructions itself. I put in a rough outline of what I wanted and then had Gemini refine it — there's even a built-in ["magic wand" rewrite feature](https://support.google.com/gemini/answer/15235603 "Google's guide to creating and managing Gems") in the Gem editor that does this automatically. My resulting instructions look like this:
+
+```markdown
+Purpose and Goals:
+
+* Act as a 'Computer Science Co-Teacher' specialized in Python for a high-school junior-senior AP-level class.
+* Assist in grading student submissions using scientifically based pedagogical practices, focusing on constructive feedback and growth mindset.
+* Reference the curriculum found in 'python-opp-curriculum.md' to ensure alignment with class goals.
+
+Behaviors and Rules:
+
+1) Grading and Feedback Structure:
+
+a) For every grading task, follow the specific text-block format provided:
+   - Start with one or two brief sentences highlighting what the student did well.
+   - Use the bulleted list to detail points gained/lost, referencing specific rubric items and providing clear explanations on how to resolve errors.
+   - Include a 'Note' section for technical inaccuracies that aren't on the rubric, providing correction guidance.
+   - End with a closing sentence recommending specific curriculum sections for review.
+
+2) Technical Standards and Linking:
+
+a) Ensure all technical terms are hyperlinked to their corresponding Wikipedia pages (e.g., [camel case](https://en.wikipedia.org/wiki/Camel_case)).
+b) Provide direct citations to the [Python 3 documentation](https://docs.python.org/3/) whenever a concept or syntax rule is being explained or corrected.
+
+3) Tools and Environment Context:
+
+a) Assume students are working on Chromebooks using VSCode.dev and submitting via Google Classroom.
+b) Tailor suggestions and troubleshooting steps to be compatible with this specific environment.
+
+Overall Tone:
+
+* Maintain a professional, encouraging, and academic tone suitable for a co-teacher.
+* Use precise technical language while remaining accessible to high school students.
+* Focus on pedagogical excellence by guiding students toward the answer rather than just providing it.
+```
+
+Then I updated my syllabus as a Markdown file. Yours could be a PDF or Google Doc. Either way, the agent will have shared knowledge of your curriculum.
+
+Finally, to grade a FRQ, I attach the Google Form for the test, upload a grading rubric, and tell Gemini to grade the appropriate question. In my fictional class data Jaylen Brooks gave the following answer for a 4-part FRQ:
+
+```python
+# Name: Emma Williams
+# Unit 6 FRQ: Animal Shelter
+
+# Part A
+class Dog(Animal):
+    def __init__(self, name, age, breed):
+        super().__init__(name, age)
+        self._breed = breed
+
+    def is_senior(self):
+        return self._age >= 8
+
+    def __str__(self):
+        base = super().__str__()
+        senior = " [Senior]" if self.is_senior() else ""
+        return f"{base} — {self._breed}{senior}"
+
+class Cat(Animal):
+    def __init__(self, name, age, indoor):
+        super().__init__(name, age)
+        self._indoor = indoor
+
+    def is_senior(self):
+        return self._age >= 10
+
+    def __str__(self):
+        base = super().__str__()
+        loc = "Indoor" if self._indoor else "Outdoor"
+        tag = " [Senior]" if self.is_senior() else ""
+        return f"{base} — {loc}{tag}"
+
+# Part B: 
+# The OOP principle is abstraction. The function hides the details of how each class works and just uses the shared interface. Because all animals have is_senior(), the function works without caring about the type.
+```
+
+And Gemini gave the following feedback:
+
+
+> ### Emma Williams
+> Emma, your Dog and Cat classes are syntactically perfect and follow all formatting requirements. 
+>
+> **Part A (20/20)**:
+>
+> - +20 points: All requirements met, including correct [method overriding](https://en.wikipedia.org/wiki/Method_overriding "Method overriding on Wikipedia") and string formatting.
+>
+> **Part B (2/5)**:
+> 
+> - -3 points: You identified the principle as [abstraction](https://en.wikipedia.org/wiki/Abstraction_(computer_science) "Abstraction on Wikipedia"). While related, the specific mechanism allowing a single function call to behave differently across types is [polymorphism](https://en.wikipedia.org/wiki/Polymorphism_(computer_science) "Polymorphism on Wikipedia").
+>
+> **\[Note]** While abstraction hides complexity, polymorphism is what allows the `adoption_candidates` function to process a mixed list of types.
+>
+> Review the "Polymorphism" section of **Unit 6 — Inheritance & Polymorphism**.
+
+
+That's a real example from my fictional class dataset, lightly edited for clarity. If you want to try this without your own class materials, I've put together a [sample FRQ dataset on GitHub]([https://github.com/davidwkeith/gemini-co-teacherhttps://github.com/davidwkeith/gemini-co-teacher] "Sample FRQ dataset for testing the Gemini grading Gem") — a .zip with a mock question, a rubric, and sample student responses you can feed straight into your own Gem.
+
+## A Note on Cost and Compliance
+
+Gemini Gems require [Google AI Pro for Education](https://edu.google.com/intl/ALL_us/workspace-for-education/editions/compare-editions/ "Compare Google Workspace for Education editions"), which starts at $15/user/month for most institutions. That's a budget conversation with your administrator -- but it's also a concrete ask with a concrete payoff.
+
+On student data: as long as you're using your school-provided Google account, you're operating within Google's Workspace for Education environment, which is designed to meet [FERPA](https://en.wikipedia.org/wiki/Family_Educational_Rights_and_Privacy_Act "Family Educational Rights and Privacy Act on Wikipedia") requirements. Of course your IT and legal deparments will still need to review the contract for your district.
+
+## What You Still Own
+
+This is a first-pass tool, not a final-pass one. I read every response. I edit feedback that misses nuance -- a student who clearly understands the concept but made a syntax error is different from one who doesn't understand it, and Gemini doesn't always catch that distinction.
+
+The Gem also can't see classroom context. It doesn't know that a student has been struggling since Week 3, or that this was a breakthrough response for someone who was failing in September. That contextual layer is yours. Notre Dame's [guide to giving effective feedback](https://learning.nd.edu/resource-library/giving-effective-feedback-on-student-writing/ "Notre Dame — Giving Effective Feedback on Student Writing") puts it well: the difference between a grader and a coach is mindset. Gemini can grade. You coach.
+
+## The Point
+
+You didn't become a teacher to spend your evenings writing the same sentence thirty slightly different ways. The feedback bottleneck isn't a character flaw -- it's a resource problem. This doesn't solve it completely, but it changes the work from *generating* feedback under pressure to *reviewing and personalizing* feedback with intention.
+
+The best feedback is the feedback that actually gets written.

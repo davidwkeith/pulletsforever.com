@@ -1,4 +1,5 @@
 import markdownItAnchor from "markdown-it-anchor";
+import { alert } from "@mdit/plugin-alert";
 import { footnote } from "@mdit/plugin-footnote";
 import { mark } from "@mdit/plugin-mark";
 import { sup } from "@mdit/plugin-sup";
@@ -53,6 +54,15 @@ export default function (eleventyConfig: EleventyConfig): void {
       return defaultLinkOpen(tokens, idx, options, env, self);
     };
 
+    // [!aside] blockquotes render as <blockquote class="aside"> for pullquote styling.
+    // Plain blockquotes (no marker) render as standard inline blockquotes.
+    mdLib.use(alert, {
+      alertNames: ["aside"],
+      openRender: () => '<blockquote class="aside">\n',
+      closeRender: () => "</blockquote>\n",
+      titleRender: () => "",
+    });
+
     mdLib.use(markdownItAnchor, {
       permalink: markdownItAnchor.permalink.linkInsideHeader({
         placement: "after",
@@ -69,16 +79,35 @@ export default function (eleventyConfig: EleventyConfig): void {
     });
   });
 
+  // Wrap each line inside <code> blocks in a <span class="code-line"> for
+  // CSS-based line numbers and soft wrapping with hanging indents.
+  eleventyConfig.addTransform("code-line-wrap", (content) => {
+    if (typeof content !== "string" || !content.includes("<code")) return content;
+    return content.replace(
+      /<pre([^>]*)><code([^>]*)>([\s\S]*?)<\/code><\/pre>/g,
+      (match, preAttrs, codeAttrs, inner) => {
+        // Split on newlines, wrap each in a span — preserve trailing empty line
+        const lines = inner.split("\n");
+        // Remove the final empty string from trailing newline
+        if (lines.length > 0 && lines[lines.length - 1] === "") lines.pop();
+        const wrapped = lines
+          .map((line) => `<span class="code-line"><span class="code-content">${line}</span></span>`)
+          .join("");
+        return `<pre${preAttrs}><code${codeAttrs}>${wrapped}</code></pre>`;
+      },
+    );
+  });
+
   // Convert "> \n> -- Attribution" into <footer> inside blockquotes.
   // In markdown, use a blank ">" line before the attribution:
   //   > Quote text
   //   >
   //   > --Author Name
   eleventyConfig.addTransform("blockquote-footer", (content) => {
-    if (typeof content !== "string" || !content.includes("<blockquote>")) return content;
+    if (typeof content !== "string" || !content.includes("<blockquote")) return content;
     return content.replace(
-      /<blockquote>([\s\S]*?)<\/blockquote>/g,
-      (match, inner) => {
+      /<blockquote([^>]*)>([\s\S]*?)<\/blockquote>/g,
+      (match, attrs, inner) => {
         // Match a <p> whose text starts with an en/em dash or --
         // and replace the entire <p>...</p> with <footer>...</footer>
         const replaced = inner.replace(
@@ -86,7 +115,7 @@ export default function (eleventyConfig: EleventyConfig): void {
           "<footer>$1</footer>",
         );
         if (replaced !== inner) {
-          return `<blockquote>${replaced}</blockquote>`;
+          return `<blockquote${attrs}>${replaced}</blockquote>`;
         }
         return match;
       },
