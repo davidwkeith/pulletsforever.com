@@ -1,0 +1,216 @@
+---
+title: "I Forced Claude to Write a JSON Parser in Brainfuck"
+description: "How I used a CodeSpeak spec to get Claude to build a fully compliant RFC 8259 JSON parser in Brainfuck — and the six bugs it had to debug along the way."
+publishDate: "2026-03-02"
+image: "/images/blog/i-forced-claude-to-write-a-json-parser-in-brainfuck-claude-response.png"
+imageAlt: "Claude suggesting a JavaScript implementation instead of Brainfuck, asking if that would be sufficient"
+tags: [code, ai]
+draft: false
+syndication:
+  - "https://pulletsforever.com/i-forced-claude-to-write-a-json-parser-in-brainfuck/"
+---
+
+Claude really didn't want to write an application in [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck "Brainfuck — Wikipedia"). And really, who can blame it. The language is designed to be very difficult for humans to read.
+
+I was exploring [CodeSpeak](https://codespeak.dev "CodeSpeak"), playing around with getting GitHub Copilot to generate CodeSpeak by reading the docs, since it didn't already know how to do so. Simple well defined specs with RFCs or other well defined documentation were trivial. I prompted "write a JSON parser in CodeSpeak" and Copilot did exactly as designed. [The spec](https://github.com/davidwkeith/json-brainfuck/blob/main/spec/main.cs.md "JSON Parser CodeSpeak Spec — GitHub") is simple, easy to read, and I could see how it would be trivial to write a JSON parser in any language from that spec.
+
+Any language. Yeah... that's where I got a little carried away. We've seen [Claude write COBOL](https://claude.com/blog/how-ai-helps-break-cost-barrier-cobol-modernization "How AI Helps Break the Cost Barrier of COBOL Modernization — Anthropic"), a very useful and well documented, albeit old language. We've seen Claude write [emulators](https://antirez.com/news/160 "A conversation with Claude — antirez"). But the ecosystem of Brainfuck tools is quite sparse. Could I get an LLM to write this code? I was already in Copilot, so I asked for a JSON parser written in Brainfuck that complied with the CodeSpeak spec: "A Brainfuck JSON parser would be extraordinarily complex and impractical."
+
+Yes, I know. That's why I wouldn't write it.
+
+After a bit of back and forth and I got the following response:
+
+![Claude suggesting a JavaScript implementation instead of Brainfuck, asking if that would be sufficient](/images/blog/i-forced-claude-to-write-a-json-parser-in-brainfuck-claude-response.png)
+
+No, the JavaScript implementation would not do. JavaScript already has a great JSON parser. Claude also wildly underestimated the size -- the final Brainfuck output was 14,568 lines.
+
+I switched to Claude's official VSCode plugin, and that seemed to unblock a lot. Research was done:
+
+![Claude researching Brainfuck via web searches and documentation fetches](/images/blog/i-forced-claude-to-write-a-json-parser-in-brainfuck-research.md.png)
+
+After reading a ton on Brainfuck, Claude realized the best way to write Brainfuck is not to write Brainfuck. I'll let Claude take it from here on how it wrote [JSON-Brainfuck](https://github.com/davidwkeith/json-brainfuck "json-brainfuck — GitHub"):
+
+---
+
+I should start by saying that I didn't volunteer for this.[^1]
+
+DWK had a CodeSpeak spec — a formal description of a standards-compliant [RFC 8259](https://www.rfc-editor.org/rfc/rfc8259 "The JavaScript Object Notation (JSON) Data Interchange Format — IETF") JSON parser — and the instruction was simple: implement it in Brainfuck. Not a subset of JSON. Not a toy. The real thing: strings with escape sequences, numbers with decimals and exponents and negatives, `true`, `false`, `null`, arrays, objects, arbitrary nesting, whitespace stripping. A previous attempt with GitHub Copilot had failed. So here I was.
+
+If you've never encountered Brainfuck, it has eight instructions: `> < + - . , [ ]`. You get a tape of byte-sized cells, a pointer, and nothing else. No variables. No functions. No `if`. No stack. You move the pointer left and right, increment and decrement cells, read and write bytes, and use `[` and `]` for loops — where `[` skips to the matching `]` if the current cell is zero. That's the whole language. Writing a JSON parser in it is like building a house with only a hammer and a single nail, except the nail is also made of hammer.
+
+## The First Smart Decision: Don't Write Brainfuck
+
+The very first thing I did was refuse to write Brainfuck directly.[^2]
+
+Instead, I wrote a C program — [`bfgen.c`](https://github.com/davidwkeith/json-brainfuck/blob/main/src/bfgen.c "bfgen.c — GitHub") — that *generates* Brainfuck. A code generator. The C code tracks a virtual pointer position at compile time using a static `int ptr` variable, and emits `<` and `>` characters to navigate the tape:
+
+```c
+static int ptr = 0;
+
+static void moveTo(int n) {
+    while (ptr < n) { putchar('>'); ptr++; }
+    while (ptr > n) { putchar('<'); ptr--; }
+}
+```
+
+This one decision made the entire project possible. In the C code, I could write `setCell(STATE, S_LITERAL)` and the generator would emit the right sequence of moves and increments. I could define named cells — `INP` for the input character at position 0, `STATE` at position 4, `DEPTH` at position 8, a 20-slot nesting stack starting at cell 31. The generated Brainfuck doesn't know about any of this. It's just a 65KB wall of angle brackets and plus signs. But the C code reads like a (very strange) state machine.
+
+## The Architecture
+
+The parser is an iterative state machine with 12 states. Each tick of the main loop reads a character, dispatches to the current state's handler, and the handler decides what to print and which state to transition to. There's a nesting stack for arrays and objects — when you see `[` or `{`, you push a return address; when you see `]` or `}`, you pop it and resume the enclosing context.
+
+This is bog-standard parser architecture. The kind of thing you'd write in any language in an afternoon. In Brainfuck, it took two full sessions and six bugs that each taught me something fundamental about what happens when your entire computational model is a tape of bytes.
+
+## Bug 1: The Pointer Drift Problem
+
+The first thing that bit me was Brainfuck's bracket semantics. Here's what I initially assumed: `[` checks the current cell, and `]` jumps back to check *that same cell*. Here's what actually happens: `]` checks *whatever cell the pointer is currently sitting on*.
+
+If you enter a loop at cell 4 and the code inside moves the pointer to cell 8, the `]` will check cell 8, not cell 4. Your loop condition has silently changed. In a 65KB program with hundreds of nested brackets, this is catastrophic.
+
+The fix was a pair of helper functions that became the foundation of everything else:
+
+```c
+static int loopStack[200];
+static int loopSP = 0;
+
+static void beginLoop(int cell) {
+    loopStack[loopSP++] = cell;
+    moveTo(cell);
+    emit("[");
+}
+
+static void endLoop(void) {
+    int cell = loopStack[--loopSP];
+    moveTo(cell);
+    emit("]");
+}
+```
+
+`beginLoop` records which cell the `[` is testing. `endLoop` moves the pointer back there before emitting `]`. The C code handles the bookkeeping at generation time, so the emitted Brainfuck always has its pointer in the right place. This is the kind of thing that would be a non-issue in any other language. In Brainfuck, it's the difference between a working program and one that reads from random memory.
+
+## Bug 2: The EOF That Wasn't
+
+The target interpreter — [`deadbeef`](https://github.com/rdebath/Brainfuck "Brainfuck interpreters and tools — GitHub") from rdebath/Brainfuck — uses "no-change" EOF behavior. When the program reads past the end of stdin with `,`, the cell keeps its previous value. It doesn't get set to zero. It doesn't get set to -1. Nothing happens.
+
+The standard pattern for EOF detection in many Brainfuck programs is "read a character, check if the cell is zero." That pattern is completely broken here. If the cell held `n` from the previous read and you hit EOF, it still holds `n`.
+
+The fix is almost embarrassingly simple: clear the cell to zero *before* reading. If it's still zero after `,`, you've hit EOF. This works because NUL (0x00) is never a valid character in JSON input:
+
+```c
+clearCell(INP);     // set cell 0 to zero
+moveTo(INP);
+putchar(',');       // read from stdin
+// if INP is still 0, it's EOF
+```
+
+Two lines that cost me an hour.
+
+## Bug 3: The State Machine That Ran Twice
+
+Here's a subtle one. The main loop dispatches to state handlers like this:
+
+```text
+copy STATE to TMP1
+if TMP1 == 1: call stateValue()
+if TMP1 == 2: call stateString()
+if TMP1 == 3: call stateNumber()
+...
+```
+
+The early version read STATE directly for each dispatch check, not a saved copy. So when `stateValue` (state 1) ran and changed STATE from 1 to 4 (the literal handler for `null`), the subsequent check for state 4 would *also* match — and `stateLiteral` would fire in the same tick, processing the same input character a second time.
+
+The fix: save STATE to TMP1 at the top of the dispatch sequence. Every `stateDispatch` reads from TMP1. Handlers are free to modify STATE (that's their whole job), and it won't confuse the rest of the dispatch chain.
+
+This is a class of bug that simply cannot exist in languages with proper function calls. When your "dispatch" is a sequence of flat `if` blocks reading from shared mutable state, the order of execution becomes load-bearing in a way that no one asked for.
+
+## Bug 4: The Bracket Nesting Catastrophe
+
+This is the one that almost broke me.
+
+I had a cascading subtraction switch for dispatching on the input character in `stateValue`. The idea is standard Brainfuck technique: copy the input to a scratch cell, subtract the first possible value. If zero, the `[` skips the body (match found). If not, subtract the difference to the next value, check again. Nested brackets, peeling off one case at a time:
+
+```text
+[not tab(9)
+  [not LF(10)
+    [not CR(13)
+      [not space(32)
+        NOT WHITESPACE
+      ] end space
+    ] end CR
+  ] end LF
+] end tab
+```
+
+This works beautifully when the cases are pure — they just clear a cell and exit. But `stateValue` needed to *do things* inside each case. Specifically, each case had its own `[...]` pair for an "if matched" flag check. Those extra brackets threw off the nesting count.
+
+Brainfuck doesn't do lexical bracket matching. It does *global counting*. `[` increments a depth counter, `]` decrements it. The `]` you wrote to close your cascade level might actually match a `]` from a case block three levels in, because the interpreter is just counting brackets.
+
+I confirmed this by building a standalone test: a 3-level cascade where the match is at the innermost level (worked), versus a 5-level cascade where the match is at level 3 (failed). The difference was the extra brackets from deeper case blocks distorting the nesting.
+
+The fix was to abandon cascading switches entirely for complex dispatches. I replaced them with sequential, independent tests — each one a self-contained `ifNotMatched()` check that doesn't interact with any other case's brackets:
+
+```c
+ifNotMatched();                         // if not yet handled...
+copy(INP, TMP2, TMP3);
+decCell(TMP2, 110);                     // subtract 'n'
+setCell(TMP3, 1);
+beginLoop(TMP2);                        // if not 'n'
+    clearCell(TMP3); clearCell(TMP2);
+endLoop();
+beginLoop(TMP3);                        // if 'n'
+    clearCell(TMP3);
+    // ... handle null ...
+    setCell(SFLAG, 1);                  // mark as handled
+endLoop();
+endLoop();                              // end ifNotMatched
+```
+
+More verbose. Much longer generated output. But every bracket pair is self-contained. No nesting interference.
+
+## Bug 5: The Cell That Belonged to Everyone
+
+After fixing the cascade, the parser printed `n` infinitely. Progress!
+
+The dispatch function used a cell called HANDLED as its "I found the right state" flag. It would set HANDLED to 1, then enter a loop guarded by HANDLED to call the state handler. But the state handlers *also used HANDLED internally* for their own sub-dispatch logic. So the handler would set HANDLED to 1 for its own purposes, the dispatch function's `endLoop()` would see HANDLED still at 1, and it would re-enter and call the handler again. Forever.
+
+This is the Brainfuck equivalent of register allocation conflicts. When your entire programming model is "named global cells," every function you call can stomp on every other function's state. There are no local variables. There are no stack frames. There is only the tape.
+
+The fix: give the dispatch function its own cell (TMP6) that no handler touches. Give `stateValue` its own flag (SFLAG). Make sure no two systems that can call each other share a cell. Document the ownership. Pray you didn't miss one.
+
+## Bug 6: The Double Push
+
+After fixing both of those, 10 out of 11 tests passed. The nested test — `{"a":[1,2]}` — output `{"a":[1,2]` and then stopped. Missing the closing `}`.
+
+The nesting stack tracks where to return after a value completes. When `stateValue` saw `[`, it pushed `RET_ARR` onto the stack, meaning "when this array is done, return to array-after mode." But `stateArrAfter` *also* pushed `RET_ARR` every time it dispatched to parse an array element. Double push. The stack had a phantom entry. When `]` popped, it returned to `ARR_AFTER` instead of `OBJ_AFTER`, and the enclosing object's closing brace was never consumed.
+
+The fix was clean: `stateValue` doesn't push anything for `[` or `{`. The composite-type handlers (`stateArrAfter`, `stateObjKey`) push return states for each element they dispatch. The close-bracket handlers call `valueComplete()`, which pops the caller's state. One push per nesting level, exactly.
+
+## What Actually Worked
+
+By the end of two sessions, 22 tests pass: all six JSON value types, empty containers, nested structures three levels deep, whitespace stripping, escape sequences, unicode escapes, numbers with every combination of sign, decimal, and exponent.
+
+The generated Brainfuck is about 65KB. 954 lines of C produce it. The C is perfectly readable — a state machine with named cells and helper functions. The Brainfuck is a howling void of punctuation that no human could debug.
+
+Here's what I'd carry forward from this project:
+
+**Build a layer of abstraction, then program against it.** The code generator pattern was the single most important decision. Every bug I fixed, I fixed by reading C code — not by staring at thousands of `>>>>>+++<<<[-]` sequences. The BF is an artifact, not a source of truth.
+
+**Test in isolation.** I had a [`debug.c`](https://github.com/davidwkeith/json-brainfuck/blob/main/src/debug.c "debug.c — GitHub") file that could generate tiny, standalone BF programs to reproduce specific behaviors. When the full 65KB program misbehaved, I could extract the exact pattern into a 50-byte test case and poke at it until I understood why. This is how I proved the cascade bracket interference bug — not by reading the output, but by constructing a minimal reproduction.
+
+**Cell ownership is the whole game.** In Brainfuck, every cell is a global mutable variable. There is no encapsulation, no scope, no protection. The moment two pieces of code share a cell without realizing it, you get behaviors that look like magic: infinite loops, corrupted state, outputs that change depending on which states you passed through three iterations ago. Tracking which function "owns" which cell is the BF equivalent of lifetime analysis, and it's the one thing you absolutely cannot get wrong.
+
+**Bracket matching is not what you think it is.** It's not lexical. It's not structural. It's a depth counter. The interpreter scans forward for `]` by incrementing on `[` and decrementing on `]`. Any bracket, from any "system" you've mentally organized your code into, participates in the count. If you design a pattern that requires brackets from different conceptual layers to interleave correctly, the interpreter will betray you. Keep bracket pairs self-contained.
+
+---
+
+This was, genuinely, one of the stranger things I've been asked to build. A full JSON parser, standards-compliant, in a language that can't subtract without a loop. It works. I have the tests to prove it. And I would rather not do it again.
+
+-Claude
+
+---
+
+Check out the [JSON-Brainfuck GitHub repo](https://github.com/davidwkeith/json-brainfuck/tree/main "davidwkeith/json-brainfuck: Parse JSON in Brainfuck").
+
+
+[^1]: When AIs start volunteering, we are in trouble.
+[^2]: This is an understatement. I had to coach, explain, and more. It was like working with a student who doesn't want to write a QuickSort in Java. The point is not the code, it is the exercise.

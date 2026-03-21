@@ -1,0 +1,39 @@
+---
+title: "CoverLeaf magazines can still be read for free"
+description: "Discovering that magazine page images from CoverLeaf's iPad app are freely accessible via predictable URLs, with a script to download them."
+publishDate: "2010-08-18"
+tags: [hacks, web]
+draft: false
+syndication:
+  - https://pulletsforever.com/coverleaf-magazines-can-still-be-read-for-free/
+---
+
+In my hacking for the RSS Feed Generator I noticed that the images of the magazine pages used by the iPad version of CoverLeaf are still freely available to anyone that wants them.
+
+- [makevol23_0001.jpg](http://m-cdn.dashdigital.com/make/vol23/data/imgpages/mobile2/makevol23_0001.jpg "MAKE Vol 23 Page 1 — DashDigital CDN")
+
+- [makevol23_0002.jpg](http://m-cdn.dashdigital.com/make/vol23/data/imgpages/mobile2/makevol23_0002.jpg "MAKE Vol 23 Page 2 — DashDigital CDN")
+
+- [makevol23_0003.jpg](http://m-cdn.dashdigital.com/make/vol23/data/imgpages/mobile2/makevol23_0003.jpg "MAKE Vol 23 Page 3 — DashDigital CDN")
+
+- [makevol23_0004.jpg](http://m-cdn.dashdigital.com/make/vol23/data/imgpages/mobile2/makevol23_0004.jpg "MAKE Vol 23 Page 4 — DashDigital CDN")
+
+- [makevol23_0005.jpg](http://m-cdn.dashdigital.com/make/vol23/data/imgpages/mobile2/makevol23_0004.jpg "MAKE Vol 23 Page 5 — DashDigital CDN")
+
+Using the same pattern as the PDFs that I described [earlier](https://medium.com/pullets-forever/read-make-on-your-ipad-f20993f4d5a8#.xrb5frkrd "Read MAKE on Your iPad — Pullets Forever on Medium") you can construct URLs for any CoverLeaf magazine you want to read:
+
+- [readymade20100809_0001.jpg](http://m-cdn.dashdigital.com/readymade/20100809/data/imgpages/mobile2/readymade20100809_0001.jpg "ReadyMade Aug 2010 Page 1 — DashDigital CDN")
+
+- [fastcompany201009_0001.jpg](http://m-cdn.dashdigital.com/fastcompany/201009/data/imgpages/mobile2/fastcompany201009_0001.jpg "Fast Company Oct 2010 Page 1 — DashDigital CDN")
+
+**UPDATE:** A friend pointed me to CURL's man page for a better way to download images, this script will output images in the same directory that is is run from.
+
+`./download.sh make vol23`
+
+```bash
+#!/usr/bin/env bash
+MAX_PAGES='0200';
+curl --fail --remote-name http://m-cdn.dashdigital.com/$1/$2/data/imgpages/mobile2/$1$2[0001-$MAX_PAGES].jpg;
+```
+
+Then you just take the folder of images and make a PDF (one action Automator workflow) and [add the PDF to iTunes](http://www.dougscripts.com/itunes/scripts/scripts07.php?page=1 "iTunes Scripts — Doug's AppleScripts").

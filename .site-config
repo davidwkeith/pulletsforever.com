@@ -1,0 +1,6 @@
+SITE_TYPE=blog
+OWNER_NAME=dwk
+SITE_NAME=Pullets Forever
+DEV_HOSTNAME=pulletsforever.local
+AI_MODEL=Claude Opus 4.6
+EXPLAIN_STEPS=true

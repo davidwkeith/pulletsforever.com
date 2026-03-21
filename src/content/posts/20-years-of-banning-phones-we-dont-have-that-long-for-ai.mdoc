@@ -1,0 +1,84 @@
+---
+title: "20 Years of Banning Phones. We Don't Have That Long for AI."
+description: "We spent two decades banning smartphones from classrooms instead of teaching students to use them. We can't afford to make the same mistake with AI."
+publishDate: "2026-02-23"
+image: "/images/blog/20-years-of-banning-phones-we-dont-have-that-long-for-ai-image.webp"
+imageAlt: "Claude Chat with AP CS A Tutor project"
+tags: [ai, education]
+draft: false
+syndication:
+  - "https://pulletsforever.com/20-years-of-banning-phones-we-dont-have-that-long-for-ai/"
+---
+
+I was on Apple's campus watching a live stream of Steve Jobs presenting his now iconic [iPhone Introduction](https://www.apple.com/newsroom/2007/01/09Apple-Reinvents-the-Phone-with-iPhone/ "Apple Reinvents the Phone with iPhone — Apple Newsroom") at [Macworld 2007](https://en.wikipedia.org/wiki/Macworld/iWorld#2007 "Macworld 2007 — Wikipedia").
+
+> ...a widescreen iPod with touch controls; a revolutionary mobile phone; and a breakthrough Internet communications device. An iPod, a phone, and an Internet communicator. An iPod, a phone... are you getting it?
+>
+> --[Steve Jobs](https://www.youtube.com/watch?v=MnrJzXM7a6os "Steve Jobs iPhone Keynote 2007 — YouTube")
+
+The world changed, the Internet was mobile. We now had the ability to carry a supercomputer in our pockets. Over the years that supercomputer got many sensors: a camera, accelerometer, gyroscope, compass, LiDAR, and more. A device that could have [transformed how students learn](https://er.educause.edu/articles/2023/1/the-evolving-landscape-of-students-mobile-learning-practices-in-higher-education "The Evolving Landscape of Students' Mobile Learning Practices — EDUCAUSE Review"). Instead, we banned it. And still, almost two decades later, despite many cries to integrate technology into the classroom,[^1] most schools [still ban smartphones](https://calmatters.org/commentary/reader-reactions/2026/02/cellphone-schools-ban-california-reaction/ "Cellphone Schools Ban California Reaction — CalMatters"), turning phones into forbidden fruit, binged after school.
+
+Research from [CMU found](https://www.heinz.cmu.edu/media/2023/September/students-perform-best-when-teachers-encourage-smartphones-to-aid-instruction "Students Perform Best When Teachers Encourage Smartphones — CMU Heinz") that students' performance was even better when teachers asked them to use devices to aid instruction--not worse.
+
+Today we have Artificial Intelligence (AI) in the form of Large Language Models (LLMs) from OpenAI, Anthropic, and Google. This school year many school IT departments either blocked or ignored them. Google only allows Gemini in Classroom to be used by [students over 18](https://support.google.com/edu/classroom/answer/15410566 "Gemini in Google Classroom age requirements — Google Support"). Effectively banning their own product in K-12. We are already not teaching students how to avoid distractions on their phones, and are already losing a generation to algorithmic distraction. Not integrating AI will cost us another generation of students unprepared for the realities of modern work if we don't teach students emerging best practices as we develop them.
+
+**We don't have 20 years to figure out how to integrate AI into the classroom**
+
+I co-teach AP Computer Science A, the high school equivalent of CS 101. As such, it is nearly impossible to avoid AI, by definition these students are excited about technology--that's why they signed up. Yes, most are going into other sciences, but all science disciplines are already using AI in one way or another, and that won't change, we've passed the point of no return. AI will be in the offices and labs of the future. We need to prepare students with best practices on how to use it.
+
+## The Evidence
+
+[Early research](https://www.nature.com/articles/s41598-025-97652-6 "AI tutoring vs active learning study — Nature") shows students learned almost twice as much with AI tutoring compared to in-class active learning. The key to that success? Context. The AI knew what topics students had covered, where they struggled, and what came next. Without that context, AI is just a chatty search engine. With it, you have a tutor. As one researcher put it:
+
+> We know what topics they're covering in the next 20 weeks -- we know the curriculum. We know the other students in the classroom. We know whether they're putting effort into their questions. We know whether they're watching videos or not -- we know so much about the student without passing any personally identifiable information to the AI.
+>
+> -- [the74million.org](https://www.the74million.org/article/ai-tutors-with-a-little-human-help-offer-reliable-instruction-study-finds/ "AI Tutors With a Little Human Help Offer Reliable Instruction — The 74")
+
+Hallucinations are a real concern--but when working with common educational material, the numbers are encouraging. [One study](https://www.the74million.org/article/ai-tutors-with-a-little-human-help-offer-reliable-instruction-study-finds/ "AI Tutors With a Little Human Help Offer Reliable Instruction — The 74") found the supervised AI tutor hallucinated just 0.1% of the time: 5 errors in 3,617 messages. I've been teaching this curriculum for years, and I'm nowhere near that accurate. Just ask my students.
+
+Critics argue we're moving too fast. A widely-cited [Wharton study](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4895486 "Generative AI Can Harm Learning — SSRN") found that high school students given access to standard ChatGPT performed 17% *worse* on exams than students with no AI access--what researchers called using AI as a "crutch." [Some professors](https://www.techpolicy.press/schools-went-after-cellphones-now-its-time-to-ban-generative-ai/ "Schools Went After Cellphones, Now It's Time to Ban Generative AI — Tech Policy Press") report a "junior-year wall" where CS students who coasted through intro courses with AI can't handle advanced work without it.
+
+But read the Wharton study closely: students using a tutor *with pedagogical guardrails*--one designed to guide rather than answer--showed no negative effect on learning. The problem isn't AI in education. It's *unguided* AI. ChatGPT is designed to be helpful, which in an educational context means giving away the answer. A well-designed tutor does the opposite.
+
+The "junior-year wall" critique assumes the goal is producing engineers who work *without* AI. But that's not the job market students are entering. AI fluency is [becoming a baseline expectation](https://www.forbes.com/councils/forbestechcouncil/2025/11/17/ai-isnt-replacing-junior-engineers-its-redefining-what-junior-means/ "AI Isn't Replacing Junior Engineers, It's Redefining What Junior Means — Forbes"), not a crutch. The question isn't whether students will use AI--they will. The question is whether they'll know how to use it well.
+
+## How to Build One
+
+![Claude Chat with AP CS A Tutor project](/images/blog/20-years-of-banning-phones-we-dont-have-that-long-for-ai-image.webp)
+
+The project prompt instructions I created are for my class, AP CS A, but the same principles apply to any curriculum. When writing your own instructions, tell the agent to guide, not solve--following [evidence-based tutoring practices](https://ies.ed.gov/ncee/wwc/ "What Works Clearinghouse — Institute of Education Sciences")--as a core principle. Add a "never" section that reminds the AI not to write complete solutions and instead ask probing questions. Tell the agent how to handle pushback when students demand answers, and how to keep frustrated learners engaged. Give examples that anchor the instructions in role playing practice. Basically the same guidance you would give to a new human tutor.
+
+Once you have written a document[^3] that describes the ideal tutor for your class, you can export it to Markdown and create a project in your AI of choice.[^4] Chats in that project, or gem as Google calls them, will use the instructions as a base-prompt for any new conversation in that project. For the latest LLMs the approach works the same way--pick the platform that fits your school's policies and your comfort level.
+
+With the right tooling, parents and administrators can review every conversation. The tutor keeps logs. This isn't a black box--it's a teaching assistant with a paper trail.
+
+Yes, I'm asking students to use corporate tools. I got into volunteering through [TEALS](https://www.microsoft.com/en-us/teals "Technology Education and Literacy in Schools — Microsoft"), Microsoft's nonprofit. The class runs on Chromebooks managed by Google Classroom, writing code on [code.org](https://code.org/ "Code.org — Learn Computer Science")--which is powered by AWS. Corporate infrastructure is already the foundation of public CS education. The difference with an AI tutor is we're showing students how the tool works, what it's good at, and where it fails--instead of pretending it's neutral infrastructure.
+
+## Why It Works
+
+Now, I know kids are smart. They can game the tutor, they can open a new window, they can use another AI tool. This isn't new. Kids have been copying from peers, older siblings, and parents who think they're helping since school began. AI doesn't change that, it makes 'cheating' faster and more available. We already have solutions for that, in class testing. A student who is not learning won't pass the test, it is obvious. That's an implementation gap for the platforms to solve--not a reason to abandon the approach.
+
+AI also provides a guard against cheating: immediate, personalized feedback--[among the most effective influences on learning](https://visible-learning.org/hattie-ranking-influences-effect-sizes-learning-achievement/ "Hattie Ranking: Influences and Effect Sizes — Visible Learning"). Finally an [algorithm](https://www.hhs.gov/surgeongeneral/priorities/youth-mental-health/social-media/index.html "Surgeon General's Advisory on Social Media and Youth Mental Health") that is good for us. Once students become motivated learners, the feedback loop snowballs. They have a tireless tutor who adapts to them, knows the curriculum, guides using pedagogical best practices, and is ready to teach 24/7, whenever the student is ready. And AI can democratize access to personalized tutoring at a scale we have never seen before.
+
+To be clear: the tutor doesn't replace me. It handles the 11 PM debugging session so I can focus on the parts of teaching that actually require a human--mentorship, motivation, helping students see the bigger picture, and knowing when a kid is struggling with more than just code. The tutor teaches Java syntax and problem decomposition. I teach everything else.
+
+[China made AI education mandatory for six-year-olds this year.](https://fortune.com/2025/03/10/china-school-children-ai-deepseek-liang-wengfeng-estonia-uk-america-south-korea/ "China mandates AI education starting at age six — Fortune") We're still deciding whether to block ChatGPT.
+
+Banning AI use in the classroom is as short sighted as banning smartphones. These are tools that students must master, both the positive and negative aspects, in order to survive in modern society. Teaching students to get the technology to work for them, while they are still young and still forming habits gives them skills their future employers will expect them to have.
+
+AI is [evolving fast](https://hai.stanford.edu/ai-index/2025-ai-index-report "2025 AI Index Report — Stanford HAI"). Best practices are [constantly being rewritten](https://www.aiforeducation.io/ai-resources/state-ai-guidance "State AI Guidance for Education — AI for Education")--states are publishing guidance as living documents with biannual review cycles. I want to stay on top of what's working. Let me know your ideas. My socials are in the footer.
+
+[^1]: Proper smartphone use in the classroom is well researched.
+    - [NEA: Using Smartphones in the Classroom](https://www.nea.org/professional-excellence/student-engagement/tools-tips/using-smartphones-classroom "Using Smartphones in the Classroom — National Education Association")
+    - [Forbes/LSE: Smartphones as a Tool, Not a Distraction](https://www.forbes.com/sites/londonschoolofeconomics/2025/10/07/smartphones-in-the-classroom-a-tool-not-a-distraction/ "Smartphones in the Classroom: A Tool, Not a Distraction — Forbes/LSE")
+    - [CMU Heinz: Students Perform Best When Teachers Encourage Smartphones](https://www.heinz.cmu.edu/media/2023/September/students-perform-best-when-teachers-encourage-smartphones-to-aid-instruction "Students Perform Best When Teachers Encourage Smartphones — CMU Heinz")
+    - [Brunel: Mobile Phones Can Support Teaching](https://www.brunel.ac.uk/news-and-events/news/articles/Mobile-phones-in-the-classroom-can-support-teaching-and-learning "Mobile Phones Can Support Teaching and Learning — Brunel University")
+    - [APS: Physics with Phones](https://www.aps.org/archives/publications/apsnews/201503/smartphones.cfm "Physics with Phones — American Physical Society")
+    - [LLNL: Physics with Phones](https://st.llnl.gov/sci-ed/Physics-with-Phones "Physics with Phones — Lawrence Livermore National Laboratory")
+
+[^3]: In an app like Google Docs or Apple Notes, or write [Markdown](https://www.markdowntutorial.com "Markdown Tutorial") directly in any plain text editor.
+
+[^4]: All three major platforms support project-based instructions:
+    - [Anthropic Claude](https://support.claude.com/en/articles/9517075-what-are-projects "What Are Projects — Claude Support")
+    - [OpenAI ChatGPT](https://help.openai.com/en/articles/10169521-using-projects-in-chatgpt "Using Projects in ChatGPT — OpenAI Help")
+    - [Google Gemini](https://support.google.com/gemini/answer/15146780?hl=en "Gems in Google Gemini — Google Support")

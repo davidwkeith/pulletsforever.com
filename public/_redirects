@@ -1,0 +1,41 @@
+# Cloudflare Pages redirects
+# Format: /from /to [status]
+#
+# Examples:
+#   /old-page /new-page 301
+#   /blog/old-slug /blog/new-slug 301
+#
+# Docs: https://developers.cloudflare.com/pages/configuration/redirects/
+
+# Eleventy → Anglesite redirects (old /{slug}/ → new /blog/{slug})
+/city-of-new-auburn-bans-chickens/ /blog/city-of-new-auburn-bans-chickens 301
+/gingerbread-mac/ /blog/gingerbread-mac 301
+/leaving-the-nest/ /blog/leaving-the-nest 301
+/letter-to-city-council/ /blog/letter-to-city-council 301
+/an-update-on-taco-truck-tuesday/ /blog/an-update-on-taco-truck-tuesday 301
+/bloggin/ /blog/bloggin 301
+/chicken-subculture-resources-updated/ /blog/chicken-subculture-resources-updated 301
+/coverleaf-magazines-can-still-be-read-for-free/ /blog/coverleaf-magazines-can-still-be-read-for-free 301
+/how-coverleaf-could-use-my-hack-to-make-a-mint/ /blog/how-coverleaf-could-use-my-hack-to-make-a-mint 301
+/ibank-for-iphone/ /blog/ibank-for-iphone 301
+/iphone-theme/ /blog/iphone-theme 301
+/make-rss-feed-generator/ /blog/make-rss-feed-generator 301
+/personal-shopper/ /blog/personal-shopper 301
+/poultry-underground/ /blog/poultry-underground 301
+/poultrygate/ /blog/poultrygate 301
+/read-make-on-your-ipad/ /blog/read-make-on-your-ipad 301
+/running-jslint-with-safaris-javascript-core/ /blog/running-jslint-with-safaris-javascript-core 301
+/swift-fractionformater-1-0/ /blog/swift-fractionformater-1-0 301
+/taco-truck-tuesday/ /blog/taco-truck-tuesday 301
+/the-future-of-product-development/ /blog/the-future-of-product-development 301
+/i-forced-claude-to-write-a-json-parser-in-brainfuck/ /blog/i-forced-claude-to-write-a-json-parser-in-brainfuck 301
+/emoji-domains-and-mastodon/ /blog/emoji-domains-and-mastodon 301
+/copper-charlie/ /blog/copper-charlie 301
+/ember-fastboot-google-app-engine/ /blog/ember-fastboot-google-app-engine 301
+/unicode-chicken-dot-tk/ /blog/unicode-chicken-dot-tk 301
+/pullets-forever/ /blog/pullets-forever 301
+/ibank-tapp/ /blog/ibank-tapp 301
+/noodle-search-like-its-y2k-again/ /blog/noodle-search-like-its-y2k-again 301
+/stay-of-execution/ /blog/stay-of-execution 301
+/20-years-of-banning-phones-we-dont-have-that-long-for-ai/ /blog/20-years-of-banning-phones-we-dont-have-that-long-for-ai 301
+/using-gemini-to-give-the-feedback-you-know-you-should-write/ /blog/using-gemini-to-give-the-feedback-you-know-you-should-write 301
