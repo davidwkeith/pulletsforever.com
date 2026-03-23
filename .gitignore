@@ -3,6 +3,8 @@ node_modules/
 
 # Build output
 _site/
+dist/
+.astro/
 
 # Cache
 .cache/

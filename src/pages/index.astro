@@ -1,8 +1,38 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const allPosts = await getCollection("posts", ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+const posts = allPosts.sort(
+  (a, b) =>
+    b.data.publishDate.getTime() - a.data.publishDate.getTime(),
+);
 ---
 
-<BaseLayout title="Welcome" description="Your business website. Run /start to set up.">
-  <h1>Welcome</h1>
-  <p>This site is ready to set up. Type <code>/start</code> in Claude Desktop to get started.</p>
+<BaseLayout title="Pullets Forever" description="A blog by dwk.">
+  <ul class="post-list">
+    {
+      posts.map((post) => (
+        <li class="h-entry">
+          <a href={`/${post.id}/`} class="u-url">
+            <h2 class="p-name">{post.data.title}</h2>
+          </a>
+          <time
+            class="dt-published"
+            datetime={post.data.publishDate.toISOString()}
+          >
+            {post.data.publishDate.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </time>
+          <p class="p-summary">{post.data.description}</p>
+        </li>
+      ))
+    }
+  </ul>
 </BaseLayout>
