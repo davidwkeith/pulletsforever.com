@@ -74,7 +74,7 @@
     "@keystatic/astro": "^5.0.6",
     "@keystatic/core": "^0.5.48",
     "@mdit/plugin-alert": "^0.23.1",
-    "astro": "^5.18.1",
+    "astro": "^6.1.6",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   }
