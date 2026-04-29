@@ -1,6 +1,0 @@
-<script webc:type="js">
-export default function() {
-const { socialIcon } = this;
-return socialIcon(this.service, this.size || 24);
-}
-</script>
