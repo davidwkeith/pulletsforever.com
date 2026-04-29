@@ -149,9 +149,9 @@ main :first-child {
 
 header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   flex-wrap: wrap;
-  gap: clamp(0.35rem, 1.2vw, 0.75rem);
+  gap: clamp(0.5rem, 1.5vw, 1rem);
   padding: clamp(0.6rem, 2.2vw, 1rem);
 }
 
@@ -161,14 +161,40 @@ header::after {
   clear: both;
 }
 
-header > a.p-name {
+.header-logo {
+  flex-shrink: 0;
+  display: inline-block;
+  line-height: 0;
+}
+
+.header-logo img {
+  display: block;
+  width: clamp(2.9rem, 9vw, 4rem);
+  height: auto;
+}
+
+.header-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0;
+}
+
+.header-title h1,
+.header-title .p-name {
+  margin: 0;
   font-family: var(--font-family);
-  font-size: clamp(2rem, 6vw, 2.8rem);
+  font-size: clamp(2rem, 6vw, 3rem);
   line-height: 1;
   color: var(--color-heading-gray);
-  text-decoration: none;
   font-weight: 700;
   white-space: nowrap;
+  text-decoration: none;
+}
+
+.header-title a.p-name:hover,
+.header-title a.p-name:focus-visible {
+  text-decoration: underline;
 }
 
 header nav {

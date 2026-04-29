@@ -90,7 +90,16 @@ const websiteJsonLd = jsonLd ?? siteConfig.schema;
     <a href="#main" class="skip-link">Skip to content</a>
 
     <header class="h-card">
-      <a href="/" class="p-name u-url">{siteConfig.title}</a>
+      <a href="/" class="header-logo">
+        <img src={siteConfig.logo.src} alt={siteConfig.logo.alt} width="64" height="64" />
+      </a>
+      <div class="header-title">
+        {Astro.url.pathname === "/" ? (
+          <h1 class="p-name">{siteConfig.title}</h1>
+        ) : (
+          <a href="/" class="p-name u-url">{siteConfig.title}</a>
+        )}
+      </div>
       <nav aria-label="Main">
         <a href="/blog/">Blog</a>
         <a href="/tags/">Tags</a>
