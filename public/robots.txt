@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /keystatic/
-
-# Sitemap URL added by /deploy when domain is known

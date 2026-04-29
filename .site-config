@@ -1,4 +1,5 @@
 SITE_TYPE=blog
+SITE_DOMAIN=pulletsforever.com
 OWNER_NAME=dwk
 SITE_NAME=Pullets Forever
 DEV_HOSTNAME=pulletsforever.local
