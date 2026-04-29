@@ -61,6 +61,11 @@ const siteUrl = siteDomain
 export default defineConfig({
   site: siteUrl,
   devToolbar: { enabled: false },
+  build: {
+    // Always emit external CSS so the strict CSP can drop 'unsafe-inline'
+    // for style-src.
+    inlineStylesheets: "never",
+  },
   integrations: [markdoc(), sitemap()],
   vite: isDev
     ? {
