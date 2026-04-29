@@ -91,7 +91,7 @@ const websiteJsonLd = jsonLd ?? siteConfig.schema;
 
     <header class="h-card">
       <a href="/" class="p-name u-url">{siteConfig.title}</a>
-      <nav>
+      <nav aria-label="Main">
         <a href="/blog/">Blog</a>
         <a href="/tags/">Tags</a>
         <a href="/feed.xml" rel="alternate" type="application/atom+xml">Feed</a>
@@ -103,6 +103,20 @@ const websiteJsonLd = jsonLd ?? siteConfig.schema;
     </main>
 
     <footer>
+      <ul class="footer-social">
+        <li>
+          <a href={siteConfig.author.alternates.mastodon} rel="me">Mastodon</a>
+        </li>
+        <li>
+          <a href={siteConfig.author.alternates.github} rel="me">GitHub</a>
+        </li>
+        <li>
+          <a href={siteConfig.author.alternates.linkedin} rel="me">LinkedIn</a>
+        </li>
+        <li>
+          <a href={siteConfig.author.alternates.keybase} rel="me">Keybase</a>
+        </li>
+      </ul>
       <p>
         © {new Date().getFullYear()}
         <a class="u-url" href={siteConfig.author.url} rel="author">

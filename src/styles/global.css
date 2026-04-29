@@ -555,6 +555,36 @@ h2 + .header-anchor {
 }
 
 /* ---------------------------------------------------------------------------
+ * Post navigation (next / previous)
+ * --------------------------------------------------------------------------- */
+
+.links-nextprev {
+  display: flex;
+  justify-content: space-between;
+  gap: 1em;
+  margin-top: 2.5em;
+  padding-top: 1em;
+  border-top: 1px dashed var(--color-gray-20);
+  font-size: 0.95em;
+}
+
+.links-nextprev a[rel="next"] {
+  margin-left: auto;
+  text-align: right;
+}
+
+@media (max-width: 540px) {
+  .links-nextprev {
+    flex-direction: column;
+    gap: 0.5em;
+  }
+  .links-nextprev a[rel="next"] {
+    text-align: left;
+    margin-left: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * Footer
  * --------------------------------------------------------------------------- */
 
@@ -569,6 +599,17 @@ footer {
 
 footer a {
   color: var(--color-gray-50);
+}
+
+.footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1em;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1em;
+  font-size: 0.875em;
 }
 
 /* ---------------------------------------------------------------------------

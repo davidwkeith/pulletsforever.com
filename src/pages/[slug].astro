@@ -1,18 +1,29 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection, render } from "astro:content";
+import { publishedPosts, type Post } from "../utils/feed.ts";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("posts", ({ data }) => {
+  const all = await getCollection("posts", ({ data }) => {
     return import.meta.env.PROD ? !data.draft : true;
   });
-  return posts.map((post) => ({
+  const ordered = publishedPosts(all);
+  return ordered.map((post, idx) => ({
     params: { slug: post.id },
-    props: { post },
+    props: {
+      post,
+      // newer first → "previous" (older) is at idx+1, "next" (newer) is at idx-1
+      newer: idx > 0 ? ordered[idx - 1] : null,
+      older: idx < ordered.length - 1 ? ordered[idx + 1] : null,
+    },
   }));
 }
 
-const { post } = Astro.props;
+const { post, newer, older } = Astro.props as {
+  post: Post;
+  newer: Post | null;
+  older: Post | null;
+};
 const { Content } = await render(post);
 
 const articleJsonLd = {
@@ -84,4 +95,19 @@ const articleJsonLd = {
       )
     }
   </article>
+
+  {(older || newer) && (
+    <nav aria-label="Post navigation" class="links-nextprev">
+      {older ? (
+        <a href={`/${older.id}/`} rel="prev">← {older.data.title}</a>
+      ) : (
+        <span />
+      )}
+      {newer ? (
+        <a href={`/${newer.id}/`} rel="next">{newer.data.title} →</a>
+      ) : (
+        <span />
+      )}
+    </nav>
+  )}
 </BaseLayout>
