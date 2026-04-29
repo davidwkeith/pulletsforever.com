@@ -4,7 +4,7 @@ main = "workers/site/index.ts"
 upload_source_maps = true
 
 [assets]
-directory = "./_site"
+directory = "./dist"
 binding = "ASSETS"
 run_worker_first = true
 
