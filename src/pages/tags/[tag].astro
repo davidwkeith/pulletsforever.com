@@ -1,0 +1,59 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import {
+  filterTagList,
+  publishedPosts,
+  type Post,
+} from "../../utils/feed.ts";
+
+export async function getStaticPaths() {
+  const all = await getCollection("posts");
+  const posts = publishedPosts(all);
+
+  const byTag = new Map<string, Post[]>();
+  for (const post of posts) {
+    for (const tag of filterTagList(post.data.tags)) {
+      if (!byTag.has(tag)) byTag.set(tag, []);
+      byTag.get(tag)!.push(post);
+    }
+  }
+
+  return [...byTag.entries()].map(([tag, taggedPosts]) => ({
+    params: { tag },
+    props: { tag, posts: taggedPosts },
+  }));
+}
+
+const { tag, posts } = Astro.props as { tag: string; posts: Post[] };
+---
+
+<BaseLayout
+  title={`Tagged: ${tag}`}
+  description={`Posts tagged ${tag}.`}
+>
+  <h1>Tagged: <span class="p-category">{tag}</span></h1>
+  <p><a href="/tags/">All tags</a></p>
+  <ul class="post-list">
+    {posts.map((post) => (
+      <li class="h-entry">
+        <a href={`/${post.id}/`} class="u-url">
+          <h2 class="p-name">{post.data.title}</h2>
+        </a>
+        <time
+          class="dt-published"
+          datetime={post.data.publishDate.toISOString()}
+        >
+          {post.data.publishDate.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </time>
+        {post.data.description && (
+          <p class="p-summary">{post.data.description}</p>
+        )}
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

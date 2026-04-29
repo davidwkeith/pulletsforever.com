@@ -1,19 +1,31 @@
 ---
 import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
+import siteConfig from "../site.config.ts";
 
 interface Props {
   title: string;
-  description: string;
+  description?: string;
   image?: string;
   jsonLd?: Record<string, unknown>;
 }
 
-const { title, description, image, jsonLd } = Astro.props;
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const ogImage = image ? new URL(image, Astro.site).toString() : undefined;
+const {
+  title,
+  description = siteConfig.description,
+  image,
+  jsonLd,
+} = Astro.props;
 
-// Build generator string: Anglesite 0.9.0 (Claude Opus 4.6, Astro v5.16.0)
+const siteOrigin = (Astro.site ?? new URL(siteConfig.url));
+const canonicalURL = new URL(Astro.url.pathname, siteOrigin);
+const ogImage = image
+  ? new URL(image, siteOrigin).toString()
+  : new URL(siteConfig.logo.src, siteOrigin).toString();
+
+const fullTitle =
+  Astro.url.pathname === "/" ? siteConfig.title : `${title} — ${siteConfig.title}`;
+
 const { version } = JSON.parse(
   readFileSync(resolve(process.cwd(), "package.json"), "utf-8"),
 );
@@ -24,43 +36,52 @@ const configContent = existsSync(configPath)
 const aiModel =
   configContent.match(/^AI_MODEL=(.+)$/m)?.[1]?.trim() ?? "Claude";
 const generator = `Anglesite ${version} (${aiModel}, ${Astro.generator})`;
+
+const websiteJsonLd = jsonLd ?? siteConfig.schema;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={siteConfig.language}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content={siteConfig.colorScheme} />
     <meta name="generator" content={generator} />
-    <title>{title}</title>
+    <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <meta name="author" content={siteConfig.author.name} />
     <link rel="canonical" href={canonicalURL} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={siteConfig.favicon} />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={siteConfig.ogType} />
+    <meta property="og:site_name" content={siteConfig.title} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta property="og:image" content={ogImage} />
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    {ogImage && <meta name="twitter:image" content={ogImage} />}
+    <meta name="twitter:image" content={ogImage} />
 
-    <!-- Feed -->
-    <link rel="alternate" type="application/rss+xml" title="Blog" href="/rss.xml" />
+    {siteConfig.headLinks.map((link) => (
+      <link
+        rel={link.rel}
+        href={link.href}
+        type={link.type}
+        title={link.title}
+      />
+    ))}
 
-    <!-- PWA -->
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/manifest.webmanifest" />
-
-    <!-- Structured data -->
-    {jsonLd && (
-      <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    {websiteJsonLd && (
+      <script
+        is:inline
+        type="application/ld+json"
+        set:html={JSON.stringify(websiteJsonLd)}
+      />
     )}
 
     <style is:global>
@@ -71,7 +92,12 @@ const generator = `Anglesite ${version} (${aiModel}, ${Astro.generator})`;
     <a href="#main" class="skip-link">Skip to content</a>
 
     <header class="h-card">
-      <a href="/" class="p-name u-url">Pullets Forever</a>
+      <a href="/" class="p-name u-url">{siteConfig.title}</a>
+      <nav>
+        <a href="/blog/">Blog</a>
+        <a href="/tags/">Tags</a>
+        <a href="/feed.xml" rel="alternate" type="application/atom+xml">Feed</a>
+      </nav>
     </header>
 
     <main id="main">
@@ -79,7 +105,16 @@ const generator = `Anglesite ${version} (${aiModel}, ${Astro.generator})`;
     </main>
 
     <footer>
-      <p>&copy; {new Date().getFullYear()}</p>
+      <p>
+        © {new Date().getFullYear()}
+        <a class="u-url" href={siteConfig.author.url} rel="author">
+          {siteConfig.author.name}
+        </a>
+        {" · "}
+        <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">
+          CC BY 4.0
+        </a>
+      </p>
     </footer>
   </body>
 </html>
