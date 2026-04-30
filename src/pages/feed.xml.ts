@@ -4,6 +4,7 @@
  */
 
 import type { APIContext } from "astro";
+import { getImage } from "astro:assets";
 import { getCollection } from "astro:content";
 import siteConfig from "../site.config.ts";
 import {
@@ -23,16 +24,20 @@ export async function GET(context: APIContext) {
     ? rfc3339(posts[0].data.publishDate)
     : rfc3339(new Date());
 
-  const entries = posts
-    .map((post) => {
-      const postUrl = `${origin}/${post.id}/`;
-      const articleHtml = renderArticleForFeed(post, origin);
-      const tags = filterTagList(post.data.tags);
-      const categoryTags = tags
-        .map((tag) => `\t\t<category term="${escapeXml(tag)}"/>`)
-        .join("\n");
-      const published = rfc3339(post.data.publishDate);
-      return `\t<entry>
+  const entries = (
+    await Promise.all(
+      posts.map(async (post) => {
+        const postUrl = `${origin}/${post.id}/`;
+        const heroUrl = post.data.image
+          ? `${origin}${(await getImage({ src: post.data.image, format: "webp", width: 1200 })).src}`
+          : undefined;
+        const articleHtml = renderArticleForFeed(post, origin, heroUrl);
+        const tags = filterTagList(post.data.tags);
+        const categoryTags = tags
+          .map((tag) => `\t\t<category term="${escapeXml(tag)}"/>`)
+          .join("\n");
+        const published = rfc3339(post.data.publishDate);
+        return `\t<entry>
 \t\t<title>${escapeXml(post.data.title)}</title>
 \t\t<link href="${postUrl}" rel="alternate" type="text/html"/>
 \t\t<id>${postUrl}</id>
@@ -40,8 +45,9 @@ export async function GET(context: APIContext) {
 \t\t<updated>${published}</updated>
 ${categoryTags ? categoryTags + "\n" : ""}\t\t<content type="html">${escapeXml(articleHtml)}</content>
 \t</entry>`;
-    })
-    .join("\n");
+      }),
+    )
+  ).join("\n");
 
   const xml = `<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="${siteConfig.language}">

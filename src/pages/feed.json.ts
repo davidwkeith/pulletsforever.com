@@ -4,6 +4,7 @@
  */
 
 import type { APIContext } from "astro";
+import { getImage } from "astro:assets";
 import { getCollection } from "astro:content";
 import siteConfig from "../site.config.ts";
 import {
@@ -18,24 +19,25 @@ export async function GET(context: APIContext) {
   const posts = publishedPosts(all);
   const origin = (context.site ?? new URL(siteConfig.url)).toString().replace(/\/$/, "");
 
-  const items = posts.map((post) => {
-    const postUrl = `${origin}/${post.id}/`;
-    const item: Record<string, unknown> = {
-      id: postUrl,
-      url: postUrl,
-      title: post.data.title,
-      content_html: renderArticleForFeed(post, origin),
-      date_published: rfc3339(post.data.publishDate),
-      tags: filterTagList(post.data.tags),
-    };
-    if (post.data.image) {
-      item.image = `${origin}${post.data.image}`;
-    }
-    if (post.data.description) {
-      item.summary = post.data.description;
-    }
-    return item;
-  });
+  const items = await Promise.all(
+    posts.map(async (post) => {
+      const postUrl = `${origin}/${post.id}/`;
+      const heroUrl = post.data.image
+        ? `${origin}${(await getImage({ src: post.data.image, format: "webp", width: 1200 })).src}`
+        : undefined;
+      const item: Record<string, unknown> = {
+        id: postUrl,
+        url: postUrl,
+        title: post.data.title,
+        content_html: renderArticleForFeed(post, origin, heroUrl),
+        date_published: rfc3339(post.data.publishDate),
+        tags: filterTagList(post.data.tags),
+      };
+      if (heroUrl) item.image = heroUrl;
+      if (post.data.description) item.summary = post.data.description;
+      return item;
+    }),
+  );
 
   const feed = {
     version: "https://jsonfeed.org/version/1.1",

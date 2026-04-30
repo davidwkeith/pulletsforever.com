@@ -39,12 +39,16 @@ export function absolutizeHtml(html: string, siteOrigin: string): string {
 }
 
 /** Build a post's full article HTML for inclusion in a feed entry. */
-export function renderArticleForFeed(post: Post, siteOrigin: string): string {
+export function renderArticleForFeed(
+  post: Post,
+  siteOrigin: string,
+  heroUrl?: string,
+): string {
   const body = absolutizeHtml(renderPostHtml(post), siteOrigin);
   let html = "";
-  if (post.data.image) {
+  if (heroUrl) {
     const img = absolutizeHtml(
-      `<img src="${post.data.image}" alt="${post.data.imageAlt ?? ""}">`,
+      `<img src="${heroUrl}" alt="${post.data.imageAlt ?? ""}">`,
       siteOrigin,
     );
     html += `  <figure class="hero-image">\n    ${img}\n  </figure>\n`;

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { Image, getImage } from "astro:assets";
 import { getCollection, render } from "astro:content";
 import { publishedPosts, type Post } from "../utils/feed.ts";
 
@@ -26,14 +27,21 @@ const { post, newer, older } = Astro.props as {
 };
 const { Content } = await render(post);
 
+// Build a canonical absolute URL for og:image / JSON-LD from the
+// optimized hero. The Image component handles inline rendering;
+// getImage() gives us the same hashed URL for use in metadata.
+const heroOgImage = post.data.image
+  ? (await getImage({ src: post.data.image, format: "webp", width: 1200 })).src
+  : undefined;
+
 const articleJsonLd = {
   "@context": "https://schema.org",
   "@type": "Article",
   headline: post.data.title,
   description: post.data.description,
   datePublished: post.data.publishDate.toISOString(),
-  ...(post.data.image && {
-    image: new URL(post.data.image, Astro.site).toString(),
+  ...(heroOgImage && {
+    image: new URL(heroOgImage, Astro.site).toString(),
   }),
 };
 ---
@@ -41,7 +49,7 @@ const articleJsonLd = {
 <BaseLayout
   title={post.data.title}
   description={post.data.description}
-  image={post.data.image}
+  image={heroOgImage}
   jsonLd={articleJsonLd}
 >
   <article class="h-entry">
@@ -59,10 +67,12 @@ const articleJsonLd = {
 
     {
       post.data.image && (
-        <img
+        <Image
           src={post.data.image}
           alt={post.data.imageAlt || ""}
           class="u-photo"
+          loading="eager"
+          formats={["webp", "avif"]}
         />
       )
     }
