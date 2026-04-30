@@ -8,7 +8,10 @@ import { publishedPosts } from "../utils/feed.ts";
 const all = await getCollection("posts", ({ data }) => {
   return import.meta.env.PROD ? !data.draft : true;
 });
-const posts = publishedPosts(all);
+const FEATURED_LIMIT = 10;
+const ordered = publishedPosts(all);
+const posts = ordered.slice(0, FEATURED_LIMIT);
+const hasOlder = ordered.length > FEATURED_LIMIT;
 
 /** Compute reading-time minutes from a post's raw Markdoc body. */
 function readingMinutes(body: string | undefined): number {
@@ -78,6 +81,11 @@ const monthYear = new Intl.DateTimeFormat("en-US", {
           })
         }
       </ul>
+      {hasOlder && (
+        <p class="home-more-link">
+          <a href="/blog/">Older posts →</a>
+        </p>
+      )}
     </div>
     <Sidebar />
   </div>
