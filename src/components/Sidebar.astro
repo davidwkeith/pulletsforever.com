@@ -27,7 +27,8 @@ const quote = {
 };
 
 const { author } = siteConfig;
-const handle = author.url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+// "dwk" — short display handle, distinct from the full url shown in the link
+const handle = "dwk";
 ---
 
 <aside aria-label="About and navigation" class="sidebar h-card">
@@ -54,7 +55,7 @@ const handle = author.url.replace(/^https?:\/\//, "").replace(/\/$/, "");
           decoding="async"
         />
         <a href={author.url} rel="me" class="sidebar-handle u-url">
-          {handle.split("/")[0]}
+          {handle}
         </a>
       </div>
       <data value={author.name} hidden class="p-name"></data>

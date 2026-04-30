@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Sidebar from "../components/Sidebar.astro";
+import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import { publishedPosts } from "../utils/feed.ts";
 
@@ -8,31 +9,73 @@ const all = await getCollection("posts", ({ data }) => {
   return import.meta.env.PROD ? !data.draft : true;
 });
 const posts = publishedPosts(all);
+
+/** Compute reading-time minutes from a post's raw Markdoc body. */
+function readingMinutes(body: string | undefined): number {
+  if (!body) return 1;
+  const words = body.split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
+}
+
+const monthYear = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "long",
+});
 ---
 
 <BaseLayout title="Pullets Forever" description="A blog by dwk.">
   <div class="home-layout">
     <div class="home-feed">
-      <ul class="post-list">
+      <ul class="postfeed">
         {
-          posts.map((post) => (
-            <li class="h-entry">
-              <a href={`/${post.id}/`} class="u-url">
-                <h2 class="p-name">{post.data.title}</h2>
-              </a>
-              <time
-                class="dt-published"
-                datetime={post.data.publishDate.toISOString()}
+          posts.map((post) => {
+            const minutes = readingMinutes(post.body);
+            return (
+              <li
+                class:list={[
+                  "postfeed-item",
+                  "h-entry",
+                  post.data.image && "postfeed-item-has-image",
+                ]}
               >
-                {post.data.publishDate.toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </time>
-              <p class="p-summary">{post.data.description}</p>
-            </li>
-          ))
+                <a href={`/${post.id}/`} class="postfeed-link u-url">
+                  {post.data.image && (
+                    <div class="postfeed-media">
+                      <Image
+                        src={post.data.image}
+                        alt={post.data.imageAlt ?? ""}
+                        class="postfeed-image u-photo"
+                        width={300}
+                        height={300}
+                        loading="lazy"
+                        decoding="async"
+                        formats={["webp", "avif"]}
+                      />
+                    </div>
+                  )}
+                  <div class="postfeed-content">
+                    <h2 class="postfeed-title p-name">{post.data.title}</h2>
+                    {post.data.description && (
+                      <p class="postfeed-excerpt p-summary">
+                        {post.data.description}
+                      </p>
+                    )}
+                    <p class="postfeed-meta">
+                      <time
+                        class="dt-published"
+                        datetime={post.data.publishDate.toISOString()}
+                      >
+                        {monthYear.format(post.data.publishDate)}
+                      </time>
+                      <span class="postfeed-reading-time">
+                        {minutes} min read
+                      </span>
+                    </p>
+                  </div>
+                </a>
+              </li>
+            );
+          })
         }
       </ul>
     </div>
