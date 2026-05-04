@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { Image, getImage } from "astro:assets";
+import { getImage } from "astro:assets";
 import { getCollection, render } from "astro:content";
 import { publishedPosts, type Post } from "../utils/feed.ts";
 
@@ -64,18 +64,6 @@ const articleJsonLd = {
         day: "numeric",
       })}
     </time>
-
-    {
-      post.data.image && (
-        <Image
-          src={post.data.image}
-          alt={post.data.imageAlt || ""}
-          class="u-photo"
-          loading="eager"
-          formats={["webp", "avif"]}
-        />
-      )
-    }
 
     <div class="e-content">
       <Content />
