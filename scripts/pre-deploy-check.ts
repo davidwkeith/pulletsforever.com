@@ -12,7 +12,7 @@
  * Also runs automatically via `npm run deploy`.
  */
 
-import { readdirSync, readFileSync, statSync, existsSync } from "node:fs";
+import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { join, extname, resolve } from "node:path";
 
 const DIST = "dist";

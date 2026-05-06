@@ -2,12 +2,10 @@
 title: "Noodle: Search Like It's Y2K Again"
 description: "I built a self-hosted search engine that uses LLMs to rank results by relevance instead of ad revenue."
 publishDate: "2026-02-04"
-image: "/images/blog/noodle-search-like-its-y2k-again-homepage.png"
+image: "../../assets/blog/noodle-search-like-its-y2k-again-homepage.png"
 imageAlt: "Noodle homepage"
 tags: [projects, web]
 draft: false
-syndication:
-  - "https://pulletsforever.com/noodle-search-like-its-y2k-again/"
 ---
 
 I built a search engine that shows *results*. Not to compete with Google--I definitely can't--but because somewhere between "Don't be evil" and "maximize shareholder value," Google forgot how to search. The [enshittification](https://bookshop.org/p/books/enshittification-why-everything-suddenly-got-worse-and-what-to-do-about-it-cory-doctorow/d3f8483b158906ce "Enshittification by Cory Doctorow — Bookshop.org") is real.
@@ -26,11 +24,14 @@ npx @dwk/noodle
 
 On first run it asks which provider you want (Claude CLI or OpenAI), and what port to use. Then you open localhost:3000 and search. There's even a "Lucky Me" button that jumps straight to the top result, back when "I'm Feeling Lucky" wasn't a joke.
 
-![Google search results for thermostat showing sponsored product ads](/images/blog/noodle-search-like-its-y2k-again-google_results.webp)
-
-![Noodle search results for thermostat showing Wikipedia and informational links](/images/blog/noodle-search-like-its-y2k-again-search_results.webp)
-
-*Google (left) vs Noodle (right) for "thermostat"*
+{% compare
+   before="/images/blog/noodle-search-like-its-y2k-again-google_results.webp"
+   beforeAlt="Google search results for thermostat showing sponsored product ads"
+   beforeLabel="Google"
+   after="/images/blog/noodle-search-like-its-y2k-again-search_results.webp"
+   afterAlt="Noodle search results for thermostat showing Wikipedia and informational links"
+   afterLabel="Noodle"
+   caption="Drag to compare Google and Noodle for \"thermostat\"" /%}
 
 The best part is adding it as your default search engine. Chrome, Edge, and Brave let you right-click the URL bar and add it directly. Firefox requires a couple more clicks through settings. Safari, predictably, doesn't support custom search engines at all without third-party tools.
 

@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { filterTagList, publishedPosts } from "../../utils/feed.ts";
+
+const all = await getCollection("posts");
+const posts = publishedPosts(all);
+
+const counts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of filterTagList(post.data.tags)) {
+    counts.set(tag, (counts.get(tag) ?? 0) + 1);
+  }
+}
+
+const tags = [...counts.entries()].sort(([a], [b]) => a.localeCompare(b));
+---
+
+<BaseLayout
+  title="Tags"
+  description="Browse Pullets Forever posts by topic — chickens, AI, web, code, food, projects, and more, organized by tag."
+>
+  <h1>Tags</h1>
+  {tags.length === 0 ? (
+    <p>No tags yet.</p>
+  ) : (
+    <ul class="tag-list">
+      {tags.map(([tag, count]) => (
+        <li>
+          <a href={`/tags/${tag}/`}>{tag}</a>
+          <span class="count"> ({count})</span>
+        </li>
+      ))}
+    </ul>
+  )}
+</BaseLayout>

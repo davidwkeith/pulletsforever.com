@@ -1,18 +1,14 @@
 /**
- * Astro configuration for an Anglesite-managed website.
- *
- * Reads site identity from `.site-config` (written by `/anglesite:start`).
- * In dev mode, enables Keystatic CMS, local HTTPS via mkcert, and server
- * output. In production, builds static HTML with no client JavaScript.
+ * Astro configuration. Site identity comes from `.site-config`. Output is
+ * fully static — Keystatic CMS is not currently wired up; re-enabling it
+ * requires switching to `output: "server"` and installing an adapter.
  *
  * @see https://docs.astro.build/en/reference/configuration-reference/
  * @module
  */
 
 import { defineConfig } from "astro/config";
-import react from "@astrojs/react";
 import markdoc from "@astrojs/markdoc";
-import keystatic from "@keystatic/astro";
 import sitemap from "@astrojs/sitemap";
 import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
@@ -65,13 +61,12 @@ const siteUrl = siteDomain
 export default defineConfig({
   site: siteUrl,
   devToolbar: { enabled: false },
-  output: isDev ? "server" : "static",
-  integrations: [
-    react(),
-    markdoc(),
-    ...(isDev ? [keystatic()] : []),
-    sitemap(),
-  ],
+  build: {
+    // Always emit external CSS so the strict CSP can drop 'unsafe-inline'
+    // for style-src.
+    inlineStylesheets: "never",
+  },
+  integrations: [markdoc(), sitemap()],
   vite: isDev
     ? {
         server: {

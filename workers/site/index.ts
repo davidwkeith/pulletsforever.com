@@ -1,12 +1,20 @@
-import { createWorkerHandler } from "@dwk/eleventy-shared/worker";
-
 /**
- * Content negotiation: serve raw Markdown when Accept: text/markdown is requested.
+ * Cloudflare Worker fronting the static Astro build in dist/.
+ *
+ * Handles content negotiation: when a client sends `Accept: text/markdown`,
+ * serve the matching `index.md` file (emitted by `src/pages/[slug]/index.md.ts`)
+ * instead of the rendered HTML. Otherwise pass through to the assets binding
+ * and stamp `Vary: accept` on HTML responses for cache correctness.
  */
+
+interface Env {
+  ASSETS: { fetch: (input: string | Request) => Promise<Response> };
+}
+
 async function contentNegotiation(
   request: Request,
   url: URL,
-  env: { ASSETS: { fetch: (input: string | Request) => Promise<Response> } },
+  env: Env,
 ): Promise<Response | null> {
   const accept = request.headers.get("accept") || "";
   if (!accept.includes("text/markdown")) return null;
@@ -33,13 +41,9 @@ async function contentNegotiation(
     });
   }
 
-  // No markdown found — fall through to default asset fetch
   return null;
 }
 
-/**
- * Post-process HTML responses to add Vary: accept for content negotiation caching.
- */
 function addVaryHeader(response: Response): Response {
   if (response.headers.get("content-type")?.includes("text/html")) {
     const newResponse = new Response(response.body, response);
@@ -50,11 +54,11 @@ function addVaryHeader(response: Response): Response {
 }
 
 export default {
-  async fetch(request: Request, env: any, ctx: any): Promise<Response> {
-    const handler = createWorkerHandler({
-      before: contentNegotiation,
-    });
-    const response = await handler(request, env, ctx);
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
+    const negotiated = await contentNegotiation(request, url, env);
+    if (negotiated) return negotiated;
+    const response = await env.ASSETS.fetch(request);
     return addVaryHeader(response);
   },
 };

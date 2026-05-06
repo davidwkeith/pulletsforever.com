@@ -1,19 +1,58 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { Image, getImage } from "astro:assets";
 import { getCollection, render } from "astro:content";
+import {
+  publishedPosts,
+  readingMinutes,
+  relatedPosts,
+  type Post,
+} from "../utils/feed.ts";
+import siteConfig from "../site.config.ts";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("posts", ({ data }) => {
+  const all = await getCollection("posts", ({ data }: Post) => {
     return import.meta.env.PROD ? !data.draft : true;
   });
-  return posts.map((post) => ({
+  const ordered = publishedPosts(all);
+  return ordered.map((post, idx) => ({
     params: { slug: post.id },
-    props: { post },
+    props: {
+      post,
+      // newer first → "previous" (older) is at idx+1, "next" (newer) is at idx-1
+      newer: idx > 0 ? ordered[idx - 1] : null,
+      older: idx < ordered.length - 1 ? ordered[idx + 1] : null,
+      related: relatedPosts(post, all),
+    },
   }));
 }
 
-const { post } = Astro.props;
+const { post, newer, older, related } = Astro.props as {
+  post: Post;
+  newer: Post | null;
+  older: Post | null;
+  related: Post[];
+};
 const { Content } = await render(post);
+
+// Build a canonical absolute URL for og:image / JSON-LD from the
+// optimized hero. The Image component handles inline rendering;
+// getImage() gives us the same hashed URL for use in metadata.
+const heroOgImage = post.data.image
+  ? (await getImage({ src: post.data.image, format: "webp", width: 1200 })).src
+  : undefined;
+
+const minutes = readingMinutes(post.body);
+// Posts with footnotes get their "-dwk" signature injected by the
+// `fnblock` Markdoc transform so it sits before the footnote section.
+// Footnote-less posts render the signature here at the end of the body.
+const hasFootnotes = /^\[\^[^\]]+\]:/m.test(post.body ?? "");
+const dayMonthYear = new Intl.DateTimeFormat("en-GB", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  timeZone: "UTC",
+});
 
 const articleJsonLd = {
   "@context": "https://schema.org",
@@ -21,8 +60,8 @@ const articleJsonLd = {
   headline: post.data.title,
   description: post.data.description,
   datePublished: post.data.publishDate.toISOString(),
-  ...(post.data.image && {
-    image: new URL(post.data.image, Astro.site).toString(),
+  ...(heroOgImage && {
+    image: new URL(heroOgImage, Astro.site).toString(),
   }),
 };
 ---
@@ -30,50 +69,44 @@ const articleJsonLd = {
 <BaseLayout
   title={post.data.title}
   description={post.data.description}
-  image={post.data.image}
+  image={heroOgImage}
   jsonLd={articleJsonLd}
 >
-  <article class="h-entry">
+  <div class="h-entry">
     <h1 class="p-name">{post.data.title}</h1>
-    <time
-      class="dt-published"
-      datetime={post.data.publishDate.toISOString()}
-    >
-      {post.data.publishDate.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })}
-    </time>
 
-    {
-      post.data.image && (
-        <img
-          src={post.data.image}
-          alt={post.data.imageAlt || ""}
-          class="u-photo"
-        />
-      )
-    }
+    <ul class="post-metadata">
+      <li>
+        <time
+          class="dt-published"
+          datetime={post.data.publishDate.toISOString()}
+        >
+          {dayMonthYear.format(post.data.publishDate)}
+        </time>
+      </li>
+      <li>{minutes} min read</li>
+      {post.data.tags.map((tag: string) => (
+        <li>
+          <a
+            href={`/tags/${tag}/`}
+            aria-label={`Posts tagged ${tag}`}
+            class="post-tag p-category"
+          >{tag}</a>
+        </li>
+      ))}
+    </ul>
+    <a href={`/${post.id}/`} aria-hidden="true" tabindex="-1" class="u-url"></a>
+    <a href={siteConfig.author.url} class="p-author h-card">{siteConfig.author.name}</a>
 
-    <div class="e-content">
+    <article class="e-content">
       <Content />
-    </div>
-
-    {
-      post.data.tags.length > 0 && (
-        <ul class="tags">
-          {post.data.tags.map((tag) => (
-            <li class="p-category">{tag}</li>
-          ))}
-        </ul>
-      )
-    }
+      {!hasFootnotes && <p class="signature">-dwk</p>}
+    </article>
 
     {
       post.data.syndication.length > 0 && (
         <ul class="syndication">
-          {post.data.syndication.map((url) => (
+          {post.data.syndication.map((url: string) => (
             <li>
               <a href={url} class="u-syndication" rel="syndication">
                 {new URL(url).hostname}
@@ -83,5 +116,50 @@ const articleJsonLd = {
         </ul>
       )
     }
-  </article>
+  </div>
+
+  <hr class="post-end-sep" />
+
+  {related.length > 0 && (
+    <aside class="related-posts" aria-labelledby="related-heading">
+      <h2 id="related-heading">Related Posts</h2>
+      <ul class="related-post-grid">
+        {related.map((p) => (
+          <li class="related-post-tile">
+            <a href={`/${p.id}/`} class="related-post-tile-link">
+              {p.data.image ? (
+                <Image
+                  src={p.data.image}
+                  alt=""
+                  class="related-post-tile-image"
+                  width={400}
+                  height={210}
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <span class="related-post-tile-image related-post-tile-image-placeholder" aria-hidden="true">
+                  {p.data.title}
+                </span>
+              )}
+              <span class="related-post-tile-title">{p.data.title}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  )}
+
+  {(older || newer) && (
+    <nav aria-label="Post navigation">
+      <ul class="links-nextprev">
+        {older && (
+          <li>Previous: <a href={`/${older.id}/`} rel="prev">{older.data.title}</a></li>
+        )}
+        {newer && (
+          <li>Next: <a href={`/${newer.id}/`} rel="next">{newer.data.title}</a></li>
+        )}
+      </ul>
+    </nav>
+  )}
 </BaseLayout>

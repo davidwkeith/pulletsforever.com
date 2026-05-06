@@ -1,0 +1,272 @@
+---
+/**
+ * Before/after image comparison slider for Markdoc bodies.
+ *
+ * Both images must share the same intrinsic aspect ratio so the slider
+ * reveals an aligned crop. Resolves `/images/blog/*` paths to the
+ * matching `src/assets/blog/*` ImageMetadata so astro:assets can emit
+ * responsive WebP/AVIF variants, mirroring MarkdocImage.astro.
+ */
+import { Image } from "astro:assets";
+
+const blogImages = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/blog/*.{png,jpg,jpeg,webp,gif,avif}",
+  { eager: true },
+);
+
+interface Props {
+  before: string;
+  beforeAlt: string;
+  beforeLabel?: string;
+  after: string;
+  afterAlt: string;
+  afterLabel?: string;
+  caption?: string;
+  start?: number;
+}
+
+const {
+  before,
+  beforeAlt,
+  beforeLabel,
+  after,
+  afterAlt,
+  afterLabel,
+  caption,
+  start = 50,
+} = Astro.props;
+
+function resolve(src: string): ImageMetadata | undefined {
+  if (src.startsWith("/images/blog/")) {
+    const filename = src.replace("/images/blog/", "");
+    return blogImages[`../assets/blog/${filename}`]?.default;
+  }
+  return undefined;
+}
+
+const beforeImg = resolve(before);
+const afterImg = resolve(after);
+const initial = Math.min(100, Math.max(0, start));
+---
+
+<figure class="compare" aria-label={`Comparison: ${beforeAlt} versus ${afterAlt}`}>
+  <div
+    class="compare-frame"
+    style={`--pos: ${initial}%`}
+    data-image-compare
+  >
+    <div class="compare-layer compare-after">
+      {
+        afterImg ? (
+          <Image
+            src={afterImg}
+            alt={afterAlt}
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <img src={after} alt={afterAlt} loading="lazy" decoding="async" />
+        )
+      }
+      {afterLabel && <span class="compare-label compare-label-after">{afterLabel}</span>}
+    </div>
+    <div class="compare-layer compare-before" aria-hidden="true">
+      {
+        beforeImg ? (
+          <Image
+            src={beforeImg}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <img src={before} alt="" loading="lazy" decoding="async" />
+        )
+      }
+      {beforeLabel && <span class="compare-label compare-label-before">{beforeLabel}</span>}
+    </div>
+    <input
+      type="range"
+      min="0"
+      max="100"
+      step="0.1"
+      value={initial}
+      class="compare-range"
+      aria-label={`Compare ${beforeLabel ?? "before"} and ${afterLabel ?? "after"}`}
+    />
+    <div class="compare-divider" aria-hidden="true">
+      <span class="compare-handle">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path
+            d="M9 6 4 12l5 6M15 6l5 6-5 6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.25"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </span>
+    </div>
+    <span class="compare-sr" aria-live="polite"></span>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .compare {
+    margin: 1.5rem 0;
+  }
+
+  .compare-frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    line-height: 0;
+    touch-action: pan-y;
+    user-select: none;
+    isolation: isolate;
+  }
+
+  .compare-layer {
+    position: relative;
+    inset: 0;
+  }
+
+  .compare-layer :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .compare-before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+  }
+
+  .compare-before :global(img) {
+    height: 100%;
+    object-fit: cover;
+    object-position: left top;
+  }
+
+  .compare-label {
+    position: absolute;
+    bottom: 0.6rem;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 3px;
+    pointer-events: none;
+  }
+
+  .compare-label-before {
+    left: 0.6rem;
+  }
+
+  .compare-label-after {
+    right: 0.6rem;
+  }
+
+  .compare-divider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--pos);
+    width: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .compare-handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: #fff;
+    color: #111;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  }
+
+  .compare-range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: ew-resize;
+    opacity: 0;
+  }
+
+  .compare-range:focus-visible + .compare-divider .compare-handle {
+    outline: 2px solid var(--color-link, #0366d6);
+    outline-offset: 3px;
+  }
+
+  .compare-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 2.25rem;
+    height: 100%;
+    cursor: ew-resize;
+  }
+
+  .compare-range::-moz-range-thumb {
+    width: 2.25rem;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    cursor: ew-resize;
+  }
+
+  .compare-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .compare figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+    text-align: center;
+    color: var(--color-muted, #666);
+    font-style: italic;
+  }
+</style>
+
+<script>
+  const frames = document.querySelectorAll<HTMLElement>("[data-image-compare]");
+  frames.forEach((frame) => {
+    const range = frame.querySelector<HTMLInputElement>(".compare-range");
+    const sr = frame.querySelector<HTMLElement>(".compare-sr");
+    if (!range) return;
+    const update = (value: number) => {
+      const clamped = Math.min(100, Math.max(0, value));
+      frame.style.setProperty("--pos", `${clamped}%`);
+      if (sr) sr.textContent = `${Math.round(clamped)}% before`;
+    };
+    range.addEventListener("input", () => update(Number(range.value)));
+    update(Number(range.value));
+  });
+</script>

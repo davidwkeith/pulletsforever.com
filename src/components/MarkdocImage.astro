@@ -1,0 +1,61 @@
+---
+/**
+ * Default image renderer for Markdoc bodies.
+ *
+ * Markdoc's `![alt](path)` arrives here with `src` as a plain string.
+ * Body posts use `/images/blog/foo.png` which is a public-folder path,
+ * so we glob-import the parallel `src/assets/blog/*` originals and
+ * look up the corresponding ImageMetadata to hand to <Image> for
+ * astro:assets WebP/srcset generation. Anything we can't resolve
+ * (remote URLs, missing files) falls through to a plain <img>.
+ */
+import { Image } from "astro:assets";
+
+const blogImages = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/blog/*.{png,jpg,jpeg,webp,gif,avif}",
+  { eager: true },
+);
+
+interface Props {
+  src: ImageMetadata | string;
+  alt?: string;
+  title?: string;
+  width?: number;
+  height?: number;
+}
+
+const { src, alt = "", title, width, height } = Astro.props;
+
+let resolved: ImageMetadata | undefined;
+
+if (typeof src === "object") {
+  // Frontmatter / image() schema already provided metadata.
+  resolved = src;
+} else if (src.startsWith("/images/blog/")) {
+  const filename = src.replace("/images/blog/", "");
+  const key = `../assets/blog/${filename}`;
+  resolved = blogImages[key]?.default;
+}
+---
+
+{
+  resolved ? (
+    <Image
+      src={resolved}
+      alt={alt}
+      title={title}
+      width={width}
+      height={height}
+      loading="lazy"
+      decoding="async"
+    />
+  ) : (
+    <img
+      src={typeof src === "string" ? src : src.src}
+      alt={alt}
+      title={title}
+      loading="lazy"
+      decoding="async"
+    />
+  )
+}

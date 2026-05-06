@@ -1,24 +1,18 @@
 {
+  "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "target": "ES2023",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "lib": ["ES2023"],
-    "strict": true,
+    "allowImportingTsExtensions": true,
     "noEmit": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "isolatedModules": true,
-    "allowImportingTsExtensions": true
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "target": "ES2023"
   },
   "include": [
-    "eleventy.config.ts",
+    ".astro/types.d.ts",
     "src/**/*.ts",
-    "plugins/**/*.ts",
-    "scripts/**/*.ts",
-    "types/**/*.d.ts"
+    "src/**/*.astro",
+    "scripts/**/*.ts"
   ],
-  "exclude": ["node_modules", "_site", "workers"]
+  "exclude": ["node_modules", "dist", ".astro", "workers"]
 }
