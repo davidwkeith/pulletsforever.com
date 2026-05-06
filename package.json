@@ -43,6 +43,7 @@
     "@astrojs/markdoc": "^0.14.0",
     "@astrojs/sitemap": "^3.7.1",
     "@markdoc/markdoc": "^0.5.0",
-    "astro": "^5.18.1"
+    "astro": "^5.18.1",
+    "markdown-it-footnote": "^4.0.0"
   }
 }

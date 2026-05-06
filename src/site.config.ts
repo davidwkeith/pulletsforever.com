@@ -122,7 +122,7 @@ const headLinks: HeadLink[] = [
     type: "application/feed+json",
     title: `${title} (JSON)`,
   },
-  { rel: "reply-to", href: email },
+  { rel: "reply-to", href: `mailto:${email}` },
   { rel: "webmention", href: webmention.endpoint },
   { rel: "pingback", href: webmention.pingback },
   { rel: "authorization_endpoint", href: indieauth.authorization_endpoint },

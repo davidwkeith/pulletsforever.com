@@ -16,7 +16,7 @@ const monthYear = new Intl.DateTimeFormat("en-US", {
 
 <BaseLayout title="Blog" description="All posts.">
   <h1>Blog</h1>
-  <ul class="post-list">
+  <ul class="post-list h-feed">
     {
       posts.map((post) => (
         <li class="h-entry">

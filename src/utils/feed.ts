@@ -7,6 +7,11 @@
 
 import Markdoc from "@markdoc/markdoc";
 import type { CollectionEntry } from "astro:content";
+import { applyFootnotePatch, footnoteTags } from "./footnotes.ts";
+import { applyTypographyPatch } from "./typography.ts";
+
+applyFootnotePatch();
+applyTypographyPatch();
 
 export type Post = CollectionEntry<"posts">;
 
@@ -19,7 +24,7 @@ export function filterTagList(tags: readonly string[] | undefined): string[] {
 /** Render the Markdoc body of a post to a string of HTML. */
 export function renderPostHtml(post: Post): string {
   const ast = Markdoc.parse(post.body ?? "");
-  const transformed = Markdoc.transform(ast);
+  const transformed = Markdoc.transform(ast, { tags: footnoteTags });
   return Markdoc.renderers.html(transformed);
 }
 
@@ -45,6 +50,11 @@ export function renderArticleForFeed(
   heroUrl?: string,
 ): string {
   const body = absolutizeHtml(renderPostHtml(post), siteOrigin);
+  // Posts with footnotes already include the "-dwk" signature inside
+  // `body` (injected by the `fnblock` Markdoc transform so it sits
+  // before the footnote section). Footnote-less posts get it appended
+  // here at the end.
+  const hasFootnotes = /^\[\^[^\]]+\]:/m.test(post.body ?? "");
   let html = "";
   if (heroUrl) {
     const img = absolutizeHtml(
@@ -54,7 +64,9 @@ export function renderArticleForFeed(
     html += `  <figure class="hero-image">\n    ${img}\n  </figure>\n`;
   }
   html += `  ${body}\n`;
-  html += `  <p class="signature">-dwk</p>`;
+  if (!hasFootnotes) {
+    html += `  <p class="signature">-dwk</p>`;
+  }
   return html;
 }
 
@@ -69,6 +81,44 @@ export function escapeXml(str: string): string {
 
 export function rfc3339(date: Date): string {
   return date.toISOString().replace(/\.\d{3}Z$/, "Z");
+}
+
+/**
+ * Find posts related to `current` by shared tag count.
+ * Returns up to `limit` posts sorted by number of shared tags (descending),
+ * tie-broken by most recent first. Excludes the current post and drafts.
+ */
+export function relatedPosts(
+  current: Post,
+  all: Post[],
+  limit = 3,
+): Post[] {
+  const currentTags = filterTagList(current.data.tags);
+  if (currentTags.length === 0) return [];
+
+  const candidates = publishedPosts(all)
+    .filter((p) => p.id !== current.id)
+    .map((post) => {
+      const tags = filterTagList(post.data.tags);
+      const score = currentTags.filter((t) => tags.includes(t)).length;
+      return { post, score };
+    })
+    .filter((item) => item.score > 0)
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return (
+        b.post.data.publishDate.getTime() - a.post.data.publishDate.getTime()
+      );
+    });
+
+  return candidates.slice(0, limit).map((item) => item.post);
+}
+
+/** Estimated reading time in minutes from a post's raw Markdoc body. */
+export function readingMinutes(body: string | undefined): number {
+  if (!body) return 1;
+  const words = body.split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
 }
 
 export function publishedPosts(

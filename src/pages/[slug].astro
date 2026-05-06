@@ -1,8 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getImage } from "astro:assets";
+import { Image, getImage } from "astro:assets";
 import { getCollection, render } from "astro:content";
-import { publishedPosts, type Post } from "../utils/feed.ts";
+import {
+  publishedPosts,
+  readingMinutes,
+  relatedPosts,
+  type Post,
+} from "../utils/feed.ts";
+import siteConfig from "../site.config.ts";
 
 export async function getStaticPaths() {
   const all = await getCollection("posts", ({ data }) => {
@@ -16,14 +22,16 @@ export async function getStaticPaths() {
       // newer first → "previous" (older) is at idx+1, "next" (newer) is at idx-1
       newer: idx > 0 ? ordered[idx - 1] : null,
       older: idx < ordered.length - 1 ? ordered[idx + 1] : null,
+      related: relatedPosts(post, all),
     },
   }));
 }
 
-const { post, newer, older } = Astro.props as {
+const { post, newer, older, related } = Astro.props as {
   post: Post;
   newer: Post | null;
   older: Post | null;
+  related: Post[];
 };
 const { Content } = await render(post);
 
@@ -33,6 +41,18 @@ const { Content } = await render(post);
 const heroOgImage = post.data.image
   ? (await getImage({ src: post.data.image, format: "webp", width: 1200 })).src
   : undefined;
+
+const minutes = readingMinutes(post.body);
+// Posts with footnotes get their "-dwk" signature injected by the
+// `fnblock` Markdoc transform so it sits before the footnote section.
+// Footnote-less posts render the signature here at the end of the body.
+const hasFootnotes = /^\[\^[^\]]+\]:/m.test(post.body ?? "");
+const dayMonthYear = new Intl.DateTimeFormat("en-GB", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  timeZone: "UTC",
+});
 
 const articleJsonLd = {
   "@context": "https://schema.org",
@@ -52,32 +72,36 @@ const articleJsonLd = {
   image={heroOgImage}
   jsonLd={articleJsonLd}
 >
-  <article class="h-entry">
-    <h1 class="p-name">{post.data.title}</h1>
-    <time
-      class="dt-published"
-      datetime={post.data.publishDate.toISOString()}
-    >
-      {post.data.publishDate.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })}
-    </time>
+  <div class="h-entry">
+    <h2 class="p-name">{post.data.title}</h2>
 
-    <div class="e-content">
+    <ul class="post-metadata">
+      <li>
+        <time
+          class="dt-published"
+          datetime={post.data.publishDate.toISOString()}
+        >
+          {dayMonthYear.format(post.data.publishDate)}
+        </time>
+      </li>
+      <li>{minutes} min read</li>
+      {post.data.tags.map((tag) => (
+        <li>
+          <a
+            href={`/tags/${tag}/`}
+            aria-label={`Posts tagged ${tag}`}
+            class="post-tag p-category"
+          >{tag}</a>
+        </li>
+      ))}
+    </ul>
+    <a href={`/${post.id}/`} aria-hidden="true" tabindex="-1" class="u-url"></a>
+    <a href={siteConfig.author.url} class="p-author h-card">{siteConfig.author.name}</a>
+
+    <article class="e-content">
       <Content />
-    </div>
-
-    {
-      post.data.tags.length > 0 && (
-        <ul class="tags">
-          {post.data.tags.map((tag) => (
-            <li class="p-category">{tag}</li>
-          ))}
-        </ul>
-      )
-    }
+      {!hasFootnotes && <p class="signature">-dwk</p>}
+    </article>
 
     {
       post.data.syndication.length > 0 && (
@@ -92,20 +116,51 @@ const articleJsonLd = {
         </ul>
       )
     }
-  </article>
+  </div>
+
+  <hr class="post-end-sep" />
+
+  {related.length > 0 && (
+    <aside class="related-posts" aria-labelledby="related-heading">
+      <h3 id="related-heading">Related Posts</h3>
+      <ul class="related-post-grid">
+        {related.map((p) => (
+          <li class="related-post-tile">
+            <a href={`/${p.id}/`} class="related-post-tile-link">
+              {p.data.image ? (
+                <Image
+                  src={p.data.image}
+                  alt=""
+                  class="related-post-tile-image"
+                  width={400}
+                  height={210}
+                  loading="lazy"
+                  decoding="async"
+                  formats={["webp", "avif"]}
+                />
+              ) : (
+                <span class="related-post-tile-image related-post-tile-image-placeholder" aria-hidden="true">
+                  {p.data.title}
+                </span>
+              )}
+              <span class="related-post-tile-title">{p.data.title}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  )}
 
   {(older || newer) && (
-    <nav aria-label="Post navigation" class="links-nextprev">
-      {older ? (
-        <a href={`/${older.id}/`} rel="prev">← {older.data.title}</a>
-      ) : (
-        <span />
-      )}
-      {newer ? (
-        <a href={`/${newer.id}/`} rel="next">{newer.data.title} →</a>
-      ) : (
-        <span />
-      )}
+    <nav aria-label="Post navigation">
+      <ul class="links-nextprev">
+        {older && (
+          <li>Previous: <a href={`/${older.id}/`} rel="prev">{older.data.title}</a></li>
+        )}
+        {newer && (
+          <li>Next: <a href={`/${newer.id}/`} rel="next">{newer.data.title}</a></li>
+        )}
+      </ul>
     </nav>
   )}
 </BaseLayout>

@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Sidebar from "../components/Sidebar.astro";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
-import { publishedPosts } from "../utils/feed.ts";
+import { publishedPosts, readingMinutes } from "../utils/feed.ts";
 
 const all = await getCollection("posts", ({ data }) => {
   return import.meta.env.PROD ? !data.draft : true;
@@ -12,13 +12,6 @@ const FEATURED_LIMIT = 10;
 const ordered = publishedPosts(all);
 const posts = ordered.slice(0, FEATURED_LIMIT);
 const hasOlder = ordered.length > FEATURED_LIMIT;
-
-/** Compute reading-time minutes from a post's raw Markdoc body. */
-function readingMinutes(body: string | undefined): number {
-  if (!body) return 1;
-  const words = body.split(/\s+/).filter(Boolean).length;
-  return Math.max(1, Math.ceil(words / 200));
-}
 
 const monthYear = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
@@ -29,7 +22,8 @@ const monthYear = new Intl.DateTimeFormat("en-US", {
 <BaseLayout title="Pullets Forever" description="A blog by dwk.">
   <div class="home-layout">
     <div class="home-feed">
-      <ul class="postfeed">
+      <hr class="home-section-divider" />
+      <ul class="postfeed h-feed">
         {
           posts.map((post) => {
             const minutes = readingMinutes(post.body);
