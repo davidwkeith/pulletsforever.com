@@ -52,3 +52,7 @@ Discovery endpoints (RSS/JSON feeds, llms.txt, license, nodeinfo, .well-known/*)
 ## Testing changes
 
 Always run `npm run build` after edits. For TypeScript changes also run `npm run typecheck`. Build must succeed before committing.
+
+## No `/privacy` or `/accessibility` page
+
+Anglesite-style health checks may flag these as missing. They are intentionally absent: the site has no contact form, no signup, no ecommerce, no third-party scripts, and Cloudflare Web Analytics is privacy-respecting and aggregate-only. There is nothing to disclose in a privacy policy and no committed accessibility statement to maintain. Don't add either page during a `/anglesite:check` unless the site grows a feature that warrants it.

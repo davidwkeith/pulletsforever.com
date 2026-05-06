@@ -1040,7 +1040,7 @@ a[href].sidebar-handle:active {
   border-top: 1px dashed var(--color-gray-20);
 }
 
-.related-posts h3 {
+.related-posts h2 {
   margin: 0 0 0.75em;
   font-size: 1em;
   color: var(--color-gray-50);

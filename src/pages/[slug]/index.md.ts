@@ -9,7 +9,7 @@
 import type { APIContext } from "astro";
 import { getCollection } from "astro:content";
 import siteConfig from "../../site.config.ts";
-import { filterTagList, publishedPosts } from "../../utils/feed.ts";
+import { filterTagList, publishedPosts, type Post } from "../../utils/feed.ts";
 
 export async function getStaticPaths() {
   const all = await getCollection("posts");
@@ -20,9 +20,7 @@ export async function getStaticPaths() {
 }
 
 export async function GET({ props }: APIContext) {
-  const post = props.post as Awaited<
-    ReturnType<typeof getCollection<"posts">>
-  >[number];
+  const post = props.post as Post;
   const isoDate = post.data.publishDate.toISOString().slice(0, 10);
   const tags = filterTagList(post.data.tags);
 

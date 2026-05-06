@@ -24,8 +24,14 @@ const ogImage = image
   ? new URL(image, siteOrigin).toString()
   : new URL(siteConfig.logo.src, siteOrigin).toString();
 
+const SEO_TITLE_MAX = 60;
+const brandSuffix = ` — ${siteConfig.title}`;
 const fullTitle =
-  Astro.url.pathname === "/" ? siteConfig.title : `${title} — ${siteConfig.title}`;
+  Astro.url.pathname === "/"
+    ? siteConfig.title
+    : title.length + brandSuffix.length > SEO_TITLE_MAX
+      ? title
+      : `${title}${brandSuffix}`;
 
 const { version } = JSON.parse(
   readFileSync(resolve(process.cwd(), "package.json"), "utf-8"),
@@ -54,6 +60,7 @@ const isHome = Astro.url.pathname === "/";
     <meta name="author" content={siteConfig.author.name} />
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href={siteConfig.favicon} />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="manifest" href="/manifest.webmanifest" />
 

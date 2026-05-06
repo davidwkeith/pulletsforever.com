@@ -26,11 +26,13 @@ export async function getStaticPaths() {
 }
 
 const { tag, posts } = Astro.props as { tag: string; posts: Post[] };
+const postCount = posts.length;
+const description = `${postCount} ${postCount === 1 ? "post" : "posts"} on Pullets Forever tagged "${tag}" — essays and projects by David W. Keith filed under ${tag}.`;
 ---
 
 <BaseLayout
   title={`Tagged: ${tag}`}
-  description={`Posts tagged ${tag}.`}
+  description={description}
 >
   <h1>Tagged: <span class="p-category">{tag}</span></h1>
   <p><a href="/tags/">All tags</a></p>

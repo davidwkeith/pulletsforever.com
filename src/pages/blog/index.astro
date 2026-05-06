@@ -1,9 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-import { publishedPosts } from "../../utils/feed.ts";
+import { publishedPosts, type Post } from "../../utils/feed.ts";
 
-const all = await getCollection("posts", ({ data }) => {
+const all = await getCollection("posts", ({ data }: Post) => {
   return import.meta.env.PROD ? !data.draft : true;
 });
 const posts = publishedPosts(all);
@@ -14,7 +14,10 @@ const monthYear = new Intl.DateTimeFormat("en-US", {
 });
 ---
 
-<BaseLayout title="Blog" description="All posts.">
+<BaseLayout
+  title="Blog"
+  description="The full archive of posts on Pullets Forever — essays and projects on technology, food, AI, and chickens by David W. Keith."
+>
   <h1>Blog</h1>
   <ul class="post-list h-feed">
     {
