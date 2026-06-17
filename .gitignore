@@ -20,3 +20,6 @@ dist/
 .obsidian
 .claude
 .playwright-mcp
+
+# Audit / scan reports (regenerated on demand; never committed)
+/reports/

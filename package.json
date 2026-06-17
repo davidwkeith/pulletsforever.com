@@ -16,7 +16,7 @@
     "webmentions:send:dry": "node --experimental-strip-types scripts/send-webmentions.ts --dry-run",
     "websub:ping": "node --experimental-strip-types scripts/ping-websub.ts",
     "websub:ping:dry": "node --experimental-strip-types scripts/ping-websub.ts --dry-run",
-    "predeploy": "node --experimental-strip-types scripts/pre-deploy-check.ts",
+    "predeploy": "tsx scripts/pre-deploy-check.ts",
     "deploy": "npm run build && npm run predeploy && wrangler deploy && npm run websub:ping && npm run webmentions:send",
     "deploy:preview": "npm run build && wrangler deploy --dry-run",
     "cf-typegen": "wrangler types"
@@ -32,6 +32,8 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "schema-dts": "^2.0.0",
+    "tsx": "^4.19.0",
     "@cloudflare/workers-types": "^4.20260218.0",
     "@types/jsdom": "^27.0.0",
     "dotenv": "^17.3.1",
