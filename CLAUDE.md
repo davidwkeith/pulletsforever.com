@@ -1,6 +1,6 @@
 # pulletsforever.com
 
-Personal blog. Built with [Anglesite](https://anglesite.dev) (Astro 5 + Markdoc + Keystatic CMS) and deployed as a Cloudflare Pages site fronted by a Worker for content negotiation. Posts live in `src/content/posts/` as `.mdoc` files.
+Personal blog. Built with [Anglesite](https://anglesite.dwk.io) (Astro 5 + Markdoc + Keystatic CMS) and deployed as a Cloudflare Pages site fronted by a Worker for content negotiation. Posts live in `src/content/posts/` as `.mdoc` files.
 
 ## Commands
 
