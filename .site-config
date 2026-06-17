@@ -6,3 +6,6 @@ DEV_HOSTNAME=pulletsforever.local
 AI_MODEL=Claude Opus 4.6
 EXPLAIN_STEPS=true
 ANGLESITE_VERSION=1.0.0-beta.6
+# Emails intentionally published in post content (skipped by the pre-deploy PII scan):
+# fediverse handles that look like emails, and a documentation placeholder.
+PII_EMAIL_ALLOW=dwk@mastodon.social,dwk@xn--4t8h.dwk.io,user@domain.com
