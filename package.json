@@ -19,7 +19,9 @@
     "predeploy": "tsx scripts/pre-deploy-check.ts",
     "deploy": "npm run build && npm run predeploy && wrangler deploy && npm run websub:ping && npm run webmentions:send",
     "deploy:preview": "npm run build && wrangler deploy --dry-run",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types",
+    "lint:css": "stylelint 'src/**/*.css'",
+    "lint:md": "markdownlint-cli2 'docs/**/*.md' '*.md'"
   },
   "author": {
     "name": "David W. Keith",
@@ -32,6 +34,9 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "markdownlint-cli2": "^0.22.0",
+    "stylelint": "^17.6.0",
+    "stylelint-declaration-strict-value": "^1.11.1",
     "schema-dts": "^2.0.0",
     "tsx": "^4.19.0",
     "@cloudflare/workers-types": "^4.20260218.0",
