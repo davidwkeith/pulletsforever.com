@@ -44,6 +44,12 @@ const websub = {
   hub: "https://pubsubhubbub.superfeedr.com/",
 };
 
+const analytics = {
+  // Cloudflare Web Analytics site tag — privacy-respecting, aggregate-only.
+  // Rendered as the beacon's data-cf-beacon token in BaseLayout.astro.
+  cloudflareInsightsToken: "5049d90e34c84a5ba463d0541825cb30",
+};
+
 const logo = {
   src: "/img/logo.svg",
   alt: "Stylized pullet head logo",
@@ -146,6 +152,7 @@ export const siteConfig = {
   webmention,
   indieauth,
   websub,
+  analytics,
   schema,
   headLinks,
   atproto: {
