@@ -93,6 +93,18 @@ const isHome = Astro.url.pathname === "/";
       />
     )}
 
+    {import.meta.env.PROD && siteConfig.analytics.cloudflareInsightsToken && (
+      <script
+        is:inline
+        defer
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon={JSON.stringify({
+          token: siteConfig.analytics.cloudflareInsightsToken,
+        })}
+        crossorigin="anonymous"
+      />
+    )}
+
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
