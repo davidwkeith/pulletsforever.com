@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import worker from "./index.ts";
+import worker from "./site-entry.ts";
 
 interface MockAsset {
   body: string | Uint8Array;

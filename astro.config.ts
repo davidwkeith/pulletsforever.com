@@ -1,7 +1,8 @@
 /**
  * Astro configuration. Site identity comes from `.site-config`. Output is
- * fully static — Keystatic CMS is not currently wired up; re-enabling it
- * requires switching to `output: "server"` and installing an adapter.
+ * fully static. The Keystatic CMS is wired dev-only — the `keystatic()`
+ * integration is added only under `astro dev`, so the production build stays
+ * static with no adapter; edits are made locally and committed as `.mdoc` files.
  *
  * @see https://docs.astro.build/en/reference/configuration-reference/
  * @module
@@ -10,6 +11,8 @@
 import { defineConfig } from "astro/config";
 import markdoc from "@astrojs/markdoc";
 import sitemap from "@astrojs/sitemap";
+import react from "@astrojs/react";
+import keystatic from "@keystatic/astro";
 import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -66,7 +69,7 @@ export default defineConfig({
     // for style-src.
     inlineStylesheets: "never",
   },
-  integrations: [markdoc(), sitemap()],
+  integrations: [react(), markdoc(), ...(isDev ? [keystatic()] : []), sitemap()],
   vite: isDev
     ? {
         server: {

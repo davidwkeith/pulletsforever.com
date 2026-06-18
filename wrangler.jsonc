@@ -1,0 +1,31 @@
+{
+  // Wrangler config for the Cloudflare Workers Static Assets deployment.
+  // The worker (worker/site-entry.ts) runs first on every request
+  // (run_worker_first) so it can do Accept: text/markdown content negotiation
+  // before falling through to the static assets in dist/.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pulletsforever-com",
+  "compatibility_date": "2026-02-18",
+  "main": "worker/site-entry.ts",
+  "upload_source_maps": true,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "observability": {
+    "enabled": false,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+      "invocation_logs": true
+    },
+    "traces": {
+      "enabled": true,
+      "persist": true,
+      "head_sampling_rate": 1
+    }
+  }
+}

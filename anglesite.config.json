@@ -1,0 +1,6 @@
+{
+  "keystatic": {
+    "collections": ["posts"],
+    "singletons": []
+  }
+}
