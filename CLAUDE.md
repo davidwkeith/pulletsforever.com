@@ -9,7 +9,22 @@ Personal blog. Built with [Anglesite](https://anglesite.dwk.io) (Astro 6 + Markd
 - `npm run typecheck` — `astro check`
 - `npm test` — Worker tests (vitest, `--prefix worker`)
 - `npm run lint:css` / `npm run lint:md` — stylelint / markdownlint (advisory)
-- `npm run deploy` — Build + pre-deploy security scan + `wrangler deploy` + WebSub ping + send webmentions
+- `npm run deploy` — Manual laptop deploy: build + scan + `wrangler deploy` + WebSub ping + send webmentions (pings are fatal here so you notice failures interactively)
+- `npm run cloudflare:deploy` — Deploy command Cloudflare **Workers Builds** invokes in CI: `wrangler deploy` then `npm run notify`
+- `npm run notify` — Post-deploy pings, non-fatal (`websub:ping || true; webmentions:send || true`) so a transient hub error can't fail a CI build
+
+## Deploying
+
+Two paths, same Worker:
+
+- **Manual (laptop):** `npm run deploy` from `main`. Still available as a fallback / for ad-hoc deploys.
+- **CI (Cloudflare Workers Builds):** auto-builds + deploys on push once wired in the dashboard. Settings → Builds for the `pulletsforever-com` Worker:
+  - Build command: `npm run build && npm run scan` (keeps the security/SEO gate in CI)
+  - Production branch (`main`) deploy command: `npm run cloudflare:deploy`
+  - Non-production branch deploy command: `npx wrangler versions upload` (uploads a preview version + `*.workers.dev` preview URL; does **not** run the production pings)
+  - `preview_urls: true` in `wrangler.jsonc` enables the preview URL Workers Builds posts on PRs.
+
+  Neither `websub:ping` nor `webmentions:send` needs a secret, so no build env vars are required. Tracking: GH #26.
 
 ## Worktrees
 

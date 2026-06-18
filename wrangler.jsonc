@@ -8,6 +8,9 @@
   "compatibility_date": "2026-02-18",
   "main": "worker/site-entry.ts",
   "upload_source_maps": true,
+  // Enable the *.workers.dev preview URL for non-production branch versions
+  // (Workers Builds posts these on PRs). See CLAUDE.md "Deploying".
+  "preview_urls": true,
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
