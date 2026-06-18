@@ -1,13 +1,14 @@
 # pulletsforever.com
 
-Personal blog. Built with [Anglesite](https://anglesite.dwk.io) (Astro 5 + Markdoc + Keystatic CMS) and deployed as a Cloudflare Pages site fronted by a Worker for content negotiation. Posts live in `src/content/posts/` as `.mdoc` files.
+Personal blog. Built with [Anglesite](https://anglesite.dwk.io) (Astro 6 + Markdoc + Keystatic CMS) and deployed to Cloudflare Workers (Static Assets) with a Worker that handles content negotiation. Posts live in `src/content/posts/` as `.mdoc` files.
 
 ## Commands
 
 - `npm start` — Astro dev server (with Keystatic CMS at `/keystatic`)
 - `npm run build` — Production build to `dist/`
 - `npm run typecheck` — `astro check`
-- `npm test --prefix workers/site` — Worker tests
+- `npm test` — Worker tests (vitest, `--prefix worker`)
+- `npm run lint:css` / `npm run lint:md` — stylelint / markdownlint (advisory)
 - `npm run deploy` — Build + pre-deploy security scan + `wrangler deploy` + WebSub ping + send webmentions
 
 ## Architecture
@@ -18,8 +19,9 @@ Personal blog. Built with [Anglesite](https://anglesite.dwk.io) (Astro 5 + Markd
 - **Content**: `src/content/posts/*.mdoc` (Markdoc), schema in `src/content.config.ts`
 - **CMS**: `keystatic.config.ts` (visual editor at `/keystatic` in dev)
 - **Static assets**: `public/` — copied verbatim to `dist/`. Images live in `public/images/blog/` named `{slug}-{name}.{ext}`
-- **Worker**: `workers/site/index.ts` serves `dist/` and handles `Accept: text/markdown` content negotiation by serving the matching `index.md` produced by `src/pages/[slug]/index.md.ts`
-- **Cloudflare**: `wrangler.toml` (worker + assets), `public/_headers` (security headers, CSP, content-types), `public/_redirects`
+- **Worker**: `worker/site-entry.ts` serves `dist/` and handles `Accept: text/markdown` content negotiation by serving the matching `index.md` produced by `src/pages/[slug]/index.md.ts`. Tests in `worker/site-entry.test.ts`.
+- **Cloudflare**: `wrangler.jsonc` (Workers Static Assets — worker `main` + `dist/` assets, `run_worker_first`), `public/_headers` (security headers, CSP, content-types), `public/_redirects`
+- **Build tooling**: scripts run via `tsx`; `scripts/pre-deploy-check.ts` (+ `config.ts`/`csp.ts`/`seo.ts`/`seo-audit.ts`) is the pre-deploy security/SEO scan; `.stylelintrc.json` / `.markdownlint.jsonc` lint configs
 
 ## Creating a new post
 
