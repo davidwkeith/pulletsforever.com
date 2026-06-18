@@ -44,7 +44,7 @@
     "dotenv": "^17.3.1",
     "jsdom": "^28.1.0",
     "typescript": "^5.9.3",
-    "wrangler": "^4.66.0"
+    "wrangler": "^4.102.0"
   },
   "dependencies": {
     "@astrojs/markdoc": "^1.0.6",
