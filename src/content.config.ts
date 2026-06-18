@@ -21,7 +21,7 @@ const posts = defineCollection({
       imageAlt: z.string().optional(),
       tags: z.array(z.string()).default([]),
       draft: z.boolean().default(false),
-      syndication: z.array(z.string().url()).default([]),
+      syndication: z.array(z.url()).default([]),
     }),
 });
 
