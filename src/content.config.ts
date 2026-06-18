@@ -16,7 +16,9 @@ const posts = defineCollection({
     z.object({
       title: z.string(),
       description: z.string(),
-      publishDate: z.string().transform((str) => new Date(str)),
+      // Accept both a quoted string (hand-written posts) and an unquoted YAML
+      // date (Keystatic's fields.date output, parsed by js-yaml as a Date).
+      publishDate: z.coerce.date(),
       image: image().optional(),
       imageAlt: z.string().optional(),
       tags: z.array(z.string()).default([]),
