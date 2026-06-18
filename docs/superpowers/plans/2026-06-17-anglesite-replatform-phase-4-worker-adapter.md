@@ -2,7 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development. Steps use checkbox (`- [ ]`) syntax.
 
-**Goal:** Move the content-negotiation worker `workers/site/` → `worker/` (template structure), convert `wrangler.toml` → `wrangler.jsonc`, and add the `@astrojs/cloudflare` adapter — preserving the `Accept: text/markdown` content negotiation and all current serving behavior, with **no deploy** (Phase 6) and **no D1/R2/Queues yet** (Phase 5).
+**Goal:** Move the content-negotiation worker `workers/site/` → `worker/` (template structure) and convert `wrangler.toml` → `wrangler.jsonc` — preserving the `Accept: text/markdown` content negotiation and all current serving behavior, with **no deploy** (Phase 6) and **no D1/R2/Queues yet** (Phase 5).
+
+> **AMENDMENT (during execution):** Adding the `@astrojs/cloudflare` adapter (Task 2 below) was attempted but **reverted**. Empirically it split `dist/` into `dist/client/` + `dist/server/` and emitted its own `wrangler.json` (`main: entry.mjs`, `assets: ../client`), trying to replace the custom worker as the deploy entrypoint — which breaks the static-assets + content-negotiation-worker model (and `wrangler deploy` could no longer find the HTML). Confirmed the same split occurs with the template's own config. The adapter is unnecessary for a 100% static Astro site served by a custom worker (Astro never SSRs here; IndieWeb is worker-handled). **Phase 4 shipped as the structural move only, no adapter.**
 
 **Architecture:** The site stays 100% static Astro served by a custom Workers-Static-Assets worker (the adapter is added for template fidelity but is functionally inert while all routes are prerendered — the template proves `output: "static"` + `cloudflare()` is a supported combo). The existing content-negotiation worker is re-homed and renamed `worker/site-entry.ts`, keeping its logic and TypeScript tests. D1/R2/Queue bindings and the template's full IndieWeb `site-entry.js` are Phase 5.
 
@@ -14,7 +16,7 @@
 
 ## Scope decisions
 
-1. **Adapter included** (owner's call) — `adapter: isDev ? undefined : cloudflare({ prerenderEnvironment: "node" })`, matching the template's astro.config. With all routes prerendered it produces no SSR worker; the custom `worker/site-entry.ts` remains the wrangler `main`.
+1. ~~**Adapter included**~~ → **Adapter dropped** (see amendment above). Task 2 was executed then reverted; the site stays static-Astro + custom worker with flat `dist/`.
 2. **Worker stays TypeScript** — the existing worker + its 7 vitest tests are TS; preserve them (don't convert to JS). The template ships `.js`, but adopting *our* content-negotiation logic in TS keeps the tests and types. The dir/name align with the template (`worker/site-entry.ts`).
 3. **No D1/R2/Queues / no `@dwk/*` IndieWeb packages** in this phase — `wrangler.jsonc` carries only the ASSETS binding. Phase 5 swaps in the template's full `site-entry.js` (merging content negotiation) and provisions infra.
 4. **No deploy** — gate validates with `wrangler deploy --dry-run` only.
@@ -117,7 +119,9 @@ git commit -m "refactor: move worker to worker/site-entry.ts; wrangler.toml -> w
 
 ---
 
-## Task 2: Add the Cloudflare adapter
+## Task 2: Add the Cloudflare adapter — ⚠️ EXECUTED THEN REVERTED (see amendment at top)
+
+> Kept for the record. The adapter broke the serving model (dist/ client/server split); commit `445dbcc` was reset off the branch. Skip this task.
 
 **Files:** `astro.config.ts`, `package.json`.
 
