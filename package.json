@@ -9,7 +9,7 @@
     "start": "astro dev",
     "dev": "astro dev",
     "preview": "astro preview",
-    "test": "npm test --prefix workers/site",
+    "test": "npm test --prefix worker",
     "typecheck": "astro check",
     "new-post": "tsx scripts/new-post.ts",
     "webmentions:send": "tsx scripts/send-webmentions.ts",
