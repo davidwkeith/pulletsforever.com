@@ -90,6 +90,20 @@ const htmlFiles = walkHtml(DIST);
 const emailPattern = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
 const emailExcludes = ["charset", "viewport", "@astro", "@import", "@keyframes", "@media", "@font-face", "@layer", "@property"];
 
+// Reserved / placeholder domains that can never carry real PII:
+// RFC 2606 reserved names plus common documentation placeholders.
+const reservedTlds = [".test", ".example", ".invalid", ".localhost"];
+const reservedDomains = new Set([
+  "example.com", "example.net", "example.org",
+  "domain.com", "domain.tld", "localhost",
+]);
+
+function isReservedEmailDomain(email: string): boolean {
+  const domain = email.toLowerCase().split("@")[1] ?? "";
+  if (reservedDomains.has(domain)) return true;
+  return reservedTlds.some(tld => domain.endsWith(tld));
+}
+
 for (const file of htmlFiles) {
   const content = readFileSync(file, "utf-8");
   const matches = content.match(emailPattern) || [];
@@ -99,8 +113,13 @@ for (const file of htmlFiles) {
     // Skip emails in mailto: links (intentionally published)
     const idx = content.indexOf(m);
     if (idx >= 7 && content.slice(idx - 7, idx).includes("mailto:")) return false;
+    // Skip Fediverse handles: an email-shaped token immediately
+    // preceded by '@' is @user@instance, not an email address.
+    if (idx >= 1 && content[idx - 1] === "@") return false;
     // Skip emails on the allowlist
     if (emailAllowlist.includes(m.toLowerCase())) return false;
+    // Skip reserved/placeholder domains (example.com, domain.com, …)
+    if (isReservedEmailDomain(m)) return false;
     return true;
   });
   if (real.length > 0) {
@@ -109,12 +128,22 @@ for (const file of htmlFiles) {
 }
 
 // 1b. PII scan — phone numbers
-const phonePattern = /\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g;
+//
+// Require real phone formatting: a parenthesized area code or a
+// mandatory separator between digit groups, and reject matches that
+// sit inside a longer digit/decimal run. Bare digit runs (Unix
+// timestamps, IDs, fraction expansions in technical posts) are not
+// phone numbers and must not trip the scan. Uses `.match()` rather
+// than a reused stateful `.test()` so results are deterministic.
+const phonePattern =
+  /(?<![\d.])(?:\+?1[-.\s]?)?(?:\(\d{3}\)[-.\s]?|\d{3}[-.\s])\d{3}[-.\s]\d{4}(?![\d.])/g;
 
 for (const file of htmlFiles) {
   const content = readFileSync(file, "utf-8");
-  if (phonePattern.test(content)) {
-    failures.push(`PII: possible phone number in ${file}`);
+  const matches = content.match(phonePattern);
+  if (matches) {
+    const unique = [...new Set(matches)].join(", ");
+    failures.push(`PII: possible phone number in ${file}: ${unique}`);
   }
 }
 
@@ -136,17 +165,22 @@ for (const dir of scanDirs) {
 }
 
 // 3. Third-party scripts
-const scriptSrcPattern = /<script[^>]*src=/gi;
-const allowedScripts = ["cloudflareinsights", "_astro"];
+//
+// Same-origin scripts (root-relative `/...` or relative paths) are
+// first-party — the site ships them itself — and are always allowed.
+// Only scripts loaded from an external origin (http(s):// or //host)
+// are treated as third-party and must appear on the allowlist.
+const scriptSrcPattern = /<script\b[^>]*\bsrc\s*=\s*["']([^"']+)["'][^>]*>/gi;
+const allowedExternalScripts = ["cloudflareinsights"];
+
+const isExternal = (src: string) => /^(?:https?:)?\/\//i.test(src);
 
 for (const file of htmlFiles) {
   const content = readFileSync(file, "utf-8");
-  const matches = content.match(scriptSrcPattern) || [];
-  for (const match of matches) {
-    const lineIdx = content.indexOf(match);
-    const line = content.slice(lineIdx, content.indexOf(">", lineIdx) + 1);
-    if (!allowedScripts.some(allowed => line.includes(allowed))) {
-      failures.push(`SCRIPT: unauthorized third-party script in ${file}`);
+  for (const match of content.matchAll(scriptSrcPattern)) {
+    const src = match[1];
+    if (isExternal(src) && !allowedExternalScripts.some(a => src.includes(a))) {
+      failures.push(`SCRIPT: unauthorized third-party script in ${file}: ${src}`);
     }
   }
 }
