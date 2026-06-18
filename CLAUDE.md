@@ -11,6 +11,10 @@ Personal blog. Built with [Anglesite](https://anglesite.dwk.io) (Astro 6 + Markd
 - `npm run lint:css` / `npm run lint:md` — stylelint / markdownlint (advisory)
 - `npm run deploy` — Build + pre-deploy security scan + `wrangler deploy` + WebSub ping + send webmentions
 
+## Worktrees
+
+Prefer a git worktree by default when starting any non-trivial change — a feature, a new post, or a multi-file edit — so work stays isolated from the main checkout. Use the harness's native worktree support, or `git worktree add ../pulletsforever-<branch> -b <branch>`. Each worktree is a fresh checkout with no `node_modules` (it isn't shared across worktrees), so run `npm install` in it before any `npm run build` / `npm test` / `npm run new-post`. Deploy from the main checkout after merging, not from a feature worktree.
+
 ## Architecture
 
 - **Pages and routes**: `src/pages/*.astro` (UI) and `src/pages/**/*.ts` (API endpoints — feeds, llms.txt, .well-known)
