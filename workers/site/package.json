@@ -8,6 +8,9 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "vitest": "^3.2.0"
+    "vitest": "^3.2.6"
+  },
+  "overrides": {
+    "esbuild": "^0.28.1"
   }
 }

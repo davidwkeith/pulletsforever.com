@@ -45,5 +45,9 @@
     "@markdoc/markdoc": "^0.5.0",
     "astro": "^5.18.1",
     "markdown-it-footnote": "^4.0.0"
+  },
+  "overrides": {
+    "devalue": "^5.8.1",
+    "esbuild": "^0.28.1"
   }
 }
