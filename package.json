@@ -17,8 +17,10 @@
     "websub:ping": "tsx scripts/ping-websub.ts",
     "websub:ping:dry": "tsx scripts/ping-websub.ts --dry-run",
     "scan": "tsx scripts/pre-deploy-check.ts",
+    "notify": "npm run websub:ping || true; npm run webmentions:send || true",
     "deploy": "npm run build && npm run scan && wrangler deploy && npm run websub:ping && npm run webmentions:send",
     "deploy:preview": "npm run build && wrangler deploy --dry-run",
+    "cloudflare:deploy": "wrangler deploy && npm run notify",
     "cf-typegen": "wrangler types",
     "lint:css": "stylelint 'src/**/*.css'",
     "lint:md": "markdownlint-cli2 'docs/**/*.md' '*.md'"
