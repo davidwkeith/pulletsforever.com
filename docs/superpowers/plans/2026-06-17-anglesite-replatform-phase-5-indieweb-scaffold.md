@@ -4,6 +4,13 @@
 
 **Goal:** Make the worker IndieWeb-ready by adopting the template's full `site-entry.js` (IndieAuth / Micropub / Webmention handlers, all gated on D1 bindings) **with the existing `Accept: text/markdown` content negotiation merged in**, plus the `@dwk/*` packages and support files. Everything stays **inert** (no bindings → serves exactly as today). Actual provisioning is deferred to the owner via `/anglesite:indieweb` (see runbook).
 
+> **OUTCOME: REVERTED.** This scaffold was executed (commits `29fc3d5`, `014b5f8`) then reset off the branch. Execution surfaced three blocking problems with inbound IndieWeb in Anglesite 1.1.0, none acceptable to commit:
+> 1. **The published `@dwk/*` 0.1.0-beta.2 packages don't load** — `dist/index.js` re-exports from extensionless paths (`./inbox`, `./handler`) that fail Node ESM resolution (`ERR_MODULE_NOT_FOUND`). (esbuild/wrangler may bundle them, but this is unverified and untestable while inert.)
+> 2. **Template ↔ package API mismatch** — `worker/site-entry.js` imports `{ createHandler as … }`, but the packages export `createIndieAuth`/`createMicropub`/`createWebmention`/`createWebmentionQueueConsumer` (no `createHandler`, different queue/scheduled shape). Adapting it is guesswork that can't be verified while the code is inert/mocked.
+> 3. **HIGH stored-XSS in the webmention render** — `renderMention()` writes `author_url`/`url`/`author_photo` into `href`/`src` with only `escapeHtml` (no scheme allowlist), so a `javascript:` URL in externally-sourced webmention data executes. Needs a `safeUrl()` scheme check.
+>
+> Decision: keep the clean Phase-4 content-negotiation worker; build inbound IndieWeb later, live, once the `@dwk` packages are fixed and `/anglesite:indieweb` can test against real bindings. Findings filed upstream. The runbook below is retained for when the feature is viable.
+
 **Architecture:** The site stays static Astro + custom Workers-Static-Assets worker. `worker/site-entry.ts` (minimal content-neg, TS) is replaced by the template's `worker/site-entry.js` (JS), with the content-negotiation helpers ported into it so behavior is preserved. The `@dwk/*` handlers are instantiated at module top level and dispatched only when their D1 binding is present — absent bindings mean the IndieWeb code never runs.
 
 **Tech Stack:** @dwk/indieauth, @dwk/micropub, @dwk/webmention (0.1.0-beta.2, ESM), Cloudflare Workers.
