@@ -215,8 +215,8 @@ const tokenRemediations: Record<TokenKind, string> = {
     "This is a secret binding — rotate the leaked value, then store it with `npx wrangler secret put <NAME>`. It must never appear in source or wrangler config.",
 };
 
-export function scanScripts(content: string, scriptAllowlist?: string[]): string[] {
-  const allowed = scriptAllowlist ?? allowedScripts;
+export function scanScripts(content: string, scriptAllowlist: string[]): string[] {
+  const allowed = scriptAllowlist;
   scriptSrcPattern.lastIndex = 0;
   const results: string[] = [];
   const matches = content.match(scriptSrcPattern) || [];
@@ -608,7 +608,7 @@ if (process.argv[1]?.endsWith("pre-deploy-check.ts")) {
     const content = readFileSync(file, "utf-8");
     const unauthorized = scanScripts(content, configAllowlist);
     for (const script of unauthorized) {
-      failures.push(`SCRIPT: unauthorized third-party script in ${file}`);
+      failures.push(`SCRIPT: unauthorized third-party script in ${file}: ${script}`);
     }
   }
 
