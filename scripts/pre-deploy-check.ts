@@ -124,7 +124,7 @@ export function getAllowedScripts(configPath?: string): string[] {
 }
 
 /** @deprecated Use getAllowedScripts() for config-driven allowlist */
-export const allowedScripts = ["cloudflareinsights", "_astro", "challenges.cloudflare.com", "cdn.polar.sh", "cdn.snipcart.com", "cdn.shopify.com", "sdks.shopifycdn.com"];
+export const allowedScripts = ["cloudflareinsights", "_astro", "challenges.cloudflare.com", "cdn.polar.sh"];
 
 // ---------------------------------------------------------------------------
 // Helpers

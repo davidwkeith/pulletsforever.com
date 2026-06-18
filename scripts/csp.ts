@@ -2,17 +2,12 @@
  * Central CSP builder — generates Content-Security-Policy headers and
  * pre-deploy script allowlists based on active site providers.
  *
- * Reads ECOMMERCE_PROVIDER, BOOKING_PROVIDER, and TURNSTILE_SITE_KEY
- * from .site-config to determine which third-party domains to permit.
+ * Reads ECOMMERCE_PROVIDER and TURNSTILE_SITE_KEY from .site-config to
+ * determine which third-party domains to permit.
  *
  * @module
  */
 
-import { buildSnipcartCSP } from "./snipcart.js";
-import { buildShopifyCSP } from "./shopify-buy-button.js";
-import { buildPaddleCSP } from "./paddle.js";
-import { buildLemonSqueezyCSP } from "./lemon-squeezy.js";
-import { buildBookingCSP, type BookingProvider } from "./booking.js";
 import { readConfigFromString } from "./config.js";
 
 // ---------------------------------------------------------------------------
@@ -21,8 +16,7 @@ import { readConfigFromString } from "./config.js";
 
 /** Parsed provider configuration from .site-config */
 export interface SiteProviders {
-  ecommerce?: "stripe" | "polar" | "snipcart" | "shopify" | "paddle" | "lemonsqueezy";
-  booking?: BookingProvider;
+  ecommerce?: "stripe" | "polar";
   comments?: "giscus";
   turnstile: boolean;
   /** When set, the podcast skill embeds a privacy-respecting YouTube iframe
@@ -176,9 +170,6 @@ export function parseProviders(configContent: string): SiteProviders {
   const ecommerce = readConfigFromString(configContent, "ECOMMERCE_PROVIDER") as
     | SiteProviders["ecommerce"]
     | undefined;
-  const booking = readConfigFromString(configContent, "BOOKING_PROVIDER") as
-    | BookingProvider
-    | undefined;
   const comments = readConfigFromString(configContent, "COMMENTS_PROVIDER") as
     | SiteProviders["comments"]
     | undefined;
@@ -209,7 +200,6 @@ export function parseProviders(configContent: string): SiteProviders {
 
   return {
     ecommerce,
-    booking,
     comments,
     turnstile: !!turnstileKey,
     podcastVideo,
@@ -244,23 +234,10 @@ export function buildCSP(providers: SiteProviders): string {
   const providerCSPs: CSPDirectives[] = [];
 
   // Ecommerce provider
-  if (providers.ecommerce === "snipcart") {
-    providerCSPs.push(buildSnipcartCSP());
-  } else if (providers.ecommerce === "shopify") {
-    providerCSPs.push(buildShopifyCSP());
-  } else if (providers.ecommerce === "polar") {
+  if (providers.ecommerce === "polar") {
     providerCSPs.push(buildPolarCSP());
-  } else if (providers.ecommerce === "paddle") {
-    providerCSPs.push(buildPaddleCSP());
-  } else if (providers.ecommerce === "lemonsqueezy") {
-    providerCSPs.push(buildLemonSqueezyCSP());
   }
   // stripe = external redirect, no CSP needed
-
-  // Booking provider
-  if (providers.booking) {
-    providerCSPs.push(buildBookingCSP(providers.booking));
-  }
 
   // Turnstile
   if (providers.turnstile) {
@@ -327,22 +304,8 @@ export function buildAllowedScripts(providers: SiteProviders): string[] {
     scripts.push("challenges.cloudflare.com");
   }
 
-  if (providers.ecommerce === "snipcart") {
-    scripts.push("cdn.snipcart.com");
-  } else if (providers.ecommerce === "shopify") {
-    scripts.push("cdn.shopify.com", "sdks.shopifycdn.com");
-  } else if (providers.ecommerce === "polar") {
+  if (providers.ecommerce === "polar") {
     scripts.push("cdn.polar.sh");
-  } else if (providers.ecommerce === "paddle") {
-    scripts.push("cdn.paddle.com", "sandbox-cdn.paddle.com");
-  } else if (providers.ecommerce === "lemonsqueezy") {
-    scripts.push("assets.lemonsqueezy.com");
-  }
-
-  if (providers.booking === "cal") {
-    scripts.push("app.cal.com");
-  } else if (providers.booking === "calendly") {
-    scripts.push("assets.calendly.com");
   }
 
   if (providers.comments === "giscus") {
