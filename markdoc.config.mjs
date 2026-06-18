@@ -1,6 +1,7 @@
 import { defineMarkdocConfig, nodes, component } from "@astrojs/markdoc/config";
 import { applyFootnotePatch, footnoteTags } from "./src/utils/footnotes.ts";
 import { applyTypographyPatch } from "./src/utils/typography.ts";
+import { blockquoteNode } from "./src/utils/blockquote.ts";
 
 applyFootnotePatch();
 applyTypographyPatch();
@@ -11,6 +12,7 @@ export default defineMarkdocConfig({
       ...nodes.image,
       render: component("./src/components/MarkdocImage.astro"),
     },
+    blockquote: blockquoteNode,
   },
   tags: {
     ...footnoteTags,

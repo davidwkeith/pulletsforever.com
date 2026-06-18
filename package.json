@@ -47,15 +47,20 @@
     "wrangler": "^4.66.0"
   },
   "dependencies": {
-    "@astrojs/markdoc": "1.0.4",
+    "@astrojs/markdoc": "^1.0.6",
     "@astrojs/react": "5.0.4",
-    "@astrojs/sitemap": "3.7.2",
+    "@astrojs/sitemap": "^3.7.1",
     "@keystatic/astro": "5.1.0",
     "@keystatic/core": "0.5.50",
     "@markdoc/markdoc": "^0.5.0",
-    "astro": "6.3.1",
+    "astro": "^6.4.8",
     "markdown-it-footnote": "^4.0.0",
     "react": "18.3.1",
     "react-dom": "18.3.1"
+  },
+  "overrides": {
+    "devalue": "^5.8.1",
+    "esbuild": "^0.25.0",
+    "js-yaml": "^4.2.0"
   }
 }

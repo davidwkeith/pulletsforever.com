@@ -851,6 +851,20 @@ a[href].sidebar-handle:active {
   margin-top: 1em;
 }
 
+/* Drop cap on the first body paragraph. Posts that open with a hero
+   image (a paragraph that contains only an <img>) get the cap on the
+   following paragraph instead. */
+.e-content > p:first-of-type:not(:has(img))::first-letter,
+.e-content > p:first-of-type:has(img) + p::first-letter {
+  float: left;
+  font-size: 3.2em;
+  line-height: 0.8;
+  min-width: 0.6em;
+  text-align: center;
+  padding-right: 0.08em;
+  font-weight: bold;
+}
+
 /* Post signature ("-dwk" auto-appended in feeds) */
 .signature {
   margin-top: 2em;
