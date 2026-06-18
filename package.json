@@ -9,17 +9,19 @@
     "start": "astro dev",
     "dev": "astro dev",
     "preview": "astro preview",
-    "test": "npm test --prefix workers/site",
+    "test": "npm test --prefix worker",
     "typecheck": "astro check",
-    "new-post": "node --experimental-strip-types scripts/new-post.ts",
-    "webmentions:send": "node --experimental-strip-types scripts/send-webmentions.ts",
-    "webmentions:send:dry": "node --experimental-strip-types scripts/send-webmentions.ts --dry-run",
-    "websub:ping": "node --experimental-strip-types scripts/ping-websub.ts",
-    "websub:ping:dry": "node --experimental-strip-types scripts/ping-websub.ts --dry-run",
-    "predeploy": "node --experimental-strip-types scripts/pre-deploy-check.ts",
-    "deploy": "npm run build && npm run predeploy && wrangler deploy && npm run websub:ping && npm run webmentions:send",
+    "new-post": "tsx scripts/new-post.ts",
+    "webmentions:send": "tsx scripts/send-webmentions.ts",
+    "webmentions:send:dry": "tsx scripts/send-webmentions.ts --dry-run",
+    "websub:ping": "tsx scripts/ping-websub.ts",
+    "websub:ping:dry": "tsx scripts/ping-websub.ts --dry-run",
+    "scan": "tsx scripts/pre-deploy-check.ts",
+    "deploy": "npm run build && npm run scan && wrangler deploy && npm run websub:ping && npm run webmentions:send",
     "deploy:preview": "npm run build && wrangler deploy --dry-run",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types",
+    "lint:css": "stylelint 'src/**/*.css'",
+    "lint:md": "markdownlint-cli2 'docs/**/*.md' '*.md'"
   },
   "author": {
     "name": "David W. Keith",
@@ -32,6 +34,11 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "markdownlint-cli2": "^0.22.0",
+    "stylelint": "^17.6.0",
+    "stylelint-declaration-strict-value": "^1.11.1",
+    "schema-dts": "^2.0.0",
+    "tsx": "^4.19.0",
     "@cloudflare/workers-types": "^4.20260218.0",
     "@types/jsdom": "^27.0.0",
     "dotenv": "^17.3.1",
@@ -41,15 +48,19 @@
   },
   "dependencies": {
     "@astrojs/markdoc": "^1.0.6",
+    "@astrojs/react": "5.0.4",
     "@astrojs/sitemap": "^3.7.1",
+    "@keystatic/astro": "5.1.0",
+    "@keystatic/core": "0.5.50",
     "@markdoc/markdoc": "^0.5.0",
     "astro": "^6.4.8",
-    "markdown-it-footnote": "^4.0.0"
+    "markdown-it-footnote": "^4.0.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "overrides": {
     "devalue": "^5.8.1",
-    "esbuild": "^0.28.1",
-    "vite": "^6.4.3",
+    "esbuild": "^0.25.0",
     "js-yaml": "^4.2.0"
   }
 }

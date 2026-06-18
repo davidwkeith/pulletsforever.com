@@ -3,6 +3,8 @@ SITE_DOMAIN=pulletsforever.com
 OWNER_NAME=dwk
 SITE_NAME=Pullets Forever
 DEV_HOSTNAME=pulletsforever.local
-AI_MODEL=Claude Opus 4.6
+AI_MODEL=Claude Opus 4.8
 EXPLAIN_STEPS=true
-ANGLESITE_VERSION=1.0.0-beta.6
+ANGLESITE_VERSION=1.1.0
+# Emails intentionally published in post content (skipped by the PII scan):
+PII_EMAIL_ALLOW=dwk@mastodon.social,dwk@tara.ai,dwk@xn--4t8h.dwk.io,user@domain.com
