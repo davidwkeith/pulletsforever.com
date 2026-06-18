@@ -87,10 +87,11 @@ Split so the find/replace logic is unit-testable without `astro:assets`:
   `_astro/…webp` already emitted by the page render — not a new variant), and
   returns the hashed `.src`. Returns `null` when the file is not found.
 
-Location: extend `src/utils/feed.ts` (or a sibling util it imports).
-`resolveBlogImage` keeps the `astro:assets` dependency, so `feed.ts` stays
-Astro-only (it is already imported solely by Astro endpoints, not by the
-vitest worker suite).
+Location: a dedicated module `src/utils/blog-images.ts`, imported by both
+`feed.ts` and `index.md.ts` (the two endpoints that share the rewrite). The
+module carries the `astro:assets` (`getImage`) and `import.meta.glob`
+dependencies, keeping them in one Astro-only place; both consumers are already
+Astro endpoints, not part of the vitest worker suite.
 
 ### 2. `src/utils/feed.ts`
 
