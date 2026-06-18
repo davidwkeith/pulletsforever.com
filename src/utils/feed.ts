@@ -43,11 +43,19 @@ export function absolutizeHtml(html: string, siteOrigin: string): string {
   );
 }
 
-/** Build a post's full article HTML for inclusion in a feed entry. */
+/**
+ * Build a post's full article HTML for inclusion in a feed entry.
+ *
+ * Mirrors the website (`[slug].astro`), which renders only the post
+ * body. The frontmatter `image` is metadata (og:image, JSON-LD,
+ * related-post tiles) — every post that wants a visible hero authors
+ * it as the first inline image in the body. We deliberately do NOT
+ * prepend a hero `<figure>` here: doing so duplicated the image, since
+ * the body already contains it.
+ */
 export function renderArticleForFeed(
   post: Post,
   siteOrigin: string,
-  heroUrl?: string,
 ): string {
   const body = absolutizeHtml(renderPostHtml(post), siteOrigin);
   // Posts with footnotes already include the "-dwk" signature inside
@@ -55,15 +63,7 @@ export function renderArticleForFeed(
   // before the footnote section). Footnote-less posts get it appended
   // here at the end.
   const hasFootnotes = /^\[\^[^\]]+\]:/m.test(post.body ?? "");
-  let html = "";
-  if (heroUrl) {
-    const img = absolutizeHtml(
-      `<img src="${heroUrl}" alt="${post.data.imageAlt ?? ""}">`,
-      siteOrigin,
-    );
-    html += `  <figure class="hero-image">\n    ${img}\n  </figure>\n`;
-  }
-  html += `  ${body}\n`;
+  let html = `  ${body}\n`;
   if (!hasFootnotes) {
     html += `  <p class="signature">-dwk</p>`;
   }

@@ -29,7 +29,7 @@ export async function GET(context: APIContext) {
         id: postUrl,
         url: postUrl,
         title: post.data.title,
-        content_html: renderArticleForFeed(post, origin, heroUrl),
+        content_html: renderArticleForFeed(post, origin),
         date_published: rfc3339(post.data.publishDate),
         tags: filterTagList(post.data.tags),
       };
