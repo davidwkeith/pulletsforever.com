@@ -10,6 +10,7 @@ import type { APIContext } from "astro";
 import { getCollection } from "astro:content";
 import siteConfig from "../../site.config.ts";
 import { filterTagList, publishedPosts, type Post } from "../../utils/feed.ts";
+import { rewriteBlogImageUrls, resolveBlogImage } from "../../utils/blog-images.ts";
 
 export async function getStaticPaths() {
   const all = await getCollection("posts");
@@ -41,7 +42,8 @@ export async function GET({ props }: APIContext) {
   }
   lines.push("---");
   lines.push("");
-  lines.push(post.body ?? "");
+  const body = await rewriteBlogImageUrls(post.body ?? "", resolveBlogImage);
+  lines.push(body);
 
   return new Response(lines.join("\n"), {
     headers: { "content-type": "text/markdown; charset=utf-8" },
