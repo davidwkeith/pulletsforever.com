@@ -31,7 +31,8 @@ export default config({
         }),
         image: fields.text({
           label: "Image",
-          description: "Hero image path under public/ (optional)",
+          description:
+            "Hero image, relative path e.g. ../../assets/blog/{slug}-{name}.{ext} (optional)",
         }),
         imageAlt: fields.text({
           label: "Image Alt Text",
@@ -51,7 +52,15 @@ export default config({
           description: "URLs where this post was cross-posted",
           itemLabel: (props) => props.value || "Add URL",
         }),
-        content: fields.markdoc({ label: "Content" }),
+        content: fields.markdoc({
+          label: "Content",
+          options: {
+            image: {
+              directory: "src/assets/blog",
+              publicPath: "/images/blog/",
+            },
+          },
+        }),
       },
     }),
   },
