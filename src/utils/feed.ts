@@ -9,6 +9,7 @@ import Markdoc from "@markdoc/markdoc";
 import type { CollectionEntry } from "astro:content";
 import { applyFootnotePatch, footnoteTags } from "./footnotes.ts";
 import { applyTypographyPatch } from "./typography.ts";
+import { rewriteBlogImageUrls, resolveBlogImage } from "./blog-images.ts";
 
 applyFootnotePatch();
 applyTypographyPatch();
@@ -21,11 +22,12 @@ export function filterTagList(tags: readonly string[] | undefined): string[] {
   return (tags ?? []).filter((tag) => !RESERVED_TAGS.has(tag));
 }
 
-/** Render the Markdoc body of a post to a string of HTML. */
-export function renderPostHtml(post: Post): string {
+/** Render the Markdoc body of a post to HTML with hero URLs resolved. */
+export async function renderPostHtml(post: Post): Promise<string> {
   const ast = Markdoc.parse(post.body ?? "");
   const transformed = Markdoc.transform(ast, { tags: footnoteTags });
-  return Markdoc.renderers.html(transformed);
+  const html = Markdoc.renderers.html(transformed);
+  return rewriteBlogImageUrls(html, resolveBlogImage);
 }
 
 /**
@@ -53,15 +55,11 @@ export function absolutizeHtml(html: string, siteOrigin: string): string {
  * prepend a hero `<figure>` here: doing so duplicated the image, since
  * the body already contains it.
  */
-export function renderArticleForFeed(
+export async function renderArticleForFeed(
   post: Post,
   siteOrigin: string,
-): string {
-  const body = absolutizeHtml(renderPostHtml(post), siteOrigin);
-  // Posts with footnotes already include the "-dwk" signature inside
-  // `body` (injected by the `fnblock` Markdoc transform so it sits
-  // before the footnote section). Footnote-less posts get it appended
-  // here at the end.
+): Promise<string> {
+  const body = absolutizeHtml(await renderPostHtml(post), siteOrigin);
   const hasFootnotes = /^\[\^[^\]]+\]:/m.test(post.body ?? "");
   let html = `  ${body}\n`;
   if (!hasFootnotes) {

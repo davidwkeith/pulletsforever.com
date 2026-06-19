@@ -45,6 +45,8 @@ writeFileSync(filePath, frontmatter);
 console.log(`Created: ${filePath}`);
 console.log("Set draft: false when ready to publish.");
 console.log(
-  "For posts with images, add files to public/images/blog/ and reference",
+  "For posts with images, add files to src/assets/blog/ named",
 );
-console.log(`as /images/blog/${slug}-{name}.{ext}.`);
+console.log(
+  `{slug}-{name}.{ext} and reference in the body as /images/blog/${slug}-{name}.{ext}.`,
+);
