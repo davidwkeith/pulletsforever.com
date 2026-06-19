@@ -37,7 +37,7 @@ Prefer a git worktree by default when starting any non-trivial change — a feat
 - **Site config**: `src/site.config.ts` — single source of truth for identity, IndieWeb endpoints, head links, JSON-LD schema
 - **Content**: `src/content/posts/*.mdoc` (Markdoc), schema in `src/content.config.ts`
 - **CMS**: `keystatic.config.ts` (visual editor at `/keystatic` in dev)
-- **Static assets**: `public/` — copied verbatim to `dist/`. Images live in `public/images/blog/` named `{slug}-{name}.{ext}`
+- **Static assets**: `public/` — copied verbatim to `dist/`. Hero/blog images live **only** in `src/assets/blog/` named `{slug}-{name}.{ext}`; bodies reference them as the virtual path `/images/blog/{slug}-{name}.{ext}`, resolved to the optimized `_astro` asset by `src/utils/blog-images.ts` (page, feeds, and the markdown view). There is no `public/images/blog/`.
 - **Worker**: `worker/site-entry.ts` serves `dist/` and handles `Accept: text/markdown` content negotiation by serving the matching `index.md` produced by `src/pages/[slug]/index.md.ts`. Tests in `worker/site-entry.test.ts`.
 - **Cloudflare**: `wrangler.jsonc` (Workers Static Assets — worker `main` + `dist/` assets, `run_worker_first`), `public/_headers` (security headers, CSP, content-types), `public/_redirects`
 - **Build tooling**: scripts run via `tsx`; `scripts/pre-deploy-check.ts` (+ `config.ts`/`csp.ts`/`seo.ts`/`seo-audit.ts`) is the pre-deploy security/SEO scan; `.stylelintrc.json` / `.markdownlint.jsonc` lint configs
@@ -48,7 +48,7 @@ Prefer a git worktree by default when starting any non-trivial change — a feat
 npm run new-post "My Post Title"
 ```
 
-Writes a `src/content/posts/my-post-title.mdoc` stub with `draft: true`. Edit, set `draft: false`, then build. For posts with images, drop files into `public/images/blog/` named `{slug}-{name}.{ext}` and reference as `/images/blog/{slug}-{name}.{ext}`.
+Writes a `src/content/posts/my-post-title.mdoc` stub with `draft: true`. Edit, set `draft: false`, then build. For posts with images, drop files into `src/assets/blog/` named `{slug}-{name}.{ext}` and reference in the body as `/images/blog/{slug}-{name}.{ext}` (a virtual path resolved to the optimized asset; no file is committed under `public/`).
 
 ## Required frontmatter
 
