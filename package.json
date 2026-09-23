@@ -46,7 +46,7 @@
     "stylelint-declaration-strict-value": "^1.11.1",
     "tsx": "^4.19.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.9",
+    "vitest": "^4.1.11",
     "wrangler": "^4.102.0"
   },
   "dependencies": {
