@@ -1,0 +1,83 @@
+---
+title: "AI Agents Make a Team's Mistakes. Give Them a Team's Rules."
+description: "I moved a bike coalition off Salesforce with 17 Cloudflare Workers, mostly written by AI agents. The code was the easy part. Every rule that kept it safe has a dated incident behind it."
+publishDate: "2026-11-03"
+tags: [ai, cloudflare, nonprofits]
+draft: true
+---
+
+On August 25th, three AI agents edited the same checkout at once. I'd started one [Claude Code](https://code.claude.com/docs/en/overview "Claude Code overview — Claude Code Docs") session, and it helpfully handed sub-tasks to [helper agents](https://code.claude.com/docs/en/sub-agents "Subagents — Claude Code Docs"), all working in its own directory. Two of them edited the same README. One agent's commit quietly swallowed the other's edit. No conflict, no error. Just missing work, which I found only by reading the diff.
+
+I've worked on enough teams to recognize that bug. Two engineers, one branch, nobody talking. The agents didn't invent a new way to fail. They reproduced an old one at team speed.
+
+The [Silicon Valley Bicycle Coalition](https://bikesiliconvalley.org "Silicon Valley Bicycle Coalition") is leaving Salesforce for [Monday.com](https://monday.com/ "monday.com"), and as their volunteer IT person, I built the glue. Here's the claim, and the rest of this post is the evidence:
+
+**AI agents let one volunteer build what a small nonprofit could never staff — but only after you give them the process a real team would have.**
+
+## Seventeen Workers, one shape
+
+Salesforce does a lot for a nonprofit, either for free through [Power of Us](https://www.salesforce.org/power-of-us/ "Power of Us Program — Salesforce.org") or for a plug-in fee on the [AppExchange](https://appexchange.salesforce.com/ "Salesforce AppExchange"). Monday.com doesn't. Each gap became a [Cloudflare Worker](https://developers.cloudflare.com/workers/ "Cloudflare Workers — Cloudflare Docs"), 17 in all.
+
+**TODO:** ~6-row table, Worker → what Salesforce used to do. Candidates: donation rollups, Mailchimp sync, [Funraise](https://www.funraise.org/ "Funraise") intake, calendar ICS feeds, the token broker, the staff portal.
+
+Almost every Worker has the same shape. A webhook arrives and gets deduplicated in [D1](https://developers.cloudflare.com/d1/ "D1 — Cloudflare Docs"). It goes onto a [Queue](https://developers.cloudflare.com/queues/ "Queues — Cloudflare Docs"), and a consumer writes it to Monday. Failed writes land in a [dead letter queue](https://developers.cloudflare.com/queues/configuration/dead-letter-queues/ "Dead Letter Queues — Cloudflare Docs"), so a failure becomes a backlog you can replay instead of a silently dropped donation.
+
+**TODO:** one diagram: webhook → D1 → Queue → Monday, with the DLQ branch.
+
+The numbers, as of November 2nd:
+
+- 1,259 commits, nearly all since August.
+- About 85% of them carry a `Co-Authored-By: Claude` trailer.[^models]
+- ~63,000 lines of test TypeScript, ~56,000 lines of everything else. There is more test than code.
+- 25 dated design specs, one per real decision.
+
+## The rules, and the incidents that wrote them
+
+Every rule in the repo's [`CLAUDE.md`](https://code.claude.com/docs/en/memory "Manage Claude's memory — Claude Code Docs") has a date behind it. That's the point.
+
+**One worktree, one agent, ever.** That's the August 25th story. Each agent now gets its own [git worktree](https://git-scm.com/docs/git-worktree "git-worktree — Git Documentation") and its own branch, and none of them shares.
+
+**Look before you `worktree remove`.** Also August 25th, because it was a long day. Removing a worktree silently deleted its gitignored `data/` folder. That folder held the load rehearsal's only Salesforce-to-Monday ID ledger, the geocode cache, and a pile of human-reviewed approvals. Agents now run `git status --ignored` first.
+
+**The main checkout is for `main`.** On September 20th and 21st, two separate sessions committed feature work straight into my main checkout, and a merge request went in carrying a commit that had nothing to do with it. Now a [pre-commit hook](https://git-scm.com/docs/githooks "githooks — Git Documentation") refuses any commit there that isn't on `main`. Prompts are suggestions; hooks are rules.
+
+**Know your free tier.** In early September, D1's [100,000 writes per day](https://developers.cloudflare.com/d1/platform/limits/ "Limits — Cloudflare D1 Docs") on [Workers Free](https://developers.cloudflare.com/workers/platform/pricing/ "Pricing — Cloudflare Workers Docs") stalled the rollups consumer with 2,865 rows stuck. The fix had two parts: pay the five dollars, and write only the rows that actually changed.
+
+**Bot protection doesn't know what a calendar is.** For a week starting September 25th, [Super Bot Fight Mode](https://developers.cloudflare.com/bots/get-started/super-bot-fight-mode/ "Super Bot Fight Mode — Cloudflare Docs") served calendar apps a challenge page instead of an `.ics` file. No calendar app complained; the events just stopped updating. A [WAF custom rule](https://developers.cloudflare.com/waf/custom-rules/ "Custom rules — Cloudflare WAF Docs") fixed it. That rule lives in the dashboard, where no agent can see it, so the README documents it.
+
+**Never call a token scoped until you've measured it.** On September 30th, I checked what a Monday.com API token could actually reach. A user who belonged to *no* workspace could still see 212 boards and edit 199 of them. So now no Worker holds a Monday token at all. A broker Worker hands out access from three [OAuth apps](https://developer.monday.com/apps/docs/oauth "OAuth and permissions — monday.com Apps Framework"), split by scope, and the public portal can never hold write access.[^workspace] **TODO:** this might deserve its own short post.
+
+**Some bugs only exist in production data.** Monday.com's [delete webhooks](https://developer.monday.com/api-reference/docs/webhooks "Webhooks — monday.com API Docs") carry an `itemId`. Every build before October 12th rejected them, so deleted gifts never came out of donor totals. No unit test caught it, because the tests were written from the same wrong assumption.
+
+**Build the off switch before you need it.** On October 26th, every Worker got a write switch in [KV](https://developers.cloudflare.com/kv/ "Workers KV — Cloudflare Docs"): `on`, `hold`, or `off`. Hold keeps work queued; off drops it on purpose. A 22-hour hold drained 11 gifts in 37 seconds.
+
+A few more rules that earned a line each:
+
+- Monday.com quietly serves a deprecated [API version](https://developer.monday.com/api-reference/docs/api-versioning "API versioning — monday.com API Docs") as the current maintenance version, so every Worker pins its own.
+- The GraphQL client is copied into each Worker instead of shared, so each one deploys alone and anyone can fork it. CI fails if the copies aren't byte-identical. Duplication that can't drift beats a shared package you have to version.
+- Sandbox Workers are inbound-only. The [send-email allow-list](https://developers.cloudflare.com/email-routing/email-workers/send-email-workers/ "Send emails from Workers — Cloudflare Email Routing Docs") means the sandbox can only ever email a sandbox address.
+- CI fails the build if a log line could contain an email address.
+
+## The skeptic's best case
+
+The strongest objection is maintenance. Who looks after 56,000 lines of agent-written TypeScript after I'm gone? I'll grant it: that's the weakest part of this project. What I have so far is a README in every Worker that doubles as its spec, scripts staff use to test changes before they ship, and a design where another org adapts it by changing config, not code. **TODO:** be honest about what's still missing.
+
+Then cost: why not Zapier, Make, or a Monday.com marketplace app? **TODO:** the real answer. Cost, reliability, the DLQ/replay story?
+
+Then risk: isn't 85% AI-written code a liability in a donor database? It would be without the rules above. Donor data lives in a gitignored folder, CI checks the logs for PII, the sandbox can't touch production, and no Worker holds a credential it doesn't need.
+
+## Where it stands
+
+Cutover happened on schedule, the weekend of October 23rd to 25th. **TODO:** how the weekend went (did the write switch earn its keep?), what's live now. QuickBooks is postponed indefinitely.
+
+**TODO:** link the repo once it's public on GitLab. This can't ship before then.
+
+## Write down the why
+
+If you hand an agent your repo, write down the rules a new hire would need, and put the incident right next to each one. The *why* is what keeps the next session from "optimizing" the rule away.
+
+`CLAUDE.md` turned out to be a team wiki for a team of one human.
+
+[^models]: The trailers span several model generations. I watched the models change under the project mid-flight. **TODO:** keep, cut, or name the models.
+
+[^workspace]: Closing a workspace on Monday.com's Pro plan isn't an option; that takes Enterprise. And `change_board_kind` once told me, an admin, that I was `USER_UNAUTHORIZED` on a board I had created a minute earlier.
