@@ -36,33 +36,33 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
-    "@cloudflare/workers-types": "^4.20260218.0",
+    "@cloudflare/workers-types": "^5.20261102.1",
     "@types/jsdom": "^27.0.0",
     "dotenv": "^17.3.1",
     "jsdom": "^28.1.0",
-    "markdownlint-cli2": "^0.22.0",
+    "markdownlint-cli2": "^0.23.3",
     "schema-dts": "^2.0.0",
     "stylelint": "^17.6.0",
     "stylelint-declaration-strict-value": "^1.11.1",
     "tsx": "^4.19.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.9",
-    "wrangler": "^4.102.0"
+    "vitest": "^4.1.11",
+    "wrangler": "^4.145.0"
   },
   "dependencies": {
-    "@astrojs/markdoc": "^1.0.6",
+    "@astrojs/markdoc": "^2.0.9",
     "@astrojs/react": "5.0.4",
     "@astrojs/sitemap": "^3.7.1",
-    "@keystatic/astro": "5.1.0",
+    "@keystatic/astro": "5.2.0",
     "@keystatic/core": "0.5.50",
     "@markdoc/markdoc": "^0.5.0",
-    "astro": "^6.4.8",
+    "astro": "^7.3.2",
     "markdown-it-footnote": "^4.0.0",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },
   "overrides": {
-    "devalue": "^5.8.1",
-    "js-yaml": "^4.2.0"
+    "devalue": "^5.9.4",
+    "js-yaml": "^4.3.2"
   }
 }
