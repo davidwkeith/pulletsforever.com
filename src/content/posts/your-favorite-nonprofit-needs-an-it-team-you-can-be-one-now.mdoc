@@ -1,0 +1,84 @@
+---
+title: "Your Favorite Nonprofit Needs an IT Team. You Can Be One Now."
+description: "In my spare time I moved a bike coalition off Salesforce with 17 Cloudflare Workers, mostly written by Claude Code. If you have IT skills and a cause you care about, AI agents make you a team. Here's how to do it without hurting anyone."
+publishDate: "2026-11-03"
+tags: [ai, cloudflare, nonprofits]
+draft: true
+---
+
+Small nonprofits don't have IT departments. They have a volunteer: someone's nephew, a board member who "knows computers," or, in the case of the [Silicon Valley Bicycle Coalition](https://bikesiliconvalley.org "Silicon Valley Bicycle Coalition"), me.
+
+Since August, in evenings and on weekends, I moved SVBC off Salesforce and onto [Monday.com](https://monday.com/ "monday.com"). Every integration Salesforce used to provide got rebuilt as one of 17 [Cloudflare Workers](https://developers.cloudflare.com/workers/ "Cloudflare Workers — Cloudflare Docs"). About 85% of the commits were co-written by [Claude Code](https://code.claude.com/docs/en/overview "Claude Code overview — Claude Code Docs"). Not long ago, a project that size would have meant hiring a consultancy. Nonprofits that can't afford one just go without.
+
+**If you have IT skills and a cause you care about, AI coding agents turn one volunteer into a team. You just have to give that team a team's rules.**
+
+This post is an invitation, and a field guide to the mistakes I made so you don't have to.
+
+## What one volunteer built
+
+Salesforce does a lot for a nonprofit, either for free through [Power of Us](https://www.salesforce.org/power-of-us/ "Power of Us Program — Salesforce.org") or for a plug-in fee on the [AppExchange](https://appexchange.salesforce.com/ "Salesforce AppExchange"). Monday.com is cheaper and easier for staff, but it doesn't come with the integrations. Each missing piece became a Worker.
+
+**TODO:** ~6-row table, Worker → what Salesforce used to do. Candidates: donation rollups, Mailchimp sync, [Funraise](https://www.funraise.org/ "Funraise") intake, calendar ICS feeds, the token broker, the staff portal.
+
+The numbers, as of November 2nd:
+
+- 1,259 commits, nearly all since August.
+- About 85% of them carry a `Co-Authored-By: Claude` trailer.[^models]
+- ~63,000 lines of test TypeScript, ~56,000 lines of everything else. There is more test than code.
+- 25 dated design specs, one per real decision.
+
+Cutover happened on schedule, the weekend of October 23rd to 25th. **TODO:** a line on how it went and what's live; QuickBooks is postponed indefinitely.
+
+## Start smaller than that
+
+I didn't start with a CRM migration, and you shouldn't either. My first commit for SVBC, in February, replaced a paid event-calendar subscription with an [events widget](https://events.bikesiliconvalley.org/widget "SVBC events widget") running on Cloudflare's free tier. One gap, one Worker, one fewer bill.
+
+Every nonprofit has a list of these: a SaaS tool that does one thing for a monthly fee, a spreadsheet someone updates by hand every Friday, two systems that should talk to each other but don't. Each one is a weekend project with an agent, and each one returns money to the mission.
+
+The infrastructure is cheap enough to round to zero. The [Workers free tier](https://developers.cloudflare.com/workers/platform/pricing/ "Pricing — Cloudflare Workers Docs") ran SVBC's first tools for months. When the migration outgrew it, the upgrade was the five-dollar Workers Paid plan. Cloudflare's [Project Galileo](https://www.cloudflare.com/galileo/ "Project Galileo — Cloudflare") protects at-risk public-interest groups for free, and Anthropic offers [discounted Claude plans for nonprofits](https://claude.com/solutions/nonprofits "Claude for Nonprofits — Anthropic").
+
+## The catch: agents make a team's mistakes
+
+On August 25th, three AI agents edited the same checkout at once. I'd started one Claude Code session, and it helpfully handed sub-tasks to [helper agents](https://code.claude.com/docs/en/sub-agents "Subagents — Claude Code Docs"), all working in its own directory. Two of them edited the same README. One agent's commit quietly swallowed the other's edit. No conflict, no error. Just missing work, which I found only by reading the diff.
+
+Anyone who has worked on a team has seen that bug: two engineers, one branch, nobody talking. An agent doesn't make you a solo developer who types faster. It makes you the lead of a team that makes a team's mistakes, at team speed. In a donor database, those mistakes cost real money and real trust.
+
+So the most useful thing I can hand another volunteer isn't code. It's the rules. Every one of them lives in the repo's [`CLAUDE.md`](https://code.claude.com/docs/en/memory "Manage Claude's memory — Claude Code Docs") with the incident that caused it written right next to it.
+
+**One worktree, one agent, ever.** After August 25th, each agent got its own [git worktree](https://git-scm.com/docs/git-worktree "git-worktree — Git Documentation") and its own branch, and none of them shares.
+
+**Look before you delete.** Also August 25th, because it was a long day. Removing a worktree silently deleted its gitignored `data/` folder. That folder held the only Salesforce-to-Monday ID ledger, a geocode cache, and a pile of human-reviewed approvals. Agents now run `git status --ignored` first.
+
+**Prompts are suggestions; hooks are rules.** In September, two separate sessions committed feature work straight into my main checkout. Now a [pre-commit hook](https://git-scm.com/docs/githooks "githooks — Git Documentation") refuses any commit there that isn't on `main`. If a rule matters, enforce it in code the agent can't talk its way around.
+
+**Never call a token scoped until you've measured it.** I checked what a Monday.com API token could actually reach. A user who belonged to *no* workspace could still see 212 boards and edit 199 of them. Now no Worker holds a Monday token at all. A broker hands out access from three [OAuth apps](https://developer.monday.com/apps/docs/oauth "OAuth and permissions — monday.com Apps Framework"), split by scope, and the public portal can never write.[^workspace]
+
+**Know your free tier.** D1's [100,000 writes per day](https://developers.cloudflare.com/d1/platform/limits/ "Limits — Cloudflare D1 Docs") stalled the donation rollups with 2,865 rows stuck. The fix was to pay the five dollars and write only rows that changed.
+
+**Build the off switch first.** Every Worker has a write switch in [KV](https://developers.cloudflare.com/kv/ "Workers KV — Cloudflare Docs"): `on`, `hold`, or `off`. Hold keeps work queued and off drops it. A 22-hour hold later drained 11 gifts in 37 seconds. That's the tool you want on cutover weekend, where boring is the goal.
+
+**Keep donor data out of the agent's reach.** Real data lives in a gitignored folder. CI fails the build if a log line could contain an email address. Sandbox Workers are inbound-only, and the [send-email allow-list](https://developers.cloudflare.com/email-routing/email-workers/send-email-workers/ "Send emails from Workers — Cloudflare Email Routing Docs") means a sandbox can only ever email a sandbox address.
+
+**Some bugs only exist in production data.** Monday.com's [delete webhooks](https://developer.monday.com/api-reference/docs/webhooks "Webhooks — monday.com API Docs") carry an `itemId`, and every build before October 12th rejected them. Deleted gifts never came out of donor totals. The tests passed because they shared the same wrong assumption. Plan for staff to test changes before they ship, not just for unit tests.
+
+## The skeptic's best case
+
+The strongest objection is maintenance. Who looks after 56,000 lines of agent-written TypeScript after the volunteer moves on? I'll grant it: that's the weakest part of this project, and of volunteer IT in general. Volunteers leave. What I've built against that is a README in every Worker that doubles as its spec, scripts staff use to test changes, and code that's small and boring enough for the next volunteer, or the next agent, to read in an afternoon. **TODO:** be honest about what's still missing.
+
+The second objection is cost: why not Zapier, Make, or a Monday.com marketplace app? **TODO:** your real answer. Cost, reliability, the DLQ/replay story?
+
+## How to start
+
+- **Find a cause.** If you don't have one, [Catchafire](https://www.catchafire.org/ "Catchafire — Skills-Based Volunteering") and [Taproot](https://taprootfoundation.org/ "Taproot Foundation — Pro Bono Service") match skilled volunteers with nonprofits.
+- **Ask what they pay for every month.** The first project is usually hiding in that list.
+- **Pick one gap, and ship it.** One Worker, one fewer bill. Earn trust before you touch the donor database.
+- **Write the rules down before the agent writes code.** Start a `CLAUDE.md` on day one, and add the *why* every time something breaks.
+- **Make staff the testers.** They know what right looks like. You and the agent don't.
+
+**TODO:** link the repo once it's public on GitLab, so readers can fork the rules along with the code.
+
+Nonprofits have always run on volunteers who show up with whatever skills they have. If yours is IT, you can now bring a whole team.
+
+[^models]: The trailers span several model generations. I watched the models change under the project mid-flight. **TODO:** keep, cut, or name the models.
+
+[^workspace]: Closing a workspace on Monday.com's Pro plan isn't an option; that takes Enterprise. And `change_board_kind` once told me, an admin, that I was `USER_UNAUTHORIZED` on a board I had created a minute earlier.
