@@ -14,7 +14,8 @@ export async function getStaticPaths() {
   const all = await getCollection("posts", ({ data }: Post) => {
     return import.meta.env.PROD ? !data.draft : true;
   });
-  const ordered = publishedPosts(all);
+  // Drafts get a page in dev (for previewing) but never in production.
+  const ordered = publishedPosts(all, { includeDrafts: !import.meta.env.PROD });
   return ordered.map((post, idx) => ({
     params: { slug: post.id },
     props: {

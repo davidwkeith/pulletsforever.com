@@ -50,6 +50,8 @@ npm run new-post "My Post Title"
 
 Writes a `src/content/posts/my-post-title.mdoc` stub with `draft: true`. Edit, set `draft: false`, then build. For posts with images, drop files into `src/assets/blog/` named `{slug}-{name}.{ext}` and reference in the body as `/images/blog/{slug}-{name}.{ext}` (a virtual path resolved to the optimized asset; no file is committed under `public/`).
 
+Write in the house voice: see `docs/style-guide.md` (openings, argument, links with title attributes, endings).
+
 ## Required frontmatter
 
 ```yaml

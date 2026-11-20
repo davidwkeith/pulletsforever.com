@@ -121,9 +121,12 @@ export function readingMinutes(body: string | undefined): number {
 
 export function publishedPosts(
   posts: Post[],
-  { newestFirst = true }: { newestFirst?: boolean } = {},
+  {
+    newestFirst = true,
+    includeDrafts = false,
+  }: { newestFirst?: boolean; includeDrafts?: boolean } = {},
 ): Post[] {
-  const filtered = posts.filter((p) => !p.data.draft);
+  const filtered = posts.filter((p) => includeDrafts || !p.data.draft);
   filtered.sort((a, b) => {
     const diff =
       a.data.publishDate.getTime() - b.data.publishDate.getTime();
